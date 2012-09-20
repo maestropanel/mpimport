@@ -1,0 +1,7 @@
+O:\Projects\PleskImport\PleskImport\obj\x86\Debug\ResolveAssemblyReference.cache
+O:\Projects\PleskImport\PleskImport\bin\Debug\MySql.Data.dll
+O:\Projects\PleskImport\PleskImport\bin\Debug\mpimport.exe.config
+O:\Projects\PleskImport\PleskImport\bin\Debug\mpimport.exe
+O:\Projects\PleskImport\PleskImport\bin\Debug\mpimport.pdb
+O:\Projects\PleskImport\PleskImport\obj\x86\Debug\mpimport.exe
+O:\Projects\PleskImport\PleskImport\obj\x86\Debug\mpimport.pdb
