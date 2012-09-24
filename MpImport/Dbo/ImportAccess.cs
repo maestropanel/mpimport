@@ -24,8 +24,7 @@
                                                                     clients ON clients.id = domains.cl_id) LEFT OUTER JOIN
                                                                     dom_level_usrs ON dom_level_usrs.dom_id = domains.id)
                                                             WHERE 
-                                                                (domains.htype = 'vrt_hst') AND 
-                                                                (domains.status = 320 OR domains.status = 0) 
+                                                                (domains.htype = 'vrt_hst')
                                                         ORDER BY domains.id", _conn))
                 {
                     using (OleDbDataReader _read = _cmd.ExecuteReader())

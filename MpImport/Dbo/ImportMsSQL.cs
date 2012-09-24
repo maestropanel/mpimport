@@ -24,7 +24,7 @@
 				                                LEFT JOIN dom_level_usrs ON dom_level_usrs.dom_id = domains.id 
                                                 LEFT JOIN limits ON limits.id = domains.limits_id AND limits.limit_name = 'expiration'
                                             WHERE 
-                                                domains.htype = 'vrt_hst' AND (domains.status = 320 OR domains.status = 0)", _conn))
+                                                domains.htype = 'vrt_hst'", _conn))
                 {
                     using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
