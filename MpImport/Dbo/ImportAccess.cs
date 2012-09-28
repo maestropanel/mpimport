@@ -5,6 +5,7 @@
     using System.Data.OleDb;
     using PleskImport.Entity;
     using PleskImport.Properties;
+    using System.Data;
 
     public class ImportAccess : DboFactory
     {
@@ -15,10 +16,20 @@
             using (OleDbConnection _conn = new OleDbConnection(Settings.Default.connectionString))
             {
                 _conn.Open();
-                using (OleDbCommand _cmd = new OleDbCommand(@"SELECT domains.id, domains.name, hosting.fp_adm, accounts.[password], 
-                                                            clients.login, dom_level_usrs.passwd AS DomainPass, domains.status AS Status, NULL AS expiration
+                using (OleDbCommand _cmd = new OleDbCommand(@"SELECT 
+                                                                    domains.id, 
+                                                                    domains.name, 
+                                                                    hosting.fp_adm, 
+                                                                    accounts.[password], 
+                                                                    clients.login, 
+                                                                    clients.passwd,
+                                                                    dom_level_usrs.passwd AS DomainPass, 
+                                                                    domains.status AS Status, 
+                                                                    NULL AS expiration
                                                         FROM (((((domains LEFT OUTER JOIN
-                                                                    hosting ON hosting.dom_id = domains.id) LEFT OUTER JOIN
+                                                                    hosting ON hosting.dom_id = domains.id) 
+
+                            LEFT OUTER JOIN
                                                                     sys_users ON hosting.sys_user_id = sys_users.id) LEFT OUTER JOIN
                                                                     accounts ON accounts.id = sys_users.account_id) LEFT OUTER JOIN
                                                                     clients ON clients.id = domains.cl_id) LEFT OUTER JOIN
@@ -62,17 +73,16 @@
             using (OleDbConnection _conn = new OleDbConnection(Settings.Default.connectionString))
             {
                 _conn.Open();
-                using (OleDbCommand _cmd = new OleDbCommand(@"SELECT     
-	                                                        mail.mail_name, domains.name, 
-	                                                        accounts.password, domains.status, 
-	                                                        mail.redirect, mail.redir_addr, mail.mbox_quota
-                                                        FROM domains 
-	                                                        LEFT OUTER JOIN mail ON mail.dom_id = domains.id 
-	                                                        LEFT OUTER JOIN accounts ON accounts.id = mail.account_id
-                                                        WHERE     
-                                                        (mail.mail_name <> '') AND (domains.name = @NAME)", _conn))
+                using (OleDbCommand _cmd = new OleDbCommand(@"SELECT
+                                                                    mail.mail_name, domains.name, accounts.[password], 
+                                                                    domains.status, mail.redirect, mail.redir_addr, mail.mbox_quota
+                                                            FROM            ((domains LEFT OUTER JOIN
+                                                                                        mail ON mail.dom_id = domains.id) LEFT OUTER JOIN
+                                                                                        accounts ON accounts.id = mail.account_id)
+                                                            WHERE (domains.name = ?) AND (mail.mail_name <> '')", _conn))
                 {
-                    _cmd.Parameters.AddWithValue("@NAME", domainName);
+                    _cmd.CommandType = CommandType.Text;                    
+                    _cmd.Parameters.AddWithValue("NAME", domainName);
 
                     using (OleDbDataReader _read = _cmd.ExecuteReader())
                     {
@@ -84,7 +94,7 @@
                             _d.Password = _read["password"].ToString();
                             _d.Redirect = _read["redirect"].ToString();
                             _d.RedirectedEmail = _read["redir_addr"].ToString();
-                            _d.Quota = (double)_read["mbox_quota"];
+                            _d.Quota = _read.IsDBNull(6) ? -1d :  Convert.ToDouble(_read["mbox_quota"]);
 
                             _tmp.Add(_d);
                         }
@@ -109,7 +119,8 @@
                                                                     db_users ON db_users.id = data_bases.default_user_id) 
                                                                 WHERE (domains.name = ?)", _conn))
                 {
-                    _cmd.Parameters.AddWithValue("@NAME", domainName);
+                    _cmd.CommandType = CommandType.Text;
+                    _cmd.Parameters.AddWithValue("NAME", domainName);
 
                     using (OleDbDataReader _read = _cmd.ExecuteReader())
                     {
@@ -141,7 +152,8 @@
                 _conn.Open();
                 using (OleDbCommand _cmd = new OleDbCommand(@"SELECT login, passwd FROM db_users WHERE (db_id = ?) AND (status = 'normal')", _conn))
                 {
-                    _cmd.Parameters.AddWithValue("@ID", databaseId);
+                    _cmd.CommandType = CommandType.Text;
+                    _cmd.Parameters.AddWithValue("ID", databaseId);
 
                     using (OleDbDataReader _read = _cmd.ExecuteReader())
                     {
@@ -175,7 +187,8 @@
                                                                     domains ON subdomains.dom_id = domains.id) 
                                                                 WHERE (domains.name = ?)", _conn))
                 {
-                    _cmd.Parameters.AddWithValue("@NAME", domainName);
+                    _cmd.CommandType = CommandType.Text;
+                    _cmd.Parameters.AddWithValue("NAME", domainName);
 
                     using (OleDbDataReader _read = _cmd.ExecuteReader())
                     {
@@ -211,7 +224,8 @@
                                                             domains ON domain_aliases.dom_id = domains.id)
                                                                 WHERE (domain_aliases.status = 0) AND (domains.name = ?)", _conn))
                 {
-                    _cmd.Parameters.AddWithValue("@NAME", domainName);
+                    _cmd.CommandType = CommandType.Text;
+                    _cmd.Parameters.AddWithValue("NAME", domainName);
 
                     using (OleDbDataReader _read = _cmd.ExecuteReader())
                     {

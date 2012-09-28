@@ -73,7 +73,7 @@
                 }
                 else
                 {
-                    PrintAndLog(String.Format("Domain Added: {0}", item.Name), ref _sb);
+                    PrintAndLog(String.Format("Domain Error: {0} - {1}", item.Name, result.Message), ref _sb);
                 }
             }
 

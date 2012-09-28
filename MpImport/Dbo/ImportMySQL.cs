@@ -16,8 +16,16 @@
             {
                 _conn.Open();
 
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT domains.id, domains.name, hosting.fp_adm, accounts.password, clients.login, clients.passwd, 
-                                                            dom_level_usrs.passwd As DomainPass, domains.status As Status, limits.value as expiration
+                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT 
+                                                                    domains.id, 
+                                                                    domains.name, 
+                                                                    hosting.fp_adm, 
+                                                                    accounts.password, 
+                                                                    clients.login, 
+                                                                    clients.passwd, 
+                                                                    dom_level_usrs.passwd As DomainPass, 
+                                                                    domains.status As Status, 
+                                                                    limits.value as expiration
 			                                            FROM domains 
                                                 LEFT JOIN hosting ON hosting.dom_id = domains.id 
 				                                LEFT JOIN sys_users ON hosting.sys_user_id = sys_users.id 
