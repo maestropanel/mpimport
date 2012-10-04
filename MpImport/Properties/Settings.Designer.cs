@@ -230,6 +230,18 @@ namespace PleskImport.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DestinationServerPassword {
+            get {
+                return ((string)(this["DestinationServerPassword"]));
+            }
+            set {
+                this["DestinationServerPassword"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Administrator")]
         public string DestinationServerUsername {
             get {
                 return ((string)(this["DestinationServerUsername"]));
@@ -241,13 +253,38 @@ namespace PleskImport.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DestinationServerPassword {
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files (x86)\\Mail Enable\\Postoffices\\{DOMAIN}\\MAILROOT\\{MAILBOX}")]
+        public string SourceDirEmailPattern {
             get {
-                return ((string)(this["DestinationServerPassword"]));
+                return ((string)(this["SourceDirEmailPattern"]));
             }
             set {
-                this["DestinationServerPassword"] = value;
+                this["SourceDirEmailPattern"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\\\\{DESTINATION}\\c$\\Program Files (x86)\\Mail Enable\\Postoffices\\{DOMAIN}\\MAILROOT\\" +
+            "{MAILBOX}")]
+        public string DestinationDirEmailPatter {
+            get {
+                return ((string)(this["DestinationDirEmailPatter"]));
+            }
+            set {
+                this["DestinationDirEmailPatter"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CopyEmailFiles {
+            get {
+                return ((bool)(this["CopyEmailFiles"]));
+            }
+            set {
+                this["CopyEmailFiles"] = value;
             }
         }
     }

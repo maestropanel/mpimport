@@ -53,11 +53,20 @@
     <Setting Name="DestinationServerIp" Type="System.String" Scope="User">
       <Value Profile="(Default)">192.168.2.71</Value>
     </Setting>
-    <Setting Name="DestinationServerUsername" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="DestinationServerPassword" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DestinationServerUsername" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Administrator</Value>
+    </Setting>
+    <Setting Name="SourceDirEmailPattern" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files (x86)\Mail Enable\Postoffices\{DOMAIN}\MAILROOT\{MAILBOX}</Value>
+    </Setting>
+    <Setting Name="DestinationDirEmailPatter" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\{DESTINATION}\c$\Program Files (x86)\Mail Enable\Postoffices\{DOMAIN}\MAILROOT\{MAILBOX}</Value>
+    </Setting>
+    <Setting Name="CopyEmailFiles" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -19,3 +19,4 @@ O:\Projects\MpImport\MpImport\bin\Debug\mpimport.exe
 O:\Projects\MpImport\MpImport\bin\Debug\mpimport.pdb
 O:\Projects\MpImport\MpImport\bin\Debug\MySql.Data.dll
 O:\Projects\MpImport\MpImport\obj\x86\Debug\ResolveAssemblyReference.cache
+O:\Projects\MpImport\MpImport\bin\Debug\System.Data.SQLite.dll

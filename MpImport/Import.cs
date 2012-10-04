@@ -69,7 +69,7 @@
                         ImportDomainAlias(item.Name, ref _sb);
 
                     if (Settings.Default.CopyFiles)                    
-                        RoboCopy(item.Name, ref _sb);
+                        CopyHttpFiles(item.Name, ref _sb);
                 }
                 else
                 {
@@ -97,7 +97,10 @@
                 if (result.Code == 0)
                     PrintAndLog(String.Format("\tEmail Added: {0}", item.Name), ref _sb);
                 else
-                    PrintAndLog(String.Format("\tEmail Error: {0} - {1}", item.Name, result.Message), ref _sb);                
+                    PrintAndLog(String.Format("\tEmail Error: {0} - {1}", item.Name, result.Message), ref _sb);
+
+                if (Settings.Default.CopyEmailFiles)
+                    CopyEmailFiles(domainName, item.Name, ref _sb);
             }
         }
 
@@ -200,6 +203,7 @@
             _table.Add("mssql", new ImportMsSQL());
             _table.Add("mysql", new ImportMySQL());
             _table.Add("access", new ImportAccess());
+            _table.Add("mpsqlite", new MpImportSQLite());
 
             return _table[dbtype];
         }
@@ -221,9 +225,25 @@
             Execute(net_exe, arguments);
         }
 
-        private void RoboCopy(string domainName, ref StringBuilder _sb)
+        private void CopyEmailFiles(string domainName, string mailbox, ref StringBuilder _sb)
         {
-            PrintAndLog("Copying Files...", ref _sb);
+            PrintAndLog("Copying Mailbox Files...", ref _sb);
+
+            var robocopy_exe = Path.Combine(Environment.GetEnvironmentVariable("windir", EnvironmentVariableTarget.Machine), "System32", "robocopy.exe");
+            var _source = Settings.Default.SourceDirEmailPattern.Replace("{DOMAIN}", domainName).Replace("{MAILBOX}",mailbox);
+            var _destination = Settings.Default.DestinationDirPattern
+                                    .Replace("{DOMAIN}", domainName)
+                                    .Replace("{DESTINATION}", Settings.Default.DestinationServerIp)
+                                    .Replace("{MAILBOX}", mailbox);
+
+            var arguments = String.Format(@"{0} {1} /Z /PURGE /E", _source, _destination);
+
+            Execute(robocopy_exe, arguments);
+        }
+
+        private void CopyHttpFiles(string domainName, ref StringBuilder _sb)
+        {
+            PrintAndLog("Copying HTTP Files...", ref _sb);
 
             var robocopy_exe = Path.Combine(Environment.GetEnvironmentVariable("windir", EnvironmentVariableTarget.Machine), "System32", "robocopy.exe");
             var _source = Settings.Default.SourceDirPattern.Replace("{DOMAIN}", domainName);
