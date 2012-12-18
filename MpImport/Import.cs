@@ -54,10 +54,10 @@
                     
                 if (result.Code == 0)
                 {                    
-                    PrintAndLog(String.Format("Domain Added: {0}", item.Name), ref _sb);
-
-                    if (Settings.Default.importEmails)
-                        ImportEmails(item.Name, ref _sb);
+                    if(Settings.Default.importDomains)
+                        PrintAndLog(String.Format("Domain Added: {0}", item.Name), ref _sb);
+                    
+                    ImportEmails(item.Name, ref _sb);
 
                     if (Settings.Default.importDatabases)
                         ImportDatabases(item.Name, ref _sb);
@@ -91,13 +91,16 @@
 
             foreach (var item in EmailList.Where(m => m.DomainName == domainName))
             {
-                _quota = item.Quota > 0 ? ((item.Quota / 8) / 1024) : item.Quota;
-                var result = client.AddMailBox(item.DomainName, item.Name, item.Password, item.Quota, item.Redirect, item.RedirectedEmail);
+                if (Settings.Default.importEmails)
+                {
+                    _quota = item.Quota > 0 ? ((item.Quota / 8) / 1024) : item.Quota;
+                    var result = client.AddMailBox(item.DomainName, item.Name, item.Password, item.Quota, item.Redirect, item.RedirectedEmail);
 
-                if (result.Code == 0)
-                    PrintAndLog(String.Format("\tEmail Added: {0}", item.Name), ref _sb);
-                else
-                    PrintAndLog(String.Format("\tEmail Error: {0} - {1}", item.Name, result.Message), ref _sb);
+                    if (result.Code == 0)
+                        PrintAndLog(String.Format("\tEmail Added: {0}", item.Name), ref _sb);
+                    else
+                        PrintAndLog(String.Format("\tEmail Error: {0} - {1}", item.Name, result.Message), ref _sb);
+                }
 
                 if (Settings.Default.CopyEmailFiles)
                     CopyEmailFiles(domainName, item.Name, ref _sb);
@@ -227,16 +230,17 @@
 
         private void CopyEmailFiles(string domainName, string mailbox, ref StringBuilder _sb)
         {
-            PrintAndLog("Copying Mailbox Files...", ref _sb);
+            PrintAndLog("Copying Mailbox Files... (" + mailbox +")", ref _sb);
 
             var robocopy_exe = Path.Combine(Environment.GetEnvironmentVariable("windir", EnvironmentVariableTarget.Machine), "System32", "robocopy.exe");
+
             var _source = Settings.Default.SourceDirEmailPattern.Replace("{DOMAIN}", domainName).Replace("{MAILBOX}",mailbox);
-            var _destination = Settings.Default.DestinationDirPattern
+            var _destination = Settings.Default.DestinationDirEmailPatter
                                     .Replace("{DOMAIN}", domainName)
                                     .Replace("{DESTINATION}", Settings.Default.DestinationServerIp)
                                     .Replace("{MAILBOX}", mailbox);
 
-            var arguments = String.Format(@"{0} {1} /Z /PURGE /E", _source, _destination);
+            var arguments = String.Format(@"""{0}"" ""{1}"" /Z /PURGE /E", _source, _destination);
 
             Execute(robocopy_exe, arguments);
         }
@@ -251,7 +255,7 @@
                                     .Replace("{DOMAIN}", domainName)
                                     .Replace("{DESTINATION}", Settings.Default.DestinationServerIp);
             
-            var arguments = String.Format(@"{0} {1} /Z /PURGE /E", _source, _destination);
+            var arguments = String.Format(@"""{0}"" ""{1}"" /Z /PURGE /E", _source, _destination);
 
             Execute(robocopy_exe, arguments);
         }
