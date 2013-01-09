@@ -144,8 +144,7 @@
             _args.Add("key", _apiKey);
             _args.Add("name", name);
             _args.Add("subdomain", subdomain);
-            _args.Add("username", username);            
-            _args.Add("password", password);
+            _args.Add("ftpuser", username);            
 
             return SendApi("Domain/AddSubDomain", "POST", _args);
         }

@@ -9,6 +9,7 @@
     using MaestroPanelApi;
     using PleskImport.Entity;
     using PleskImport.Properties;
+    using PleskImport.Dbo;
         
     public class Import
     {
@@ -207,6 +208,7 @@
             _table.Add("mysql", new ImportMySQL());
             _table.Add("access", new ImportAccess());
             _table.Add("mpsqlite", new MpImportSQLite());
+            _table.Add("entrenix", new ImportEntrenix());
 
             return _table[dbtype];
         }
@@ -216,7 +218,6 @@
             var _logPath = Path.Combine(Directory.GetCurrentDirectory(), LOG_FILENAME);
             File.CreateText(_logPath).Close();
         }
-
 
         public void AuthenticationUnc()
         {
@@ -254,8 +255,8 @@
             var _destination = Settings.Default.DestinationDirPattern
                                     .Replace("{DOMAIN}", domainName)
                                     .Replace("{DESTINATION}", Settings.Default.DestinationServerIp);
-            
-            var arguments = String.Format(@"""{0}"" ""{1}"" /Z /PURGE /E", _source, _destination);
+
+            var arguments = String.Format(@"""{0}"" ""{1}"" /Z /PURGE /E /MT:10", _source, _destination);
 
             Execute(robocopy_exe, arguments);
         }

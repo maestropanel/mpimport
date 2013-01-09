@@ -35,6 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MailEnable.Administration">
+      <HintPath>..\..\Maestro\assembly\MailEnable.Administration.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data, Version=6.3.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MySql.Data.dll</HintPath>
@@ -54,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dbo\ImportEntrenix.cs" />
     <Compile Include="Dbo\MpImportSQLite.cs" />
     <Compile Include="Entity\ApiResult.cs" />
     <Compile Include="Client.cs" />
