@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dbo\ImportEntrenix.cs" />
+    <Compile Include="Dbo\MpImportMsSQL.cs" />
     <Compile Include="Dbo\MpImportSQLite.cs" />
     <Compile Include="Entity\ApiResult.cs" />
     <Compile Include="Client.cs" />

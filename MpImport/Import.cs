@@ -15,6 +15,7 @@
     {
         private DboFactory _db;
         private readonly string LOG_FILENAME = "import.log";
+        private readonly string FILTER_FILENAME = "filter.txt";
 
         public Import()
         {
@@ -208,6 +209,7 @@
             _table.Add("mysql", new ImportMySQL());
             _table.Add("access", new ImportAccess());
             _table.Add("mpsqlite", new MpImportSQLite());
+            _table.Add("mpmssql", new MpImportMsSQL());
             _table.Add("entrenix", new ImportEntrenix());
 
             return _table[dbtype];
@@ -279,7 +281,7 @@
         {
             var _list = new List<string>();
 
-            var _filter_file = Path.Combine(Environment.CurrentDirectory, "filter.txt");
+            var _filter_file = Path.Combine(Environment.CurrentDirectory, FILTER_FILENAME);
 
             if (File.Exists(_filter_file))            
                 _list = File.ReadAllLines(_filter_file).ToList();

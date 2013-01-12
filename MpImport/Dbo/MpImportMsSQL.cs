@@ -1,24 +1,24 @@
-﻿namespace PleskImport
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Data.SQLite;
-    using PleskImport.Entity;
-    using PleskImport.Properties;
+﻿using PleskImport.Entity;
+using PleskImport.Properties;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 
-    public class MpImportSQLite : DboFactory
+namespace PleskImport.Dbo
+{
+    public class MpImportMsSQL : DboFactory
     {
-        //Domain, MsFTP modülü ile.
+        
         public override List<Domain> GetDomains()
         {
             var _tmp = new List<Domain>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
             {
                 _conn.Open();
 
-                using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT Domain.DomainId, 
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT Domain.DomainId, 
                                                                         Domain.Name, Domain.ExpirationDate, Domain.Status,
                                                                     DomainMsFTPUser.Username as ftpUserName, DomainMsFTPUser.Password as FtpPassword, 
                                                                     LoginAccount.UserName as DomainUser, LoginAccount.Password as DomainPassword
@@ -27,7 +27,7 @@
                                                                     LEFT JOIN DomainMsFTPUser ON DomainMsFTPUser.FtpId = DomainMsFtp.Id
                                                                     LEFT JOIN LoginAccount ON LoginAccount.LoginId = Domain.OwnerLoginId AND LoginAccount.UserName <> 'admin'", _conn))
                 {
-                    using (SQLiteDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -63,19 +63,19 @@
         {
             var _tmp = new List<Email>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
             {
                 _conn.Open();
-                using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT  Domain.Name as name, Pu.Username as mail_name, Pu.Password as password,Pu.Quota as mbox_quota 
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT  Domain.Name as name, Pu.Username as mail_name, Pu.Password as password,Pu.Quota as mbox_quota 
                                         FROM Domain 
                                             LEFT JOIN DomainPostOffice AS Po ON Po.DomainId = Domain.DomainId
                                             LEFT JOIN DomainPostOfficeUser As Pu ON Pu.PostOfficeId = Po.Id
-                                            WHERE Domain.Name = $NAME", _conn))
+                                            WHERE Domain.Name = @NAME", _conn))
                 {
                     _cmd.CommandType = CommandType.Text;
-                    _cmd.Parameters.AddWithValue("$NAME", domainName);
+                    _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (SQLiteDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -110,16 +110,16 @@
         {
             var _tmp = new List<Database>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
             {
                 _conn.Open();
-                using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT Sql.Id as db_id, D.Name as domain, Sql.Name as name FROM DomainMySQL as Sql
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT Sql.Id as db_id, D.Name as domain, Sql.Name as name FROM DomainMySQL as Sql
                                                                     LEFT JOIN Domain as D ON Sql.DomainId = D.DomainId
-                                                                        WHERE D.Name = $NAME", _conn))
+                                                                        WHERE D.Name = @NAME", _conn))
                 {
-                    _cmd.Parameters.AddWithValue("$NAME", domainName);
+                    _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (SQLiteDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -144,14 +144,14 @@
         {
             var _tmp = new List<DatabaseUser>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
             {
                 _conn.Open();
-                using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT Username, Password FROM DomainMySQLUser WHERE DatabaseId = $ID", _conn))
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT Username, Password FROM DomainMySQLUser WHERE DatabaseId = @ID", _conn))
                 {
-                    _cmd.Parameters.AddWithValue("$ID", databaseId);
+                    _cmd.Parameters.AddWithValue("@ID", databaseId);
 
-                    using (SQLiteDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -173,16 +173,16 @@
         {
             var _tmp = new List<Database>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
             {
                 _conn.Open();
-                using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT Sql.Id as db_id, D.Name as domain, Sql.Name as name, ""mssql"" as type FROM DomainMsSQL as Sql
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT Sql.Id as db_id, D.Name as domain, Sql.Name as name FROM DomainMsSQL as Sql
                                                                     LEFT JOIN Domain as D ON Sql.DomainId = D.DomainId
-                                                                        WHERE D.Name = $NAME", _conn))
+                                                                        WHERE D.Name = @NAME", _conn))
                 {
-                    _cmd.Parameters.AddWithValue("$NAME", domainName);
+                    _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (SQLiteDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -207,14 +207,14 @@
         {
             var _tmp = new List<DatabaseUser>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
             {
                 _conn.Open();
-                using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT Username, Password FROM DomainMsSQLUser WHERE DatabaseId = $ID", _conn))
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT Username, Password FROM DomainMsSQLUser WHERE DatabaseId = @ID", _conn))
                 {
-                    _cmd.Parameters.AddWithValue("$ID", databaseId);
+                    _cmd.Parameters.AddWithValue("@ID", databaseId);
 
-                    using (SQLiteDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -236,19 +236,19 @@
         {
             var _tmp = new List<Subdomain>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
             {
                 _conn.Open();
-                using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT SD.Name as name, D.Name as domain, SD.Username as login, FU.Password as password
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT SD.Name as name, D.Name as domain, SD.Username as login, FU.Password as password
 		                                                        FROM SubDomain As SD 
 		                                                        LEFT JOIN Domain As D ON D.DomainId = SD.DomainId
 		                                                        LEFT JOIN DomainMsFTP As Ftp ON Ftp.DomainId = D.DomainId 
 		                                                        LEFT JOIN DomainMsFTPUser As FU ON FU.FtpId = Ftp.Id AND FU.Username = SD.Username
-                                                                WHERE D.Name = $NAME", _conn))
+                                                                WHERE D.Name = @NAME", _conn))
                 {
-                    _cmd.Parameters.AddWithValue("$NAME", domainName);
+                    _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (SQLiteDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -273,15 +273,15 @@
         {
             var _tmp = new List<DomainAlias>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
             {
                 _conn.Open();
-                using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT D.Name as domain, DA.Hostname as name FROM DomainAlias As DA 
-                                                                LEFT JOIN Domain As D ON D.DomainId = Da.DomainId WHERE D.Name = $NAME", _conn))
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT D.Name as domain, DA.Hostname as name FROM DomainAlias As DA 
+                                                                LEFT JOIN Domain As D ON D.DomainId = Da.DomainId WHERE D.Name = @NAME", _conn))
                 {
-                    _cmd.Parameters.AddWithValue("$NAME", domainName);
+                    _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (SQLiteDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
