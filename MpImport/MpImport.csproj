@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dbo\ImportMySQLPlesk10.cs" />
     <Compile Include="Dbo\ImportEntrenix.cs" />
     <Compile Include="Dbo\MpImportMsSQL.cs" />
     <Compile Include="Dbo\MpImportSQLite.cs" />

@@ -207,6 +207,7 @@
             var _table = new Dictionary<string, DboFactory>();
             _table.Add("mssql", new ImportMsSQL());
             _table.Add("mysql", new ImportMySQL());
+            _table.Add("mysqlPlesk10", new ImportMySQLPlesk10());
             _table.Add("access", new ImportAccess());
             _table.Add("mpsqlite", new MpImportSQLite());
             _table.Add("mpmssql", new MpImportMsSQL());
@@ -258,7 +259,7 @@
                                     .Replace("{DOMAIN}", domainName)
                                     .Replace("{DESTINATION}", Settings.Default.DestinationServerIp);
 
-            var arguments = String.Format(@"""{0}"" ""{1}"" /Z /PURGE /E /MT:10", _source, _destination);
+            var arguments = String.Format(@"""{0}"" ""{1}"" /Z /PURGE /E", _source, _destination);
 
             Execute(robocopy_exe, arguments);
         }
