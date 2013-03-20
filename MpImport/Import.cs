@@ -223,7 +223,7 @@
             _table.Add("mssql", new ImportMsSQL());
             _table.Add("mysql", new ImportMySQL());
             _table.Add("mysqlPlesk10", new ImportMySQLPlesk10());
-            _table.Add("mysqlPlesk10", new ImportMySQLPlesk11());
+            _table.Add("mysqlPlesk11", new ImportMySQLPlesk11());
             _table.Add("access", new ImportAccess());
             _table.Add("mpsqlite", new MpImportSQLite());
             _table.Add("mpmssql", new MpImportMsSQL());

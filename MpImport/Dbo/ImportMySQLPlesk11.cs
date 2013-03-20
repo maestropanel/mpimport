@@ -257,13 +257,18 @@
                         while (_read.Read())
                         {
                             var _d = new Reseller();
-                            _d.Id = (int)_read[_read.GetOrdinal("id")];
+                            _d.Id = Convert.ToInt32(_read[_read.GetOrdinal("id")]);
 
                             _d.Password = _read[_read.GetOrdinal("password")].ToString();
-                            _d.Username = _read[_read.GetOrdinal("address")].ToString();
+                            _d.Username = _read[_read.GetOrdinal("login")].ToString();
                                                         
-                            _d.Email = _read[_read.GetOrdinal("email")].ToString();                            
+                            _d.Email = _read[_read.GetOrdinal("email")].ToString();
+                            
+                            if (String.IsNullOrEmpty(_d.Email))
+                                _d.Email = "mail@mail.com";
+
                             _d.FirstName = _read[_read.GetOrdinal("pname")].ToString();
+                            _d.LastName = _d.FirstName;
                             _d.Organization = _read[_read.GetOrdinal("cname")].ToString();
 
                             _d.Address1 = _read[_read.GetOrdinal("address")].ToString();
