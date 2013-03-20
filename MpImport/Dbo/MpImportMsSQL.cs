@@ -1,12 +1,14 @@
-﻿using PleskImport.Entity;
-using PleskImport.Properties;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
+﻿
 
 namespace PleskImport.Dbo
 {
+    using PleskImport.Entity;
+    using PleskImport.Properties;
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Data.SqlClient;
+
     public class MpImportMsSQL : DboFactory
     {
         
@@ -297,6 +299,11 @@ namespace PleskImport.Dbo
             }
 
             return _tmp;
+        }
+
+        public override List<Reseller> GetResellers()
+        {
+            return new List<Reseller>();
         }
     }
 }

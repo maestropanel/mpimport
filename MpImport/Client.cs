@@ -75,11 +75,17 @@
             var _result = new ApiResult();
             var _uri = new Uri(String.Format("{0}/{1}", _apiUri, action));
 
+            //@Debug
+            //for (int i = 0; i < _parameters.Count; i++)
+            //{
+            //    Console.Write(String.Format("{0}={1}",_parameters[i],_parameters.Keys[i]));                
+            //}
+            
             try
             {
                 HttpWebRequest request = WebRequest.Create(_uri) as HttpWebRequest;
                 request.Method = method;
-                request.Timeout = 120 * 1000;
+                request.Timeout = 240 * 1000;
                 request.ContentType = "application/x-www-form-urlencoded";
 
                 WriteData(ref request, _parameters);
@@ -157,6 +163,39 @@
             _args.Add("alias", alias);
 
             return SendApi("Domain/AddDomainAlias", "POST", _args);
+        }
+
+
+        public ApiResult ResellerCreate(PleskImport.Entity.Reseller r, string planAlias)
+        {
+            return ResellerCreate(r.Username, r.Password, planAlias, r.FirstName, r.LastName, r.Email, r.Country, r.Organization,
+                r.Address1, r.Address2, r.City, r.Province, r.PostalCode, r.Phone, r.fax);
+        }
+
+        public ApiResult ResellerCreate(string username, string password, string planAlias, 
+            string firstName, string lastName, string email, string country, string organization, 
+                string address1, string address2, string city, string province, string postalcode, 
+                    string phone, string fax)
+        {
+            var _args = new NameValueCollection();
+            _args.Add("key", _apiKey);
+            _args.Add("username", username);
+            _args.Add("password", password);
+            _args.Add("planAlias", planAlias);
+            _args.Add("firstName", firstName);
+            _args.Add("lastname", lastName);
+            _args.Add("email", email);
+            _args.Add("country", country);
+            _args.Add("organization", organization);
+            _args.Add("address1", address1);
+            _args.Add("address2", address2);
+            _args.Add("city", city);
+            _args.Add("province", province);
+            _args.Add("postalcode", postalcode);
+            _args.Add("phone", phone);
+            _args.Add("fax", fax);
+
+            return SendApi("Reseller/Create", "POST", _args);
         }
 
         private void WriteData(ref HttpWebRequest _request, NameValueCollection _parameters)

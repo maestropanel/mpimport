@@ -3,7 +3,7 @@ O:\Projects\MpImport\MpImport\bin\Release\mpimport.exe
 O:\Projects\MpImport\MpImport\bin\Release\mpimport.pdb
 O:\Projects\MpImport\MpImport\bin\Release\MySql.Data.dll
 O:\Projects\MpImport\MpImport\bin\Release\System.Data.SQLite.dll
-O:\Projects\MpImport\MpImport\obj\x86\Release\MpImport.csprojResolveAssemblyReference.cache
 O:\Projects\MpImport\MpImport\obj\x86\Release\mpimport.exe
 O:\Projects\MpImport\MpImport\obj\x86\Release\mpimport.pdb
 O:\Projects\MpImport\MpImport\bin\Release\MailEnable.Administration.dll
+O:\Projects\MpImport\MpImport\obj\x86\Release\MpImport.csprojResolveAssemblyReference.cache

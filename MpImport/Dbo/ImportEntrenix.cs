@@ -230,6 +230,11 @@
             public string Password { get; set; }
             public long MailBoxQuota { get; set; }
         }
+
+        public override List<Reseller> GetResellers()
+        {
+            return new List<Reseller>();
+        }
     }
 
 

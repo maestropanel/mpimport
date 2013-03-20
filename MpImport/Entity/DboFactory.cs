@@ -9,5 +9,6 @@
         public abstract List<Database> GetDatabases(string domainName);
         public abstract List<Subdomain> GetSubdomains(string domainName);
         public abstract List<DomainAlias> GetDomainAliases(string domainName);
+        public abstract List<Reseller> GetResellers();
     }
 }

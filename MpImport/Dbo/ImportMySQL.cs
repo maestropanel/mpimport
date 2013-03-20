@@ -238,5 +238,10 @@
 
             return _tmp;
         }
+
+        public override List<Reseller> GetResellers()
+        {
+            return new List<Reseller>();
+        }
     }
 }

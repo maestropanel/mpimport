@@ -99,9 +99,9 @@
                     var result = client.AddMailBox(item.DomainName, item.Name, item.Password, item.Quota, item.Redirect, item.RedirectedEmail);
 
                     if (result.Code == 0)
-                        PrintAndLog(String.Format("\tEmail Added: {0}", item.Name), ref _sb);
+                        PrintAndLog(String.Format("\tEmail Added: {0}@{1}", item.Name, domainName), ref _sb);
                     else
-                        PrintAndLog(String.Format("\tEmail Error: {0} - {1}", item.Name, result.Message), ref _sb);
+                        PrintAndLog(String.Format("\tEmail Error: {0}@{2} - {1}", item.Name, result.Message, domainName), ref _sb);
                 }
 
                 if (Settings.Default.CopyEmailFiles)
@@ -171,9 +171,24 @@
             }
         }
 
-        public void ImportClients()
+        public void ImportResellers()
         {
-            // Comin Soon...
+            if (!Settings.Default.ImportReseller)
+                return;
+
+            var _resellerList = _db.GetResellers();
+
+            var client = new Client(Settings.Default.apiKey, Settings.Default.host, Settings.Default.port, false);
+
+            foreach (var item in _resellerList)
+            {
+                var result = client.ResellerCreate(item, Settings.Default.domainPlanName);
+
+                if (result.Code == 0)
+                    Console.WriteLine(String.Format("Reseller Added: {0}", item.Username));
+                else
+                    Console.WriteLine(String.Format("Reseller Error: {0} - {1}", item.Username, result.Message));
+            }
         }
 
         private List<string> IncludedDomains()
@@ -208,9 +223,11 @@
             _table.Add("mssql", new ImportMsSQL());
             _table.Add("mysql", new ImportMySQL());
             _table.Add("mysqlPlesk10", new ImportMySQLPlesk10());
+            _table.Add("mysqlPlesk10", new ImportMySQLPlesk11());
             _table.Add("access", new ImportAccess());
             _table.Add("mpsqlite", new MpImportSQLite());
             _table.Add("mpmssql", new MpImportMsSQL());
+            _table.Add("mpmssqlicewarp", new MpImportMsSQLIceWarp());
             _table.Add("entrenix", new ImportEntrenix());
 
             return _table[dbtype];

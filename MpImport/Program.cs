@@ -28,6 +28,7 @@
                     _import.AuthenticationUnc();
                 
                 _import.ImportDomains();
+                _import.ImportResellers();
             }
         }
     }

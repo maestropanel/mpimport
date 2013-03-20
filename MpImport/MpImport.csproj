@@ -57,9 +57,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dbo\ImportMySQLPlesk11.cs" />
     <Compile Include="Dbo\ImportMySQLPlesk10.cs" />
     <Compile Include="Dbo\ImportEntrenix.cs" />
     <Compile Include="Dbo\MpImportMsSQL.cs" />
+    <Compile Include="Dbo\MpImportMsSQLIceWarp.cs" />
     <Compile Include="Dbo\MpImportSQLite.cs" />
     <Compile Include="Entity\ApiResult.cs" />
     <Compile Include="Client.cs" />
@@ -71,6 +73,7 @@
     <Compile Include="Dbo\ImportAccess.cs" />
     <Compile Include="Dbo\ImportMsSQL.cs" />
     <Compile Include="Dbo\ImportMySQL.cs" />
+    <Compile Include="Entity\Reseller.cs" />
     <Compile Include="Entity\Subdomain.cs" />
     <Compile Include="Import.cs" />
     <Compile Include="Program.cs" />
