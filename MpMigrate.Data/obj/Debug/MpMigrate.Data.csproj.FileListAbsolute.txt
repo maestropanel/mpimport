@@ -1,0 +1,6 @@
+O:\Projects\MpImport\MpMigrate.Data\bin\Debug\MpMigrate.Data.dll
+O:\Projects\MpImport\MpMigrate.Data\bin\Debug\MpMigrate.Data.pdb
+O:\Projects\MpImport\MpMigrate.Data\obj\Debug\MpMigrate.Data.dll
+O:\Projects\MpImport\MpMigrate.Data\obj\Debug\MpMigrate.Data.pdb
+O:\Projects\MpImport\MpMigrate.Data\bin\Debug\MySql.Data.dll
+O:\Projects\MpImport\MpMigrate.Data\obj\Debug\MpMigrate.Data.csprojResolveAssemblyReference.cache

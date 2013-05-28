@@ -1,20 +1,26 @@
-﻿namespace PleskImport
+﻿namespace MpMigrate
 {
     using System;
     using System.Collections.Generic;
     using System.Data;
     using System.Data.SQLite;
-    using PleskImport.Entity;
-    using PleskImport.Properties;
+    using MpMigrate.Entity;
+    using MpMigrate.Properties;
 
     public class MpImportSQLite : DboFactory
     {
-        //Domain, MsFTP modülü ile.
+        private string connectionString;
+
+        public MpImportSQLite()
+        {
+            connectionString = ImportHelper.MaestroPanelSQLiteConnectionString();
+        }
+
         public override List<Domain> GetDomains()
         {
             var _tmp = new List<Domain>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SQLiteConnection _conn = new SQLiteConnection(connectionString))
             {
                 _conn.Open();
 
@@ -63,7 +69,7 @@
         {
             var _tmp = new List<Email>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SQLiteConnection _conn = new SQLiteConnection(connectionString))
             {
                 _conn.Open();
                 using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT  Domain.Name as name, Pu.Username as mail_name, Pu.Password as password,Pu.Quota as mbox_quota 
@@ -110,7 +116,7 @@
         {
             var _tmp = new List<Database>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SQLiteConnection _conn = new SQLiteConnection(connectionString))
             {
                 _conn.Open();
                 using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT Sql.Id as db_id, D.Name as domain, Sql.Name as name FROM DomainMySQL as Sql
@@ -144,7 +150,7 @@
         {
             var _tmp = new List<DatabaseUser>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SQLiteConnection _conn = new SQLiteConnection(connectionString))
             {
                 _conn.Open();
                 using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT Username, Password FROM DomainMySQLUser WHERE DatabaseId = $ID", _conn))
@@ -173,7 +179,7 @@
         {
             var _tmp = new List<Database>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SQLiteConnection _conn = new SQLiteConnection(connectionString))
             {
                 _conn.Open();
                 using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT Sql.Id as db_id, D.Name as domain, Sql.Name as name, ""mssql"" as type FROM DomainMsSQL as Sql
@@ -207,7 +213,7 @@
         {
             var _tmp = new List<DatabaseUser>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SQLiteConnection _conn = new SQLiteConnection(connectionString))
             {
                 _conn.Open();
                 using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT Username, Password FROM DomainMsSQLUser WHERE DatabaseId = $ID", _conn))
@@ -236,7 +242,7 @@
         {
             var _tmp = new List<Subdomain>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SQLiteConnection _conn = new SQLiteConnection(connectionString))
             {
                 _conn.Open();
                 using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT SD.Name as name, D.Name as domain, SD.Username as login, FU.Password as password
@@ -273,7 +279,7 @@
         {
             var _tmp = new List<DomainAlias>();
 
-            using (SQLiteConnection _conn = new SQLiteConnection(Settings.Default.connectionString))
+            using (SQLiteConnection _conn = new SQLiteConnection(connectionString))
             {
                 _conn.Open();
                 using (SQLiteCommand _cmd = new SQLiteCommand(@"SELECT D.Name as domain, DA.Hostname as name FROM DomainAlias As DA 

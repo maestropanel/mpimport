@@ -1,17 +1,25 @@
-﻿namespace PleskImport
+﻿namespace MpMigrate
 {
     using System.Collections.Generic;
     using System.Data.SqlClient;
-    using PleskImport.Entity;
-    using PleskImport.Properties;
+    using MpMigrate.Entity;
+    using MpMigrate.Properties;
 
     public class ImportMsSQL : DboFactory
     {
+
+        private string connectionString;
+
+        public ImportMsSQL()
+        {
+            connectionString = ImportHelper.PleskMsSqlConnectionString();
+        }
+
         public override List<Domain> GetDomains()
         {
             var _tmp = new List<Domain>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT domains.id, domains.name, hosting.fp_adm, accounts.password, clients.login, clients.passwd, 
@@ -59,7 +67,7 @@
         {
             var _tmp = new List<Email>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT     
@@ -101,7 +109,7 @@
         {
             var _tmp = new List<Database>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT data_bases.id as db_id, domains.name AS domain, data_bases.name, data_bases.type
@@ -137,7 +145,7 @@
         {
             var _tmp = new List<DatabaseUser>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT login, passwd FROM db_users WHERE (db_id = @ID) AND (status = 'normal')", _conn))
@@ -166,7 +174,7 @@
         {
             var _tmp = new List<Subdomain>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT  subdomains.name, domains.name AS domain, sys_users.login, accounts.password, subdomains.sys_user_type
@@ -203,7 +211,7 @@
         {
             var _tmp = new List<DomainAlias>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT domain_aliases.name as alias, domains.name AS domain, domain_aliases.status

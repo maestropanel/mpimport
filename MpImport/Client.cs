@@ -165,8 +165,20 @@
             return SendApi("Domain/AddDomainAlias", "POST", _args);
         }
 
+        public ApiResult AddFtpUser(string name, string account, string password, string homePath = "/", bool ronly = false)
+        {
+            var _args = new NameValueCollection();
+            _args.Add("key", _apiKey);
+            _args.Add("name", name);
+            _args.Add("account", account);
+            _args.Add("password", password);
+            _args.Add("homePath", homePath);
+            _args.Add("ronly", ronly.ToString());
 
-        public ApiResult ResellerCreate(PleskImport.Entity.Reseller r, string planAlias)
+            return SendApi("Domain/AddFtpAccount", "POST", _args);
+        }
+
+        public ApiResult ResellerCreate(MpMigrate.Entity.Reseller r, string planAlias)
         {
             return ResellerCreate(r.Username, r.Password, planAlias, r.FirstName, r.LastName, r.Email, r.Country, r.Organization,
                 r.Address1, r.Address2, r.City, r.Province, r.PostalCode, r.Phone, r.fax);

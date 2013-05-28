@@ -19,5 +19,10 @@ O:\Projects\MpImport\MpImport\bin\Debug\mpimport.exe
 O:\Projects\MpImport\MpImport\bin\Debug\mpimport.pdb
 O:\Projects\MpImport\MpImport\bin\Debug\MySql.Data.dll
 O:\Projects\MpImport\MpImport\bin\Debug\System.Data.SQLite.dll
-O:\Projects\MpImport\MpImport\obj\x86\Debug\MpImport.csprojResolveAssemblyReference.cache
 O:\Projects\MpImport\MpImport\bin\Debug\MailEnable.Administration.dll
+O:\Projects\MpImport\MpImport\bin\Debug\Ionic.Zip.dll
+O:\Projects\MpImport\MpImport\bin\Debug\Microsoft.SqlServer.ConnectionInfo.dll
+O:\Projects\MpImport\MpImport\bin\Debug\Microsoft.SqlServer.Management.Sdk.Sfc.dll
+O:\Projects\MpImport\MpImport\bin\Debug\Microsoft.SqlServer.Smo.dll
+O:\Projects\MpImport\MpImport\bin\Debug\Microsoft.SqlServer.SqlEnum.dll
+O:\Projects\MpImport\MpImport\obj\x86\Debug\MpImport.csprojResolveAssemblyReference.cache

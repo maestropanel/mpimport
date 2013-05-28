@@ -1,5 +1,5 @@
 ﻿
-namespace PleskImport.Entity
+namespace MpMigrate.Entity
 {
     public class Reseller
     {

@@ -8,11 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PleskImport.Properties {
+namespace MpMigrate.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -38,48 +38,48 @@ namespace PleskImport.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string connectionString {
+        public string pleskMySQLHost {
             get {
-                return ((string)(this["connectionString"]));
+                return ((string)(this["pleskMySQLHost"]));
             }
             set {
-                this["connectionString"] = value;
+                this["pleskMySQLHost"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string apiKey {
+        public string MaestroPanelApiKey {
             get {
-                return ((string)(this["apiKey"]));
+                return ((string)(this["MaestroPanelApiKey"]));
             }
             set {
-                this["apiKey"] = value;
+                this["MaestroPanelApiKey"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("localhost")]
-        public string host {
+        public string MaestroPanelHost {
             get {
-                return ((string)(this["host"]));
+                return ((string)(this["MaestroPanelHost"]));
             }
             set {
-                this["host"] = value;
+                this["MaestroPanelHost"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("9715")]
-        public int port {
+        public int MaestroPanelPort {
             get {
-                return ((int)(this["port"]));
+                return ((int)(this["MaestroPanelPort"]));
             }
             set {
-                this["port"] = value;
+                this["MaestroPanelPort"] = value;
             }
         }
         
@@ -98,12 +98,12 @@ namespace PleskImport.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string resellerName {
+        public string pleskResellerName {
             get {
-                return ((string)(this["resellerName"]));
+                return ((string)(this["pleskResellerName"]));
             }
             set {
-                this["resellerName"] = value;
+                this["pleskResellerName"] = value;
             }
         }
         
@@ -182,12 +182,12 @@ namespace PleskImport.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool CopyFiles {
+        public bool CopyHttpFiles {
             get {
-                return ((bool)(this["CopyFiles"]));
+                return ((bool)(this["CopyHttpFiles"]));
             }
             set {
-                this["CopyFiles"] = value;
+                this["CopyHttpFiles"] = value;
             }
         }
         
@@ -297,6 +297,294 @@ namespace PleskImport.Properties {
             }
             set {
                 this["ImportReseller"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool exportDatabaseScript {
+            get {
+                return ((bool)(this["exportDatabaseScript"]));
+            }
+            set {
+                this["exportDatabaseScript"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string mysqlHost {
+            get {
+                return ((string)(this["mysqlHost"]));
+            }
+            set {
+                this["mysqlHost"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Packages")]
+        public string DomainPackageLocalDir {
+            get {
+                return ((string)(this["DomainPackageLocalDir"]));
+            }
+            set {
+                this["DomainPackageLocalDir"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool CreateDomainPackage {
+            get {
+                return ((bool)(this["CreateDomainPackage"]));
+            }
+            set {
+                this["CreateDomainPackage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\\\\{DESTINATION}\\c$\\DomainPackages")]
+        public string DomainPackageDestinationDir {
+            get {
+                return ((string)(this["DomainPackageDestinationDir"]));
+            }
+            set {
+                this["DomainPackageDestinationDir"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool exportMySQL {
+            get {
+                return ((bool)(this["exportMySQL"]));
+            }
+            set {
+                this["exportMySQL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool exportMsSQL {
+            get {
+                return ((bool)(this["exportMsSQL"]));
+            }
+            set {
+                this["exportMsSQL"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CopyDomainPackage {
+            get {
+                return ((bool)(this["CopyDomainPackage"]));
+            }
+            set {
+                this["CopyDomainPackage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("admin")]
+        public string mysqlUser {
+            get {
+                return ((string)(this["mysqlUser"]));
+            }
+            set {
+                this["mysqlUser"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string mysqlPassword {
+            get {
+                return ((string)(this["mysqlPassword"]));
+            }
+            set {
+                this["mysqlPassword"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3306")]
+        public string mysqlPort {
+            get {
+                return ((string)(this["mysqlPort"]));
+            }
+            set {
+                this["mysqlPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("admin")]
+        public string pleskMySQLUser {
+            get {
+                return ((string)(this["pleskMySQLUser"]));
+            }
+            set {
+                this["pleskMySQLUser"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string pleskMySQLPassword {
+            get {
+                return ((string)(this["pleskMySQLPassword"]));
+            }
+            set {
+                this["pleskMySQLPassword"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("8306")]
+        public string pleskMySQLPort {
+            get {
+                return ((string)(this["pleskMySQLPort"]));
+            }
+            set {
+                this["pleskMySQLPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files (x86)\\Parallels\\Plesk\\admin\\db\\psa.mdb")]
+        public string pleskMsAccessMdbPath {
+            get {
+                return ((string)(this["pleskMsAccessMdbPath"]));
+            }
+            set {
+                this["pleskMsAccessMdbPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string entrenixMsAccessMdbPath {
+            get {
+                return ((string)(this["entrenixMsAccessMdbPath"]));
+            }
+            set {
+                this["entrenixMsAccessMdbPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string pleskMsSqlHost {
+            get {
+                return ((string)(this["pleskMsSqlHost"]));
+            }
+            set {
+                this["pleskMsSqlHost"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("admin")]
+        public string pleskMsSqlUser {
+            get {
+                return ((string)(this["pleskMsSqlUser"]));
+            }
+            set {
+                this["pleskMsSqlUser"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string pleskMsSqlPassword {
+            get {
+                return ((string)(this["pleskMsSqlPassword"]));
+            }
+            set {
+                this["pleskMsSqlPassword"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MaestroPanelMsSqlHost {
+            get {
+                return ((string)(this["MaestroPanelMsSqlHost"]));
+            }
+            set {
+                this["MaestroPanelMsSqlHost"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("sa")]
+        public string MaestroPanelMsSqlUser {
+            get {
+                return ((string)(this["MaestroPanelMsSqlUser"]));
+            }
+            set {
+                this["MaestroPanelMsSqlUser"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string MaestroPanelMsSqlPassword {
+            get {
+                return ((string)(this["MaestroPanelMsSqlPassword"]));
+            }
+            set {
+                this["MaestroPanelMsSqlPassword"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("mast")]
+        public string MaestroPanelDatabaseName {
+            get {
+                return ((string)(this["MaestroPanelDatabaseName"]));
+            }
+            set {
+                this["MaestroPanelDatabaseName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\MaestroPanel\\Web\\data\\mast.sqlite")]
+        public string MaestroPanelSQLitePath {
+            get {
+                return ((string)(this["MaestroPanelSQLitePath"]));
+            }
+            set {
+                this["MaestroPanelSQLitePath"] = value;
             }
         }
     }

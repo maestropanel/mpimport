@@ -1,26 +1,26 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PleskImport.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MpImport.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="dbtype" Type="System.String" Scope="User">
       <Value Profile="(Default)">mssql</Value>
     </Setting>
-    <Setting Name="connectionString" Type="System.String" Scope="User">
+    <Setting Name="pleskMySQLHost" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="apiKey" Type="System.String" Scope="User">
+    <Setting Name="MaestroPanelApiKey" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="host" Type="System.String" Scope="User">
+    <Setting Name="MaestroPanelHost" Type="System.String" Scope="User">
       <Value Profile="(Default)">localhost</Value>
     </Setting>
-    <Setting Name="port" Type="System.Int32" Scope="User">
+    <Setting Name="MaestroPanelPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">9715</Value>
     </Setting>
     <Setting Name="domainPlanName" Type="System.String" Scope="User">
       <Value Profile="(Default)">default</Value>
     </Setting>
-    <Setting Name="resellerName" Type="System.String" Scope="User">
+    <Setting Name="pleskResellerName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="logging" Type="System.Boolean" Scope="User">
@@ -41,7 +41,7 @@
     <Setting Name="importDomainAlias" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="CopyFiles" Type="System.Boolean" Scope="User">
+    <Setting Name="CopyHttpFiles" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="SourceDirPattern" Type="System.String" Scope="User">
@@ -70,6 +70,78 @@
     </Setting>
     <Setting Name="ImportReseller" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="exportDatabaseScript" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="mysqlHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DomainPackageLocalDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Packages</Value>
+    </Setting>
+    <Setting Name="CreateDomainPackage" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="DomainPackageDestinationDir" Type="System.String" Scope="User">
+      <Value Profile="(Default)">\\{DESTINATION}\c$\DomainPackages</Value>
+    </Setting>
+    <Setting Name="exportMySQL" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="exportMsSQL" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="CopyDomainPackage" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="mysqlUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)">admin</Value>
+    </Setting>
+    <Setting Name="mysqlPassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="mysqlPort" Type="System.String" Scope="User">
+      <Value Profile="(Default)">3306</Value>
+    </Setting>
+    <Setting Name="pleskMySQLUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)">admin</Value>
+    </Setting>
+    <Setting Name="pleskMySQLPassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="pleskMySQLPort" Type="System.String" Scope="User">
+      <Value Profile="(Default)">8306</Value>
+    </Setting>
+    <Setting Name="pleskMsAccessMdbPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files (x86)\Parallels\Plesk\admin\db\psa.mdb</Value>
+    </Setting>
+    <Setting Name="entrenixMsAccessMdbPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="pleskMsSqlHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="pleskMsSqlUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)">admin</Value>
+    </Setting>
+    <Setting Name="pleskMsSqlPassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="MaestroPanelMsSqlHost" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="MaestroPanelMsSqlUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)">sa</Value>
+    </Setting>
+    <Setting Name="MaestroPanelMsSqlPassword" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="MaestroPanelDatabaseName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">mast</Value>
+    </Setting>
+    <Setting Name="MaestroPanelSQLitePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files\MaestroPanel\Web\data\mast.sqlite</Value>
     </Setting>
   </Settings>
 </SettingsFile>

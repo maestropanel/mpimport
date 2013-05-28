@@ -1,9 +1,9 @@
 ﻿
 
-namespace PleskImport.Dbo
+namespace MpMigrate.Dbo
 {
-    using PleskImport.Entity;
-    using PleskImport.Properties;
+    using MpMigrate.Entity;
+    using MpMigrate.Properties;
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -11,12 +11,19 @@ namespace PleskImport.Dbo
 
     public class MpImportMsSQL : DboFactory
     {
-        
+        private string connectionString;
+
+        public MpImportMsSQL()
+        {
+
+            connectionString = ImportHelper.MaestroPanelMsSqlConnectionString();
+        }
+
         public override List<Domain> GetDomains()
         {
             var _tmp = new List<Domain>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
 
@@ -65,7 +72,7 @@ namespace PleskImport.Dbo
         {
             var _tmp = new List<Email>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT  Domain.Name as name, Pu.Username as mail_name, Pu.Password as password,Pu.Quota as mbox_quota 
@@ -112,7 +119,7 @@ namespace PleskImport.Dbo
         {
             var _tmp = new List<Database>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT Sql.Id as db_id, D.Name as domain, Sql.Name as name FROM DomainMySQL as Sql
@@ -146,7 +153,7 @@ namespace PleskImport.Dbo
         {
             var _tmp = new List<DatabaseUser>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT Username, Password FROM DomainMySQLUser WHERE DatabaseId = @ID", _conn))
@@ -175,7 +182,7 @@ namespace PleskImport.Dbo
         {
             var _tmp = new List<Database>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT Sql.Id as db_id, D.Name as domain, Sql.Name as name FROM DomainMsSQL as Sql
@@ -209,7 +216,7 @@ namespace PleskImport.Dbo
         {
             var _tmp = new List<DatabaseUser>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT Username, Password FROM DomainMsSQLUser WHERE DatabaseId = @ID", _conn))
@@ -238,7 +245,7 @@ namespace PleskImport.Dbo
         {
             var _tmp = new List<Subdomain>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT SD.Name as name, D.Name as domain, SD.Username as login, FU.Password as password
@@ -275,7 +282,7 @@ namespace PleskImport.Dbo
         {
             var _tmp = new List<DomainAlias>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT D.Name as domain, DA.Hostname as name FROM DomainAlias As DA 

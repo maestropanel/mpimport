@@ -1,4 +1,4 @@
-﻿namespace PleskImport.Entity
+﻿namespace MpMigrate.Entity
 {
     public class DomainAlias
     {

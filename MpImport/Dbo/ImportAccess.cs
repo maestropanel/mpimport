@@ -1,19 +1,26 @@
-﻿namespace PleskImport
+﻿namespace MpMigrate
 {
     using System;
     using System.Collections.Generic;
     using System.Data.OleDb;
-    using PleskImport.Entity;
-    using PleskImport.Properties;
+    using MpMigrate.Entity;
+    using MpMigrate.Properties;
     using System.Data;
 
     public class ImportAccess : DboFactory
     {
+        private string connectionString;
+
+        public ImportAccess()
+        {
+            connectionString = ImportHelper.PleskMicrosoftAccessConnectionString();
+        }
+
         public override  List<Domain> GetDomains()
         {
             var _tmp = new List<Domain>();
 
-            using (OleDbConnection _conn = new OleDbConnection(Settings.Default.connectionString))
+            using (OleDbConnection _conn = new OleDbConnection(connectionString))
             {
                 _conn.Open();
                 using (OleDbCommand _cmd = new OleDbCommand(@"SELECT 
@@ -69,8 +76,8 @@
         public override List<Email> GetEmails(string domainName)
         {
             var _tmp = new List<Email>();
-            
-            using (OleDbConnection _conn = new OleDbConnection(Settings.Default.connectionString))
+
+            using (OleDbConnection _conn = new OleDbConnection(connectionString))
             {
                 _conn.Open();
                 using (OleDbCommand _cmd = new OleDbCommand(@"SELECT
@@ -110,7 +117,7 @@
         {
             var _tmp = new List<Database>();
 
-            using (OleDbConnection _conn = new OleDbConnection(Settings.Default.connectionString))
+            using (OleDbConnection _conn = new OleDbConnection(connectionString))
             {
                 _conn.Open();
                 using (OleDbCommand _cmd = new OleDbCommand(@"SELECT data_bases.id AS db_id, domains.name AS [domain], data_bases.name, data_bases.type
@@ -147,7 +154,7 @@
         {
             var _tmp = new List<DatabaseUser>();
 
-            using (OleDbConnection _conn = new OleDbConnection(Settings.Default.connectionString))
+            using (OleDbConnection _conn = new OleDbConnection(connectionString))
             {
                 _conn.Open();
                 using (OleDbCommand _cmd = new OleDbCommand(@"SELECT login, passwd FROM db_users WHERE (db_id = ?) AND (status = 'normal')", _conn))
@@ -177,7 +184,7 @@
         {
             var _tmp = new List<Subdomain>();
 
-            using (OleDbConnection _conn = new OleDbConnection(Settings.Default.connectionString))
+            using (OleDbConnection _conn = new OleDbConnection(connectionString))
             {
                 _conn.Open();
                 using (OleDbCommand _cmd = new OleDbCommand(@"SELECT subdomains.name, domains.name AS [domain], sys_users.login, accounts.[password], subdomains.sys_user_type
@@ -216,7 +223,7 @@
         {
             var _tmp = new List<DomainAlias>();
 
-            using (OleDbConnection _conn = new OleDbConnection(Settings.Default.connectionString))
+            using (OleDbConnection _conn = new OleDbConnection(connectionString))
             {
                 _conn.Open();
                 using (OleDbCommand _cmd = new OleDbCommand(@"SELECT domain_aliases.name AS alias, domains.name AS [domain], domain_aliases.status

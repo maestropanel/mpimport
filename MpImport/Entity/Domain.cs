@@ -1,4 +1,4 @@
-﻿namespace PleskImport
+﻿namespace MpMigrate
 {
     using System;
 

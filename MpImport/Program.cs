@@ -1,14 +1,14 @@
-﻿namespace PleskImport
+﻿namespace MpMigrate
 {
     using System;
-    using PleskImport.Properties;
+    using MpMigrate.Properties;
 
     class Program
     {
         private static Import _import;
 
         static void Main(string[] args)
-        {                        
+        {                           
             Console.WriteLine(@"# Desc : MaestroPanel Import Tool - www.maestropanel.com");
             Console.WriteLine(@"# Date : 2012-08-22");
             Console.WriteLine(@"# Version: 1.0.0");
@@ -23,12 +23,12 @@
             {
                 _import = new Import();
 
-                if (Settings.Default.CopyFiles)
+                if (Settings.Default.CopyHttpFiles)
                     _import.AuthenticationUnc();
                 
                 _import.ImportDomains();
                 _import.ImportResellers();
-            }
+            }            
         }
     }
 }

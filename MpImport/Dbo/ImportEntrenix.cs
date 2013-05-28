@@ -1,9 +1,8 @@
-﻿namespace PleskImport.Dbo
+﻿namespace MpMigrate.Dbo
 {
     using MailEnable.Administration;
     using Microsoft.Win32;
-    using PleskImport.Entity;
-    using PleskImport.Properties;
+    using MpMigrate.Entity;
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -13,11 +12,18 @@
 
     public class ImportEntrenix : DboFactory
     {
-        public override List<PleskImport.Domain> GetDomains()
-        {
-            var _tmp = new List<PleskImport.Domain>();
+        private string connectionString;
 
-            using (OleDbConnection _conn = new OleDbConnection(Settings.Default.connectionString))
+        public ImportEntrenix()
+        {
+            connectionString = ImportHelper.EntrenixMicrosoftAccessConnectionString();
+        }
+
+        public override List<MpMigrate.Domain> GetDomains()
+        {
+            var _tmp = new List<MpMigrate.Domain>();
+
+            using (OleDbConnection _conn = new OleDbConnection(connectionString))
             {
                 _conn.Open();
                 using (OleDbCommand _cmd = new OleDbCommand(@"SELECT Host_ID, Reseller_Username, Domain_Name, [Password], 
@@ -27,7 +33,7 @@
                     {
                         while (_read.Read())
                         {
-                            var _d = new PleskImport.Domain();
+                            var _d = new MpMigrate.Domain();
                             _d.Id = (int)_read["Host_ID"];
                             _d.Name = _read["Domain_Name"].ToString();
                             _d.Username = _read["Domain_Name"].ToString();
@@ -80,7 +86,7 @@
         {
             var _tmp = new List<Database>();
 
-            using (OleDbConnection _conn = new OleDbConnection(Settings.Default.connectionString))
+            using (OleDbConnection _conn = new OleDbConnection(connectionString))
             {
                 _conn.Open();
                 using (OleDbCommand _cmd = new OleDbCommand(@"SELECT Host_ID, DomainName, DatabaseName, Username, [Password] FROM MySQL_Details WHERE (DomainName = ?)", _conn))
@@ -117,7 +123,7 @@
         {
             var _tmp = new List<Subdomain>();
 
-            using (OleDbConnection _conn = new OleDbConnection(Settings.Default.connectionString))
+            using (OleDbConnection _conn = new OleDbConnection(connectionString))
             {
                 _conn.Open();
                 using (OleDbCommand _cmd = new OleDbCommand(@"SELECT Domain_Name, Sub_Domain, Host_ID, Reseller_Username FROM SubDomain_List 
@@ -152,7 +158,7 @@
         {
             var _tmp = new List<DomainAlias>();
 
-            using (OleDbConnection _conn = new OleDbConnection(Settings.Default.connectionString))
+            using (OleDbConnection _conn = new OleDbConnection(connectionString))
             {
                 _conn.Open();
                 using (OleDbCommand _cmd = new OleDbCommand(@"SELECT Host_Accounts.Domain_Name, Alias_Details.Alias_Domainname

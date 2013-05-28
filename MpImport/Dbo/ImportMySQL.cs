@@ -1,18 +1,25 @@
-﻿namespace PleskImport
+﻿namespace MpMigrate
 {
     using System;
     using System.Collections.Generic;
     using MySql.Data.MySqlClient;
-    using PleskImport.Entity;
-    using PleskImport.Properties;
+    using MpMigrate.Entity;
+    using MpMigrate.Properties;
 
     public class ImportMySQL : DboFactory
     {
+        private string connectionString;
+
+        public ImportMySQL()
+        {
+            connectionString = ImportHelper.PleskMySqlConnectionString();
+        }
+
         public override List<Domain> GetDomains()
         {
             var _tmp = new List<Domain>();
 
-            using (MySqlConnection _conn = new MySqlConnection(Settings.Default.connectionString))
+            using (MySqlConnection _conn = new MySqlConnection(connectionString))
             {
                 _conn.Open();
 
@@ -68,7 +75,7 @@
         {
             var _tmp = new List<Email>();
 
-            using (MySqlConnection _conn = new MySqlConnection(Settings.Default.connectionString))
+            using (MySqlConnection _conn = new MySqlConnection(connectionString))
             {
                 _conn.Open();
                 using (MySqlCommand _cmd = new MySqlCommand(@"SELECT     
@@ -109,7 +116,7 @@
         {
             var _tmp = new List<Database>();
 
-            using (MySqlConnection _conn = new MySqlConnection(Settings.Default.connectionString))
+            using (MySqlConnection _conn = new MySqlConnection(connectionString))
             {
                 _conn.Open();
                 using (MySqlCommand _cmd = new MySqlCommand(@"SELECT data_bases.id as db_id, domains.name AS domain, data_bases.name, data_bases.type
@@ -145,7 +152,7 @@
         {
             var _tmp = new List<DatabaseUser>();
 
-            using (MySqlConnection _conn = new MySqlConnection(Settings.Default.connectionString))
+            using (MySqlConnection _conn = new MySqlConnection(connectionString))
             {
                 _conn.Open();
                 using (MySqlCommand _cmd = new MySqlCommand(@"SELECT login, passwd FROM  db_users WHERE (db_id = @ID) AND (status = 'normal')", _conn))
@@ -174,7 +181,7 @@
         {
             var _tmp = new List<Subdomain>();
 
-            using (MySqlConnection _conn = new MySqlConnection(Settings.Default.connectionString))
+            using (MySqlConnection _conn = new MySqlConnection(connectionString))
             {
                 _conn.Open();
                 using (MySqlCommand _cmd = new MySqlCommand(@"SELECT  subdomains.name, domains.name AS domain, sys_users.login, accounts.password, subdomains.sys_user_type
@@ -211,7 +218,7 @@
         {
             var _tmp = new List<DomainAlias>();
 
-            using (MySqlConnection _conn = new MySqlConnection(Settings.Default.connectionString))
+            using (MySqlConnection _conn = new MySqlConnection(connectionString))
             {
                 _conn.Open();
                 using (MySqlCommand _cmd = new MySqlCommand(@"SELECT domain_aliases.name as alias, domains.name AS domain, domain_aliases.status

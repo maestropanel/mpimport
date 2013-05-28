@@ -1,7 +1,7 @@
-﻿namespace PleskImport.Dbo
+﻿namespace MpMigrate.Dbo
 {
-    using PleskImport.Entity;
-    using PleskImport.Properties;
+    using MpMigrate.Entity;
+    using MpMigrate.Properties;
     using System;
     using System.Collections.Generic;
     using System.Data;
@@ -9,12 +9,18 @@
 
     public class MpImportMsSQLIceWarp : DboFactory
     {
+        private string connectionString;
+
+        public MpImportMsSQLIceWarp()
+        {
+            connectionString = ImportHelper.PleskMySqlConnectionString();
+        }
 
         public override List<Domain> GetDomains()
         {
             var _tmp = new List<Domain>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
 
@@ -63,7 +69,7 @@
         {
             var _tmp = new List<Email>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT Domain.Name AS name, Pu.Username AS mail_name, Pu.Password AS password, 
@@ -111,7 +117,7 @@
         {
             var _tmp = new List<Database>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT Sql.Id as db_id, D.Name as domain, Sql.Name as name FROM DomainMySQL as Sql
@@ -145,7 +151,7 @@
         {
             var _tmp = new List<DatabaseUser>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT Username, Password FROM DomainMySQLUser WHERE DatabaseId = @ID", _conn))
@@ -174,7 +180,7 @@
         {
             var _tmp = new List<Database>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT Sql.Id as db_id, D.Name as domain, Sql.Name as name FROM DomainMsSQL as Sql
@@ -208,7 +214,7 @@
         {
             var _tmp = new List<DatabaseUser>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT Username, Password FROM DomainMsSQLUser WHERE DatabaseId = @ID", _conn))
@@ -237,7 +243,7 @@
         {
             var _tmp = new List<Subdomain>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT SD.Name as name, D.Name as domain, SD.Username as login, FU.Password as password
@@ -274,7 +280,7 @@
         {
             var _tmp = new List<DomainAlias>();
 
-            using (SqlConnection _conn = new SqlConnection(Settings.Default.connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT D.Name as domain, DA.Hostname as name FROM DomainAlias As DA 

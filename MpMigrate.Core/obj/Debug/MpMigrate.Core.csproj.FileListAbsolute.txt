@@ -1,0 +1,5 @@
+O:\Projects\MpImport\MpMigrate.Core\obj\Debug\MpMigrate.Core.csprojResolveAssemblyReference.cache
+O:\Projects\MpImport\MpMigrate.Core\bin\Debug\MpMigrate.Core.dll
+O:\Projects\MpImport\MpMigrate.Core\bin\Debug\MpMigrate.Core.pdb
+O:\Projects\MpImport\MpMigrate.Core\obj\Debug\MpMigrate.Core.dll
+O:\Projects\MpImport\MpMigrate.Core\obj\Debug\MpMigrate.Core.pdb
