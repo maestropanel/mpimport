@@ -14,5 +14,7 @@
         public abstract List<DatabaseUser> GetDatabaseUsers(int database_id);
         public abstract List<Subdomain> GetSubdomains(string domainName);        
         public abstract List<Reseller> GetResellers();
+        public abstract PanelStats GetPanelStats();
+        public abstract void LoadConnectionString(string connectionString);
     }
 }

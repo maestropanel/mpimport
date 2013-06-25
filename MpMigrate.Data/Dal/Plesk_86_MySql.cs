@@ -9,7 +9,12 @@
     public class Plesk_86_MySql : DboFactory
     {
         private string connectionString;
-        
+
+        public Plesk_86_MySql()
+        {
+
+        }
+
         public Plesk_86_MySql(string connectionString)
         {
             this.connectionString = connectionString;
@@ -84,7 +89,38 @@
         {
             var tmp = new List<Reseller>();
 
-            return tmp;
+            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            {
+                _conn.Open();
+                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT * FROM clients", _conn))
+                {                    
+                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    {
+                        while (_read.Read())
+                        {
+                            var res = new Reseller();
+                            res.Id = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "id"));
+                            res.Address1 = DataExtensions.GetColumnValue<string>(_read, "address");
+                            res.City = DataExtensions.GetColumnValue<string>(_read, "city");
+                            res.Country = DataExtensions.GetColumnValue<string>(_read, "country");                            
+                            res.fax = DataExtensions.GetColumnValue<string>(_read, "fax");                                                        
+                            res.Phone = DataExtensions.GetColumnValue<string>(_read, "phone");
+                            res.PostalCode = DataExtensions.GetColumnValue<string>(_read, "pcode");
+                            res.Province = DataExtensions.GetColumnValue<string>(_read, "country");
+
+                            res.Password = DataExtensions.GetColumnValue<string>(_read, "passwd");
+                            res.Username = DataExtensions.GetColumnValue<string>(_read, "login");
+                            res.Email = DataExtensions.GetColumnValue<string>(_read, "email");
+                            res.Organization = DataExtensions.GetColumnValue<string>(_read, "cname");
+
+                            tmp.Add(res);
+                        }
+                    }
+                }
+                _conn.Close();
+            }
+
+            return tmp;            
             
         }
 
@@ -352,6 +388,65 @@
             }
 
             return _tmp;
+        }
+
+        public override PanelStats GetPanelStats()
+        {
+            var pstats = new PanelStats();
+            
+            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            {
+                _conn.Open();
+
+                #region Disk Space
+                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT  CAST(SUM(httpdocs) AS DECIMAL) as httpdocs, 
+                                                                CAST((SUM(mysql_dbases) + SUM(mssql_dbases)) AS DECIMAL) as totaldbsize, 
+                                                                CAST(SUM(mailboxes) AS DECIMAL) as totalmailboxsize, 
+                                                                CAST(SUM(subdomains) AS DECIMAL) as subdomainsize FROM disk_usage", _conn))
+                {                    
+                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    {                       
+                        while (_read.Read())
+                        {
+                            pstats.TotalDomainDiskSpace = DataExtensions.GetColumnValue<decimal>(_read, "httpdocs");
+                            pstats.TotalDatabaseDiskSpace = DataExtensions.GetColumnValue<decimal>(_read, "totaldbsize");
+                            pstats.TotalEmailDiskSpace = DataExtensions.GetColumnValue<decimal>(_read, "totalmailboxsize");
+                            pstats.TotalSubdomainDiskSpace = DataExtensions.GetColumnValue<decimal>(_read, "subdomainsize");
+                        }
+                    }
+                }
+                #endregion
+
+                #region Count
+                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT (SELECT COUNT(*) FROM domains) as domaincount, 
+                                                                (SELECT COUNT(*) FROM mail) as mailcount, 
+                                                                (SELECT COUNT(*) FROM clients) as resellercount, (SELECT COUNT(*) FROM data_bases) as databasecount, 
+                                                                (SELECT COUNT(*) FROM domain_aliases) as aliascount, (SELECT COUNT(*) FROM subdomains) as subdomaincount", _conn))
+                {
+                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    {
+                        while (_read.Read())
+                        {
+                            pstats.TotalDomainCount = DataExtensions.GetColumnValue<long>(_read, "domaincount");
+                            pstats.TotalEmailCount = DataExtensions.GetColumnValue<long>(_read, "mailcount");
+                            pstats.TotalResellerCount = DataExtensions.GetColumnValue<long>(_read, "resellercount");
+                            pstats.TotalDatabaseCount = DataExtensions.GetColumnValue<long>(_read, "databasecount");
+                            pstats.TotalDomainAliasCount = DataExtensions.GetColumnValue<long>(_read, "aliascount");
+                            pstats.TotalSubdomainCount = DataExtensions.GetColumnValue<long>(_read, "subdomaincount");                            
+                        }
+                    }
+                }
+                #endregion
+
+                _conn.Close();
+            }
+
+            return pstats;
+        }
+
+        public override void LoadConnectionString(string connectionString)
+        {
+            this.connectionString = connectionString;
         }
     }
 }

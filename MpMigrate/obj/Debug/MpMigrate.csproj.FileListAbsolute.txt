@@ -7,10 +7,16 @@ O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.Properties.Resources.resource
 O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.csproj.GenerateResource.Cache
 O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.exe
 O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.pdb
-O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.csprojResolveAssemblyReference.cache
 O:\Projects\MpImport\MpMigrate\bin\Debug\MpMigrate.Core.dll
 O:\Projects\MpImport\MpMigrate\bin\Debug\MpMigrate.Data.dll
 O:\Projects\MpImport\MpMigrate\bin\Debug\MySql.Data.dll
 O:\Projects\MpImport\MpMigrate\bin\Debug\MpMigrate.Core.pdb
 O:\Projects\MpImport\MpMigrate\bin\Debug\MpMigrate.Data.pdb
 O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.DatabaseForm.resources
+O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.AuthenticationForm.resources
+O:\Projects\MpImport\MpMigrate\bin\Debug\MpMigrate.MaestroPanel.Api.dll
+O:\Projects\MpImport\MpMigrate\bin\Debug\MpMigrate.MaestroPanel.Api.pdb
+O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.FilterDomains.resources
+O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.FilterReseller.resources
+O:\Projects\MpImport\MpMigrate\bin\Debug\System.Data.SQLite.dll
+O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.csprojResolveAssemblyReference.cache

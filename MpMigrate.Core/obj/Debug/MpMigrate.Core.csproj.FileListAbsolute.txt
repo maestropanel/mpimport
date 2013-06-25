@@ -1,5 +1,11 @@
-O:\Projects\MpImport\MpMigrate.Core\obj\Debug\MpMigrate.Core.csprojResolveAssemblyReference.cache
 O:\Projects\MpImport\MpMigrate.Core\bin\Debug\MpMigrate.Core.dll
 O:\Projects\MpImport\MpMigrate.Core\bin\Debug\MpMigrate.Core.pdb
+O:\Projects\MpImport\MpMigrate.Core\bin\Debug\MpMigrate.Data.dll
+O:\Projects\MpImport\MpMigrate.Core\bin\Debug\MpMigrate.MaestroPanel.Api.dll
+O:\Projects\MpImport\MpMigrate.Core\bin\Debug\MySql.Data.dll
+O:\Projects\MpImport\MpMigrate.Core\bin\Debug\System.Data.SQLite.dll
+O:\Projects\MpImport\MpMigrate.Core\bin\Debug\MpMigrate.Data.pdb
+O:\Projects\MpImport\MpMigrate.Core\bin\Debug\MpMigrate.MaestroPanel.Api.pdb
 O:\Projects\MpImport\MpMigrate.Core\obj\Debug\MpMigrate.Core.dll
 O:\Projects\MpImport\MpMigrate.Core\obj\Debug\MpMigrate.Core.pdb
+O:\Projects\MpImport\MpMigrate.Core\obj\Debug\MpMigrate.Core.csprojResolveAssemblyReference.cache

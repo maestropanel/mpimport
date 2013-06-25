@@ -55,6 +55,7 @@
     <Compile Include="Entity\Forwarding.cs" />
     <Compile Include="Entity\HostPlan.cs" />
     <Compile Include="Entity\MethodResult.cs" />
+    <Compile Include="Entity\PanelStats.cs" />
     <Compile Include="Entity\Reseller.cs" />
     <Compile Include="Entity\Subdomain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

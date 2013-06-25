@@ -13,13 +13,24 @@
         public static T GetColumnValue<T>(this IDataRecord record, string columnName, T defaultValue)
         {
             object value = record[columnName];
-            if (value == null || value == DBNull.Value)
+
+            try
             {
-                return defaultValue;
+                           
+                if (value == null || value == DBNull.Value)
+                {
+                    return defaultValue;
+                }
+                else
+                {                    
+                    return (T)value;
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                return (T)value;
+
+                throw new Exception(String.Format("{0}, {1}, {2}", columnName, value.GetType().ToString(), ex.Message), ex);
             }
         }
     }

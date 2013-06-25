@@ -11,12 +11,10 @@ namespace MpMigrate.Console
     {
         static void Main(string[] args)
         {
-            var pdicover = new Plesk_86();
-            var PleskDb = pdicover.GetDatabase();
+            var conn = "Server=127.0.0.1;Port=3306;Database=psa;Uid=root;Pwd=osman12!;";
 
-            var plesk = new Plesk_86_MySql(PleskDb.ConnectionString());
-
-
+            var plesk = new Plesk_86_MySql(conn);
+            var stats = plesk.GetPanelStats();
             
         }
     }

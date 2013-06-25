@@ -15,7 +15,7 @@
     {
         private DboFactory _db;
         private MySqlManager mysqlmgr = new MySqlManager();
-        private MpMigrate.SqlManager.MsSqlManager mssqlmgr = new MpMigrate.SqlManager.MsSqlManager();
+        //private MpMigrate.SqlManager.MsSqlManager mssqlmgr = new MpMigrate.SqlManager.MsSqlManager();
         private ZipManager zipmgr = new ZipManager();
 
         private readonly string LOG_FILENAME = "import.log";
@@ -326,8 +326,8 @@
                 result = mysqlmgr.Backup(db.Name, mysqlScriptDirectory);
             }
 
-            if (db.DbType == "mssql" && Settings.Default.exportMsSQL)
-                result = mssqlmgr.Backup(db.Name, mssqlScriptDirectory);            
+            //if (db.DbType == "mssql" && Settings.Default.exportMsSQL)
+            //    result = mssqlmgr.Backup(db.Name, mssqlScriptDirectory);            
 
             if (result.Status)            
                 PrintAndLog("Database Exported: " + db.Name);            
