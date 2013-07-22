@@ -1,0 +1,8 @@
+O:\Projects\MpImport\MpMigrate.Test\bin\Debug\MpMigrate.Test.pdb
+O:\Projects\MpImport\MpMigrate.Test\bin\Debug\MpMigrate.MaestroPanel.Api.pdb
+O:\Projects\MpImport\MpMigrate.Test\bin\Debug\Newtonsoft.Json.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Debug\MpMigrate.MaestroPanel.Api.dll
+O:\Projects\MpImport\MpMigrate.Test\obj\Debug\MpMigrate.Test.csprojResolveAssemblyReference.cache
+O:\Projects\MpImport\MpMigrate.Test\obj\Debug\MpMigrate.Test.dll
+O:\Projects\MpImport\MpMigrate.Test\obj\Debug\MpMigrate.Test.pdb
+O:\Projects\MpImport\MpMigrate.Test\bin\Debug\MpMigrate.Test.dll

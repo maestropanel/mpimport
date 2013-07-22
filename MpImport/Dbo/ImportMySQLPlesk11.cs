@@ -156,7 +156,8 @@
             {
                 _conn.Open();
                 //using (MySqlCommand _cmd = new MySqlCommand(@"SELECT login, passwd FROM  db_users WHERE (db_id = @ID) AND (status = 'normal')", _conn))
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT login, accounts.password FROM  db_users JOIN accounts ON db_users.account_id = accounts.Id WHERE (db_id = @ID) AND (status = 'normal')", _conn))
+                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT login, accounts.password FROM  db_users JOIN accounts ON db_users.account_id = accounts.Id 
+                                                                        WHERE (db_id = @ID) AND (status = 'normal')", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@ID", databaseId);
 
@@ -256,9 +257,8 @@
                 _conn.Open();
                 using (MySqlCommand _cmd = new MySqlCommand(@"SELECT  C.id, cname, pname, login, A.password, phone, fax, email, address, city, state, pcode, country
                                                                         FROM clients C LEFT JOIN accounts A ON C.account_id = A.id 
-                                                            WHERE C.`type`='reseller'", _conn))
+                                                            WHERE C.`type`='reseller' OR C.`type`='client'", _conn))
                 {                    
-
                     using (MySqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())

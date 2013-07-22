@@ -1,11 +1,15 @@
 ﻿namespace MpMigrate.MaestroPanel.Api
 {
     using MpMigrate.MaestroPanel.Api.Entity;
+    using Newtonsoft.Json;
     using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Runtime.Serialization;
     using System.Text;
     using System.Web;
 
@@ -13,38 +17,44 @@
     {
         private string _apiKey;
         private string _apiUri;
+        private string _format;
+        private bool _SuppressResponse;
 
-        public ApiClient(string ApiKey, string apiHostdomain, int port = 9715, bool ssl = false)
+        private LogHelper _log;
+
+        public ApiClient(string ApiKey, string apiHostdomain, int port = 9715, bool ssl = false, string format = "JSON", bool suppressResponse = true)
         {
-            _apiKey = ApiKey;
-            _apiUri = String.Format("{2}://{0}:{1}/Api/v1", apiHostdomain, port, ssl ? "https" : "http");
+            this._format = format;
+            this._apiKey = ApiKey;
+            this._apiUri = String.Format("{2}://{0}:{1}/Api/v1", apiHostdomain, port, ssl ? "https" : "http");
+            this._SuppressResponse = suppressResponse;
+
+            _log = new LogHelper();
         }
 
-        public ApiResult DomainDelete(string name)
+        public ApiResult<DomainOperationsResult> DomainDelete(string name)
         {
-            var _args = new NameValueCollection();
-            _args.Add("key", _apiKey);
+            var _args = new NameValueCollection();            
             _args.Add("name", name);
 
-            return SendApi("Domain/Delete", "DELETE", _args);
+            return ExecuteDomainOperation("Domain/Delete", "DELETE", _args);
         }
 
-        public ApiResult DomainStart(string name)
+        public ApiResult<DomainOperationsResult> DomainStart(string name)
         {
-            var _args = new NameValueCollection();
-            _args.Add("key", _apiKey);
+            var _args = new NameValueCollection();            
             _args.Add("name", name);
-
-            return SendApi("Domain/Start", "POST", _args);
+            
+            
+            return ExecuteDomainOperation("Domain/Start", "POST", _args);
         }
 
-        public ApiResult DomainStop(string name)
+        public ApiResult<DomainOperationsResult> DomainStop(string name)
         {
-            var _args = new NameValueCollection();
-            _args.Add("key", _apiKey);
+            var _args = new NameValueCollection();            
             _args.Add("name", name);
 
-            return SendApi("Domain/Stop", "POST", _args);
+            return ExecuteDomainOperation("Domain/Stop", "POST", _args);
         }
 
         public string GeneratePassword(int Length)
@@ -52,11 +62,10 @@
             return System.Web.Security.Membership.GeneratePassword(8, 2);
         }
 
-        public ApiResult DomainCreate(string name, string planAlias, string username, string password, bool activedomainuser,
+        public ApiResult<DomainOperationsResult> DomainCreate(string name, string planAlias, string username, string password, bool activedomainuser,
                                         string firstName = "", string lastName = "", string email = "", DateTime? expiration = null)
         {
-            var _args = new NameValueCollection();
-            _args.Add("key", _apiKey);
+            var _args = new NameValueCollection();            
             _args.Add("name", name);
             _args.Add("planAlias", planAlias);
             _args.Add("username", username);
@@ -68,71 +77,13 @@
 
             if (expiration.HasValue)
                 _args.Add("expiration", expiration.Value.ToString("yyyy-MM-dd"));
-
-            return SendApi("Domain/Create", "POST", _args);
-        }
-
-        private ApiResult SendApi(string action, string method, NameValueCollection _parameters)
-        {
-            var _result = new ApiResult();
-            var _uri = new Uri(String.Format("{0}/{1}", _apiUri, action));
-            var contentType = String.Empty;
-
-            try
-            {
-                HttpWebRequest request = WebRequest.Create(_uri) as HttpWebRequest;
-                request.Method = method;
-                request.Timeout = 240 * 1000;
-                request.ContentType = "application/x-www-form-urlencoded";
-
-                WriteData(ref request, _parameters);
-                var _responseText = GetData(request, out contentType);
-
-                _result = ApiResult.DeSerializeObject<ApiResult>(_responseText);
-            }
-            catch (Exception ex)
-            {
-                _result.Code = -1;
-                _result.Message = ex.Message;
-                _result.OperationResultString = ex.StackTrace;
-            }
-
-            return _result;
-        }
-
-        private T SendApi<T>(string action, string method, NameValueCollection _parameters)
-        {
-            var _result = default(T);
-            var contentType = String.Empty;
-
-            var _uri = 
-                method == "GET" ? 
-                new Uri(String.Format("{0}/{1}?{2}", _apiUri, action, ToQueryString(_parameters))):
-                new Uri(String.Format("{0}/{1}", _apiUri, action));
                         
-            HttpWebRequest request = WebRequest.Create(_uri) as HttpWebRequest;
-            request.Method = method;
-            request.Timeout = 240 * 1000;                        
-            request.ContentType = "application/x-www-form-urlencoded";
-
-            if(method != "GET")
-                WriteData(ref request, _parameters);
-
-            
-            var _responseText = GetData(request, out contentType);
-
-            if (contentType.StartsWith("text/xml"))
-                _result = ApiResult.DeSerializeObject<T>(_responseText);
-            else
-                _result = JsonHelper<T>.JsonDeserialize(_responseText);
-            
-            return _result;
+            return ExecuteDomainOperation("Domain/Create", "POST", _args);
         }
-
-        public ApiResult AddMailBox(string name, string account, string password, double quota, string redirect, string redirectEmail)
+ 
+        public ApiResult<DomainOperationsResult> AddMailBox(string name, string account, string password, double quota, string redirect, string redirectEmail)
         {
-            var _args = new NameValueCollection();
-            _args.Add("key", _apiKey);
+            var _args = new NameValueCollection();            
             _args.Add("name", name);
             _args.Add("account", account);
             _args.Add("password", password);
@@ -140,13 +91,14 @@
             _args.Add("redirect", redirect);
             _args.Add("remail", redirectEmail);
 
-            return SendApi("Domain/AddMailBox", "POST", _args);
+            
+            return ExecuteDomainOperation("Domain/AddMailBox", "POST", _args);
+            
         }
 
-        public ApiResult AddDatabase(string name, string dbtype, string database, string username, string password, int quota)
+        public ApiResult<DomainOperationsResult> AddDatabase(string name, string dbtype, string database, string username, string password, int quota)
         {
-            var _args = new NameValueCollection();
-            _args.Add("key", _apiKey);
+            var _args = new NameValueCollection();            
             _args.Add("name", name);
             _args.Add("dbtype", dbtype);
             _args.Add("database", database);
@@ -154,63 +106,84 @@
             _args.Add("password", password);
             _args.Add("quota", quota.ToString());
 
-            return SendApi("Domain/AddDatabase", "POST", _args);
+            return ExecuteDomainOperation("Domain/AddDatabase", "POST", _args);
         }
 
-        public ApiResult AddDatabaseUser(string name, string dbtype, string database, string username, string password)
+        public ApiResult<DomainOperationsResult> AddDatabase(string name, string dbtype, string database, int quota)
         {
             var _args = new NameValueCollection();
-            _args.Add("key", _apiKey);
+            _args.Add("name", name);
+            _args.Add("dbtype", dbtype);
+            _args.Add("database", database);
+            _args.Add("username", "");
+            _args.Add("password", "");
+            _args.Add("quota", quota.ToString());
+
+            return ExecuteDomainOperation("Domain/AddDatabase", "POST", _args);
+        }
+
+        public ApiResult<DomainOperationsResult> AddDatabaseUser(string name, string dbtype, string database, string username, string password)
+        {
+            var _args = new NameValueCollection();            
             _args.Add("name", name);
             _args.Add("dbtype", dbtype);
             _args.Add("database", database);
             _args.Add("username", username);
             _args.Add("password", password);
-
-            return SendApi("Domain/AddDatabaseUser", "POST", _args);
+            
+            return ExecuteDomainOperation("Domain/AddDatabaseUser", "POST", _args);
         }
 
-        public ApiResult AddSubDomain(string name, string subdomain, string username, string password)
+        public ApiResult<DomainOperationsResult> AddSubDomain(string name, string subdomain, string username, string password)
         {
-            var _args = new NameValueCollection();
-            _args.Add("key", _apiKey);
+            var _args = new NameValueCollection();            
             _args.Add("name", name);
             _args.Add("subdomain", subdomain);
             _args.Add("ftpuser", username);
 
-            return SendApi("Domain/AddSubDomain", "POST", _args);
+            return ExecuteDomainOperation("Domain/AddSubDomain", "POST", _args);
         }
 
-        public ApiResult AddAlias(string name, string alias)
+        public ApiResult<DomainOperationsResult> AddAlias(string name, string alias)
         {
-            var _args = new NameValueCollection();
-            _args.Add("key", _apiKey);
+            var _args = new NameValueCollection();            
             _args.Add("name", name);
             _args.Add("alias", alias);
 
-            return SendApi("Domain/AddDomainAlias", "POST", _args);
+            return ExecuteDomainOperation("Domain/AddDomainAlias", "POST", _args);
         }
 
-        public ApiResult AddFtpUser(string name, string account, string password, string homePath = "/", bool ronly = false)
+        public ApiResult<DomainOperationsResult> AddFtpUser(string name, string account, string password, string homePath = "/", bool ronly = false)
         {
-            var _args = new NameValueCollection();
-            _args.Add("key", _apiKey);
+            var _args = new NameValueCollection();            
             _args.Add("name", name);
             _args.Add("account", account);
             _args.Add("password", password);
             _args.Add("homePath", homePath);
             _args.Add("ronly", ronly.ToString());
 
-            return SendApi("Domain/AddFtpAccount", "POST", _args);
+            return ExecuteDomainOperation("Domain/AddFtpAccount", "POST", _args);
         }
 
-        public ApiResult ResellerCreate(string username, string password, string planAlias,
+        public ApiResult<DomainOperationsResult> SetForwarding(string name, bool enabled, string destination, bool exacDestination, bool childOnly, string statusCode)
+        {
+            var _args = new NameValueCollection();
+            _args.Add("name", name);
+            _args.Add("enabled", enabled.ToString());
+            _args.Add("destination", destination);
+            _args.Add("exacDestination", exacDestination.ToString());
+            _args.Add("childOnly", childOnly.ToString());
+            _args.Add("statusCode", statusCode);
+
+            return ExecuteDomainOperation("Domain/Forwarding", "POST", _args);
+        }
+
+        public ApiResult<ResellerOperationResult> ResellerCreate(string username, string password, string planAlias,
             string firstName, string lastName, string email, string country, string organization,
                 string address1, string address2, string city, string province, string postalcode,
                     string phone, string fax)
         {
-            var _args = new NameValueCollection();
-            _args.Add("key", _apiKey);
+            var _args = new NameValueCollection();            
             _args.Add("username", username);
             _args.Add("password", password);
             _args.Add("planAlias", planAlias);
@@ -227,19 +200,181 @@
             _args.Add("phone", phone);
             _args.Add("fax", fax);
 
-            return SendApi("Reseller/Create", "POST", _args);
+            return ExecuteResellerOperation("Reseller/Create", "POST", _args);
         }
 
-        public Whoami Whoami()
+        public ApiResult<ResellerOperationResult> ResellerChangePassword(string username, string newpassword)
         {
             var _args = new NameValueCollection();
-            _args.Add("key", _apiKey);
-            _args.Add("format", "JSON");
+            _args.Add("username", username);
+            _args.Add("newpassword", newpassword);
 
-            return SendApi<Whoami>("User/Whoami", "GET", _args);
+            return ExecuteResellerOperation("Reseller/ChangePassword", "POST", _args);
         }
 
+        public ApiResult<ResellerOperationResult> ResellerStop(string username)
+        {
+            var _args = new NameValueCollection();
+            _args.Add("username", username);
+
+            return ExecuteResellerOperation("Reseller/Stop", "POST", _args);
+        }
+
+        public ApiResult<ResellerOperationResult> ResellerSetLimit(string username,
+            int maxdomain,
+            int maxdiskspace, int maxmailbox,
+            int maxftpuser, int maxsubdomain,
+            int maxdomainalias, int totalwebtraffic,
+            int totalmailspace, int maxwebtraffic,
+            int maxftptraffic, int maxmailtraffic,
+            int maxmysql, int maxmysqluser,
+            int maxmysqlspace, int maxmssql,
+            int maxmssqluser, int maxmssqlspace)
+        {
+            var _args = new NameValueCollection();
+            _args.Add("username", username);
+            _args.Add("maxdomain", maxdomain.ToString());
+            _args.Add("maxdiskspace", maxdiskspace.ToString());
+            _args.Add("maxmailbox", maxmailbox.ToString());
+            _args.Add("maxftpuser", maxftpuser.ToString());
+            _args.Add("maxsubdomain", maxsubdomain.ToString());
+            _args.Add("maxdomainalias", maxdomainalias.ToString());
+            _args.Add("totalmailspace", totalmailspace.ToString());
+            _args.Add("maxftptraffic", maxftptraffic.ToString());
+            _args.Add("maxmailtraffic", maxmailtraffic.ToString());
+
+            _args.Add("maxmysql", maxmysql.ToString());
+            _args.Add("maxmysqluser", maxmysqluser.ToString());
+            _args.Add("maxmysqlspace", maxmysqlspace.ToString());
+
+            _args.Add("maxmssql", maxmssql.ToString());
+            _args.Add("maxmssqluser", maxmssqluser.ToString());
+            _args.Add("maxmssqlspace", maxmssqlspace.ToString());
+
+            return ExecuteResellerOperation("Reseller/SetLimits", "POST", _args);
+        }
+
+        public ApiResult<DomainOperationsResult> ChangeReseller(string name, string newResellerName)
+        {
+            var _args = new NameValueCollection();
+            _args.Add("name", name);
+            _args.Add("resellerName", newResellerName);
+
+            return ExecuteDomainOperation("Domain/ChangeReseller", "POST", _args);
+        }
+        
+        public ApiResult<Whoami> Whoami()
+        {
+            var requestUrl = String.Empty;
+
+            var _args = new NameValueCollection();
+            return SendApi<ApiResult<Whoami>>("User/Whoami", "GET", _args, new[] { typeof(Whoami) }, out requestUrl);
+        }
+
+
+        public ApiResult<DomainOperationsResult> SetDnsZone(string name, int soa_expired, int soa_ttl, int soa_refresh, string soa_email, int soa_retry, int soa_serial,
+            string primaryServer, List<DnsZoneRecordItem> records)
+        {
+            var _args = new List<KeyValuePair<string, string>>();
+            _args.Add(new KeyValuePair<string, string>("name", name));            
+            _args.Add(new KeyValuePair<string, string>("soa_expired", soa_expired.ToString()));
+            _args.Add(new KeyValuePair<string, string>("soa_ttl", soa_ttl.ToString()));
+            _args.Add(new KeyValuePair<string, string>("soa_refresh", soa_refresh.ToString()));
+            _args.Add(new KeyValuePair<string, string>("soa_email", soa_email));
+            _args.Add(new KeyValuePair<string, string>("soa_retry", soa_retry.ToString()));
+            _args.Add(new KeyValuePair<string, string>("soa_serial", soa_serial.ToString()));
+            _args.Add(new KeyValuePair<string, string>("primaryServer", primaryServer));
+            _args.Add(new KeyValuePair<string, string>("suppress_host_ip", "false"));
+
+            foreach (var item in records)
+                _args.Add(new KeyValuePair<string, string>("record", String.Format("{0},{1},{2},{3}", item.name, item.type, item.value, item.priority)));                        
+
+            return ExecuteDomainOperation("Domain/SetDnsZone", "POST", _args);
+        }
+
+        public ApiResult<DomainOperationsResult> SetLimits(string name, 
+            int maxdiskspace, 
+            int maxmailbox, 
+            int maxftpuser, 
+            int maxsubdomain,
+            int maxdomainalias, 
+            int totalwebtraffic, 
+            int totalmailspace, 
+            int maxwebtraffic, 
+            int maxftptraffic, 
+            int maxmailtraffic,
+            int maxmysql, 
+            int maxmysqluser, 
+            int maxmysqlspace, 
+            int maxmssql, 
+            int maxmssqluser, 
+            int maxmssqlspace)
+        {            
+            var _args = new NameValueCollection();
+            _args.Add("name", name);
+            _args.Add("maxdiskspace", maxdiskspace.ToString());
+            _args.Add("maxmailbox", maxmailbox.ToString());
+            _args.Add("maxftpuser", maxftpuser.ToString());
+            _args.Add("maxsubdomain", maxsubdomain.ToString());
+            _args.Add("maxdomainalias", maxdomainalias.ToString());
+            _args.Add("totalwebtraffic", totalwebtraffic.ToString());
+            _args.Add("totalmailspace", totalmailspace.ToString());
+            _args.Add("maxwebtraffic", maxwebtraffic.ToString());
+            _args.Add("maxftptraffic", maxftptraffic.ToString());
+            _args.Add("maxmailtraffic", maxmailtraffic.ToString());
+
+            _args.Add("maxmysql", maxmysql.ToString());
+            _args.Add("maxmysqluser", maxmysqluser.ToString());
+            _args.Add("maxmysqlspace", maxmysqlspace.ToString());
+            
+            _args.Add("maxmssql", maxmssql.ToString());
+            _args.Add("maxmssqlspace", maxmssqlspace.ToString());
+            _args.Add("maxmssqluser", maxmssqluser.ToString());
+
+            return ExecuteDomainOperation("Domain/SetLimits", "POST", _args);
+        }
+        
+
+        public ApiResult<DomainOperationsResult> AddDnsRecord(string name, string rec_type, string rec_name, string rec_value, int priority)
+        {
+            var _args = new NameValueCollection();        
+            _args.Add("name", name);
+            _args.Add("rec_type", rec_type);
+            _args.Add("rec_name", rec_name);
+            _args.Add("rec_value", rec_value);
+            _args.Add("priority", priority.ToString());            
+            
+            return ExecuteDomainOperation("Domain/AddDnsRecord", "POST", _args);
+        }
+
+        public ApiResult<DomainOperationsResult> DeleteDnsRecord(string name, string rec_type, string rec_name, string rec_value, int priority)
+        {
+            var _args = new NameValueCollection();
+            _args.Add("name", name);
+            _args.Add("rec_type", rec_type);
+            _args.Add("rec_name", rec_name);
+            _args.Add("rec_value", rec_value);
+            _args.Add("priority", priority.ToString());
+
+            return ExecuteDomainOperation("Domain/DeleteDnsRecord", "POST", _args);
+        }
+
+
+
+
+        #region Privates
         private void WriteData(ref HttpWebRequest _request, NameValueCollection _parameters)
+        {
+            byte[] byteData = CreateParameters(_parameters);
+            _request.ContentLength = byteData.Length;
+
+            using (Stream postStream = _request.GetRequestStream())
+            {
+                postStream.Write(byteData, 0, byteData.Length);
+            }
+        }
+
+        private void WriteData(ref HttpWebRequest _request, List<KeyValuePair<string, string>> _parameters)
         {
             byte[] byteData = CreateParameters(_parameters);
             _request.ContentLength = byteData.Length;
@@ -254,9 +389,9 @@
         {
             contentType = String.Empty;
             var _response = String.Empty;
+
             using (HttpWebResponse response = _request.GetResponse() as HttpWebResponse)
-            {                
-                
+            {                                
                 contentType = response.ContentType;
                 StreamReader reader = new StreamReader(response.GetResponseStream());                
                 _response = reader.ReadToEnd();
@@ -277,6 +412,18 @@
             return UTF8Encoding.UTF8.GetBytes(_sb.ToString());
         }
 
+        private byte[] CreateParameters(List<KeyValuePair<string, string>> _parameters)
+        {
+            var _sb = new StringBuilder(_parameters.Count);
+
+            foreach (var item in _parameters)
+                _sb.AppendFormat("{0}={1}&", HttpUtility.UrlEncode(item.Key), HttpUtility.UrlEncode(item.Value));
+
+            _sb.Length -= 1;
+
+            return UTF8Encoding.UTF8.GetBytes(_sb.ToString());
+        }
+
         private string ToQueryString(NameValueCollection nvc)
         {
             var array = (from key in nvc.AllKeys
@@ -285,5 +432,133 @@
                 .ToArray();
             return string.Join("&", array);
         }
+
+        private string ToQueryString(List<KeyValuePair<string, string>> nvc)
+        {
+            var prms = new List<string>();
+
+            foreach (var item in nvc)            
+                prms.Add(String.Format("{0}={1}", HttpUtility.UrlEncode(item.Key), HttpUtility.UrlEncode(item.Value)));
+            
+            return String.Join("&", prms.ToArray());
+        }
+        
+        private ApiResult<DomainOperationsResult> ExecuteDomainOperation(string action, string method, NameValueCollection args)
+        {
+            var requestUri = String.Empty;
+
+            var result =  SendApi<ApiResult<DomainOperationsResult>>(action, method, args,
+                    new[] { typeof(DomainOperationsResult), typeof(DomainOperationModuleResult) }, out requestUri);
+
+
+            _log.WriteLog(requestUri, method, args, result);
+
+            return result;
+        }
+
+        private ApiResult<DomainOperationsResult> ExecuteDomainOperation(string action, string method, List<KeyValuePair<string, string>> args)
+        {
+            var requestUri = String.Empty;
+
+            var result = SendApi<ApiResult<DomainOperationsResult>>(action, method, args,
+                    new[] { typeof(DomainOperationsResult), typeof(DomainOperationModuleResult) }, out requestUri);
+
+            _log.WriteLog(requestUri, method, args, result);
+
+            return result;
+        }
+
+        private ApiResult<ResellerOperationResult> ExecuteResellerOperation(string action, string method, NameValueCollection args)
+        {
+            var requestUri = String.Empty;
+
+            var result = SendApi<ApiResult<ResellerOperationResult>>(action, method, args,
+                    new[] { typeof(ResellerOperationResult) }, out requestUri);
+
+            _log.WriteLog(requestUri, method, args, result);
+
+            return result;
+        }
+
+        private T SendApi<T>(string action, string method, NameValueCollection _parameters, Type[] extraTypes, out string RequestUri)
+        {
+            var _result = default(T);
+            var contentType = String.Empty;
+
+            if (method == "GET")
+            {
+                _parameters.Add("key", _apiKey);
+                _parameters.Add("format", _format);
+
+                if (_SuppressResponse)
+                    _parameters.Add("suppress_response_codes", "true");
+            }
+
+            var _uri =
+                method == "GET" ?
+                new Uri(String.Format("{0}/{1}?{2}", _apiUri, action, ToQueryString(_parameters))) :
+                new Uri(String.Format("{0}/{1}?key={2}&format={3}&suppress_response_codes={4}", _apiUri, action, _apiKey, _format, _SuppressResponse ? "true" : "false"));
+
+            RequestUri = _uri.ToString();
+
+            HttpWebRequest request = WebRequest.Create(_uri) as HttpWebRequest;
+            request.Method = method;
+            request.Timeout = 240 * 1000;
+            request.ContentType = "application/x-www-form-urlencoded";
+
+            if (method != "GET")
+                WriteData(ref request, _parameters);
+
+            var _responseText = GetData(request, out contentType);
+
+            if (_format == "JSON")
+                _result = JsonConvert.DeserializeObject<T>(_responseText, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects });
+            else
+                _result = XmlHelper.DeSerializeObject<T>(_responseText);
+            
+            return _result;
+        }
+
+        private T SendApi<T>(string action, string method, List<KeyValuePair<string, string>> _parameters, Type[] extraTypes, out string RequestUri)
+        {
+            var _result = default(T);
+            var contentType = String.Empty;
+
+            if (method == "GET")
+            {
+                _parameters.Add(new KeyValuePair<string,string>("key", _apiKey));
+                _parameters.Add(new KeyValuePair<string,string>("format", _format));
+
+                if (_SuppressResponse)
+                    _parameters.Add(new KeyValuePair<string,string>("suppress_response_codes", "true"));
+            }
+
+            var _uri =
+                method == "GET" ?
+                new Uri(String.Format("{0}/{1}?{2}", _apiUri, action, ToQueryString(_parameters))) :
+                new Uri(String.Format("{0}/{1}?key={2}&format={3}&suppress_response_codes={4}", _apiUri, action, _apiKey, _format, _SuppressResponse ? "true" : "false"));
+
+
+            RequestUri = _uri.ToString();
+
+            HttpWebRequest request = WebRequest.Create(_uri) as HttpWebRequest;
+            request.Method = method;
+            request.Timeout = 240 * 1000;
+            request.ContentType = "application/x-www-form-urlencoded";
+            
+
+            if (method != "GET")
+                WriteData(ref request, _parameters);
+
+            var _responseText = GetData(request, out contentType);
+
+            if (_format == "JSON")
+                _result = JsonConvert.DeserializeObject<T>(_responseText, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects });
+            else
+                _result = XmlHelper.DeSerializeObject<T>(_responseText);
+
+            return _result;
+        }
+        #endregion
     }
 }

@@ -5,10 +5,10 @@
     using MpMigrate.Data.Dal;
     using MpMigrate.Data.Entity;
     using MpMigrate.MaestroPanel.Api;
+    using MpMigrate.MaestroPanel.Api.Entity;
     using System;
-    using System.Linq;
     using System.Collections.Generic;
-    using System.IO;
+    using System.Linq;
 
     public enum PanelTypes
     {
@@ -25,19 +25,26 @@
         private string domainName;
         private string message;
         private int count;
-        private ApiResult _apiResult;
+        private int errorCode;
+        private int errorCount;
 
+        public int ErrorCount
+        {
+            get { return errorCount; }
+            set { errorCount = value; }
+        }
+        
+        public int ErrorCode
+        {
+            get { return errorCode; }
+            set { errorCode = value; }
+        }        
+        
         public int Count
         {
             get { return count; }
             set { count = value; }
-        }
-                
-        public ApiResult ApiResult
-        {
-            get { return _apiResult; }
-            set { _apiResult = value; }
-        }
+        }                       
 
         public string DomainName
         {
@@ -63,11 +70,15 @@
         public PanelTypes PanelType { get; set; }
         public IDiscovery CurrentPanel { get; set; }
         public DboFactory PanelData { get; set; }
-        public PanelDatabase SourceDatabase { get; set; }
+        public PanelDatabase SourceDatabase { get; set; }        
 
         private List<Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>> variationList;
 
+        //private List<ApiResult<DomainOperationsResult>> domainLogs = new List<ApiResult<DomainOperationsResult>>();
+        //private List<ApiResult<ResellerOperationResult>> resellerLogs = new List<ApiResult<ResellerOperationResult>>();
+
         private int totalCount;
+        private int errorCount;
 
         public MigrateManager()
         {
@@ -115,35 +126,56 @@
 
         public void Execute()
         {
-            foreach (var item in PanelData.GetDomains())
+            var domainList = new List<Domain>();
+            var resellerList = new List<Reseller>();                       
+
+            #region Filter
+            if (Plan.Filter)
             {
-                totalCount++;
-                
-                var action = new ApiAction();
-                action.DomainName = item.Name;
-                action.Count = totalCount;
+                if (Plan.FilterType == FilterTypes.Domain)
+                    domainList = PanelData.GetDomains().Where(m => Plan.FilterDomains.Contains(m.Name)).ToList();
 
-                //DEBUG
-                action.ApiResult = new ApiResult() { Code = 0, Message = "Oppa" };                
-                System.Threading.Thread.Sleep(1000);
+                if (Plan.FilterType == FilterTypes.Reseller)
+                {
+                    domainList = PanelData.GetDomains().Where(m => Plan.FilterResellers.Contains(m.ClientName)).ToList();
+                    resellerList = PanelData.GetResellers().Where(m => Plan.FilterResellers.Contains(m.Username)).ToList();
+                }
+            }
+            else        
+            {
+                domainList = PanelData.GetDomains();
+                resellerList = PanelData.GetResellers();
+            }
+            #endregion
 
-                Action(this, action);
-                //DEBUG
+            #region Reseller
+            //Import Reseller
+            if (Plan.Resellers)
+            {
+                foreach (var resItem in resellerList)
+                {
+                    var resellerResult = Api.ResellerCreate(resItem.Username, resItem.Password, Plan.Destination.DefaultPlan,
+                        resItem.FirstName, resItem.LastName, resItem.Email, resItem.Country, resItem.Organization, resItem.Address1, resItem.Address2,
+                        resItem.City, resItem.Province, resItem.PostalCode, resItem.Phone, resItem.fax);
 
+                    Action(this,CreateActionEventAndLogging(resellerResult));                    
+                }
+            }
+            #endregion
+
+            #region Domains
+            foreach (var item in domainList)
+            {                
+                 totalCount++;
+
+                //Create Domain
                 if (Plan.Domains)
                 {
-                    //var activeDomainUser = !String.IsNullOrEmpty(item.Password);
-                    //var domainResult = Api.DomainCreate(item.Name, Plan.Destination.DefaultPlan, item.Username, item.Password, activeDomainUser,
-                    //    "", "", "", item.Expiration);
+                    var activeDomainUser = !String.IsNullOrEmpty(item.Password);
+                    var domainResult = Api.DomainCreate(item.Name, Plan.Destination.DefaultPlan, item.Username, item.Password, activeDomainUser,
+                        "", "", "", item.Expiration);
 
-                    //action.ApiResult = domainResult;                    
-                    //Action(this, action);
-                }
-
-
-                if (item.isForwarding)
-                {
-
+                    Action(this, CreateActionEventAndLogging(domainResult));
                 }
 
                 if (Plan.CopyHttpFiles)
@@ -151,47 +183,155 @@
 
                 }
 
-
-                if (Plan.HostLimits)
+                //Set Frowarding
+                if (Plan.Domains && item.isForwarding)
                 {
-                        
+                    var forwardResult = Api.SetForwarding(item.Name, true, item.ForwardUrl, true, false, "Found");
+                    Action(this, CreateActionEventAndLogging(forwardResult));
                 }
-
+                
+                //Create Subdomains
                 if (Plan.Subdomains)
                 {
-                    if (Plan.CopyHttpFiles)
+                    foreach (var subItem in item.Subdomains)
                     {
+                        var subdomainResult = Api.AddSubDomain(item.Name, subItem.Name, subItem.Login, subItem.Password);
+                        Action(this, CreateActionEventAndLogging(subdomainResult));
 
+                        if (Plan.CopyHttpFiles && subdomainResult.ErrorCode == 0)
+                        {
+
+                        }
                     }
                 }
 
+                //Create Aliases
                 if (Plan.DomainAliases)
                 {
-
+                    foreach (var aliasItem in item.Aliases)
+                    {
+                        var aliasResult = Api.AddAlias(item.Name, aliasItem.Alias);
+                        Action(this, CreateActionEventAndLogging(aliasResult));
+                    }
                 }
 
                 if (Plan.Emails)
                 {
-                    if (Plan.CopyEmailFiles)
+                    foreach (var mailItem in item.Emails)
                     {
+                        var addMailboxResult = Api.AddMailBox(item.Name, mailItem.Name, mailItem.Password, mailItem.Quota, mailItem.Redirect, mailItem.RedirectedEmail);
+                        Action(this, CreateActionEventAndLogging(addMailboxResult));
 
+                        if (Plan.CopyEmailFiles && addMailboxResult.ErrorCode == 0)
+                        {
+
+                        }
                     }
-
                 }
 
+                //Create Database
                 if (Plan.Databases)
                 {
-                    if (Plan.CopyDatabase)
+                    foreach (var dbItem in item.Databases)
                     {
+                        var dbResult = Api.AddDatabase(item.Name, dbItem.DbType, dbItem.Name, -1);
+                        Action(this, CreateActionEventAndLogging(dbResult));
 
+                        //Add DB Users
+                        if (dbResult.ErrorCode == 0)
+                        {
+                            foreach (var dbUserItem in dbItem.Users)
+                            {
+                                var userResult = Api.AddDatabaseUser(item.Name, dbItem.DbType, dbItem.Name, dbUserItem.Username, dbUserItem.Password);
+                                Action(this, CreateActionEventAndLogging(userResult));
+                            }
+                        }
+
+                        if (Plan.CopyDatabase)
+                        {
+
+                        }
                     }
                 }
 
                 if (Plan.DnsRecords)
                 {
+                    var zoneRecord = item.Zone.Records
+                        .Select(m => new DnsZoneRecordItem(){ name = m.name, type  = m.type, value = m.value, priority = m.priority}).ToList();
 
-                }                
+                    var dnsResult = Api.SetDnsZone(item.Name, item.Zone.expire, item.Zone.ttl, item.Zone.refresh, item.Zone.Email, item.Zone.retry,
+                        item.Zone.serial, "", zoneRecord);
+
+                    Action(this, CreateActionEventAndLogging(dnsResult));
+                }
+
+                //Set Limits
+                if (Plan.HostLimits)
+                {
+                    var limitResult = Api.SetLimits(item.Name,
+                                                    item.Limits.DiskSpace,
+                                                    item.Limits.MaxMailBox,
+                                                    item.Limits.MaxFtpUser,
+                                                    item.Limits.MaxSubDomain,
+                                                    item.Limits.MaxDomainAlias,
+                                                    item.Limits.MaxWebTraffic,
+                                                    item.Limits.TotalMailBoxQuota,
+                                                    item.Limits.MaxWebTraffic,
+                                                    item.Limits.MaxFtpTraffic,
+                                                    item.Limits.MaxMailTraffic,
+                                                    item.Limits.MaxMySqlDb,
+                                                    item.Limits.MaxMySqlUser,
+                                                    item.Limits.MaxMySqlDbSpace,
+                                                    item.Limits.MaxMsSqlDb,
+                                                    item.Limits.MaxMsSqlDbUser,
+                                                    item.Limits.MaxMsSqlDbSpace);
+
+                    Action(this, CreateActionEventAndLogging(limitResult));
+                }
+
+                //Move to reseller.
+                if (Plan.Resellers && Plan.Domains)
+                {                    
+                    var restoreOwner = Api.ChangeReseller(item.Name, item.ClientName);
+                    Action(this, CreateActionEventAndLogging(restoreOwner));
+                }
             }
+
+            #endregion
+
+            #region Copy Reseller Limits
+            //Copy Reseller Limits
+            if (Plan.Resellers)
+            {
+                if (Plan.ResellerLimits)
+                {
+                    foreach (var resItem in resellerList)
+                    {
+                        var resellerLimitResult = Api.ResellerSetLimit(
+                            resItem.Username,
+                            resItem.Limits.MaxDomain,
+                            resItem.Limits.DiskSpace,
+                            resItem.Limits.MaxMailBox,
+                            resItem.Limits.MaxFtpUser,
+                            resItem.Limits.MaxSubDomain,
+                            resItem.Limits.MaxDomainAlias,
+                            resItem.Limits.MaxWebTraffic,
+                            resItem.Limits.TotalMailBoxQuota,
+                            resItem.Limits.MaxWebTraffic,
+                            resItem.Limits.MaxFtpTraffic,
+                            resItem.Limits.MaxMailTraffic,
+                            resItem.Limits.MaxMySqlDb,
+                            resItem.Limits.MaxMySqlUser,
+                            resItem.Limits.MaxMsSqlDbSpace,
+                            resItem.Limits.MaxMsSqlDb,
+                            resItem.Limits.MaxMsSqlDbUser,
+                            resItem.Limits.MaxMsSqlDbSpace);
+
+                        Action(this,CreateActionEventAndLogging(resellerLimitResult));
+                    }
+                }
+            }
+            #endregion
         }
 
         public void LoadInstalledPanel(PanelTypes panelType, PanelDatabase sourceDatabase)
@@ -208,7 +348,7 @@
             else
             {
                 throw new Exception(String.Format("Panel not supported: {0} - {1}", panelType, sourceDatabase.Provider));
-            }                
+            }
         }  
 
         private void LoadVariations()
@@ -219,55 +359,11 @@
             variationList = new List<Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>>();
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
-                                (PanelTypes.Plesk_86, DatabaseProviders.MYSQL, new Plesk_86_MySql(), new Plesk_86_Discover()));            
+                                (PanelTypes.Plesk_86, DatabaseProviders.MYSQL, new Plesk_86_MySql(), new Plesk_86_Discover()));
+
+            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
+                                (PanelTypes.Plesk_11, DatabaseProviders.MYSQL, new Plesk_11_MySql(), new Plesk_11_Discover()));
         }
-
-        //private PanelTypes DetectPlesk()
-        //{
-        //    PanelTypes plesk_Panel = PanelTypes.Unknown;
-
-        //    var check_environment = Environment.GetEnvironmentVariable("plesk_dir", EnvironmentVariableTarget.Machine);
-
-        //    if (Directory.Exists(check_environment))
-        //    {
-        //        var plesk_version = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "PRODUCT_VERSION");
-
-        //        if (plesk_version.StartsWith("8.6"))
-        //        {
-        //            plesk_Panel = PanelTypes.Plesk_86;
-        //            CurrentPanel = new Plesk_86_Discover();
-        //            SetSourceDatabase(CurrentPanel);
-
-        //            PanelData = new Plesk_86_MySql(SourceDatabase.ConnectionString());
-        //        }
-        //        else if (plesk_version.StartsWith("9.5"))
-        //        {
-        //            plesk_Panel = PanelTypes.Plesk_95;
-        //        }
-        //        else
-        //            plesk_Panel = PanelTypes.Unknown;
-        //    }
-        //    else
-        //    {
-        //        plesk_Panel = PanelTypes.Unknown;
-        //    }
-
-        //    return plesk_Panel;
-        //}
-
-        //private PanelTypes DetectMaestroPanel()
-        //{
-        //    var check_environment = Environment.GetEnvironmentVariable("MaestroPanelPath", EnvironmentVariableTarget.Machine);
-
-        //    if (Directory.Exists(check_environment))
-        //    {
-        //        return PanelTypes.MaestroPanel;
-        //    }
-        //    else
-        //    {
-        //        return PanelTypes.Unknown;
-        //    }
-        //}
 
         private void SetSourceDatabaseAutomatically(IDiscovery discover)
         {
@@ -278,6 +374,40 @@
             SourceDatabase.Port = discover.GetDatabasePort();
             SourceDatabase.Provider = discover.GetDatabaseProvider();
             SourceDatabase.Username = discover.GetDatabaseUsername();
+        }
+
+        private ApiAction CreateActionEventAndLogging(ApiResult<DomainOperationsResult> action)
+        {
+            if (action.ErrorCode != 0)
+                errorCount++;
+
+            //domainLogs.Add(action);
+
+            return new ApiAction()
+            {                
+                Count = totalCount,
+                DomainName = action.Details != null ? action.Details.Name : "",
+                ErrorCode = action.ErrorCode,
+                Message = action.Message,
+                ErrorCount = errorCount
+            };
+        }
+
+        private ApiAction CreateActionEventAndLogging(ApiResult<ResellerOperationResult> action)
+        {
+            if (action.ErrorCode != 0)
+                errorCount++;
+
+            //resellerLogs.Add(action);
+
+            return new ApiAction()
+            {
+                Count = totalCount,
+                DomainName = action.Details != null ? action.Details.ClientName : "",
+                ErrorCode = action.ErrorCode,
+                Message = action.Message,
+                ErrorCount = errorCount
+            };
         }
     }
 }

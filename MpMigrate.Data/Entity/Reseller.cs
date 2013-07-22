@@ -21,9 +21,11 @@
         public string fax { get; set; }
 
         public List<HostPlan> HostPlans { get; set; }
+        public HostLimit Limits { get; set; }
 
         public Reseller()
         {
+            Limits = new HostLimit();
             HostPlans = new List<HostPlan>();
         }
     }

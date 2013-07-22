@@ -3,6 +3,7 @@
     using MpMigrate.Data.Entity;
     using MySql.Data.MySqlClient;
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.Data;
 
@@ -53,20 +54,33 @@
                         {                            
                             var _d = new Domain();
                             _d.Id = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "id"));
-                            _d.Name = DataExtensions.GetColumnValue<String>(_read, "name");
+                            _d.Name = DataExtensions.GetColumnValue<String>(_read, "name").ToLower();
                             _d.ClientName = DataExtensions.GetColumnValue<String>(_read, "login");
                             _d.DomainPassword = DataExtensions.GetColumnValue<String>(_read, "DomainPass");
+
                             _d.Username = DataExtensions.GetColumnValue<String>(_read, "fp_adm");
                             _d.Password = DataExtensions.GetColumnValue<String>(_read, "password");
+
+                            if(String.IsNullOrEmpty(_d.Username))
+                                _d.Username =_d.Name;                            
+
+                            if (String.IsNullOrEmpty(_d.Password))
+                                _d.Password = DataHelper.GetPassword();
+
                             _d.Status = Convert.ToInt64(DataExtensions.GetColumnValue<ulong>(_read, "Status"));
-                                                        
+
+                            var expirationString = DataExtensions.GetColumnValue<string>(_read, "expiration");
+                            var expirationUnitTime = String.IsNullOrEmpty(expirationString) ? -1D : Convert.ToDouble(expirationString);
+                            if (expirationUnitTime != -1)
+                                _d.Expiration = DataHelper.UnixTimeStampToDateTime(expirationUnitTime);   
+
                             var hostingType = DataExtensions.GetColumnValue<String>(_read, "htype");
                             _d.isForwarding = (hostingType == "std_fwd" || hostingType == "frm_fwd");
 
                             if(_d.isForwarding)
                             {
                                 var frw = GetForwarding(_d.Name);
-                                _d.ForwardUrl = frw.ForwardUrl;
+                                _d.ForwardUrl = frw.ForwardUrl;                                
                             }
 
                             _d.Aliases = GetDomainAliases(_d.Name);
@@ -74,6 +88,7 @@
                             _d.Limits = GetDomainLimits(_d.Name);
                             _d.Subdomains = GetSubdomains(_d.Name);
                             _d.Zone = GetDnsZone(_d.Name);
+                            _d.Emails = GetEmails(_d.Name);
 
                             tmp.Add(_d);
                         }
@@ -108,10 +123,13 @@
                             res.PostalCode = DataExtensions.GetColumnValue<string>(_read, "pcode");
                             res.Province = DataExtensions.GetColumnValue<string>(_read, "country");
 
+                            res.FirstName = DataExtensions.GetColumnValue<string>(_read, "pname");
                             res.Password = DataExtensions.GetColumnValue<string>(_read, "passwd");
                             res.Username = DataExtensions.GetColumnValue<string>(_read, "login");
                             res.Email = DataExtensions.GetColumnValue<string>(_read, "email");
                             res.Organization = DataExtensions.GetColumnValue<string>(_read, "cname");
+
+                            res.Limits = ResellerLimits(res.Username);
 
                             tmp.Add(res);
                         }
@@ -224,7 +242,7 @@
             return _tmp;
         }
 
-        public override DomainLimit GetDomainLimits(string domainName)
+        public override HostLimit GetDomainLimits(string domainName)
         {
             var _tmp_limits = new List<LimitRow>();
 
@@ -241,7 +259,18 @@
                         {
                             var _d = new LimitRow();
                             _d.Name = DataExtensions.GetColumnValue<string>(_read, "limit_name");
-                            _d.Value = DataExtensions.GetColumnValue<string>(_read, "value");
+
+                            var LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<string>(_read, "value"));
+
+                            if (_d.Name == "disk_space" || _d.Name == "max_traffic" || _d.Name == "mbox_quota"
+                                || _d.Name == "mssql_dbase_space" || _d.Name == "mysql_dbase_space")
+                            {
+                                _d.Value = (int)((LimitValue / 1024) / 1024);
+                            }
+                            else
+                            {
+                                _d.Value = Convert.ToInt32(LimitValue);
+                            }
 
                             _tmp_limits.Add(_d);
                             
@@ -251,7 +280,7 @@
                 _conn.Close();
             }
             
-            return new DomainLimit(_tmp_limits); 
+            return new HostLimit(_tmp_limits); 
         }
 
         public override List<Subdomain> GetSubdomains(string domainName)
@@ -299,7 +328,8 @@
             {
                 _conn.Open();
                 using (MySqlCommand _cmd = new MySqlCommand(@"SELECT dns_zone.* FROM dns_zone 
-                                                                        LEFT JOIN domains ON dns_zone.name = domains.name WHERE domains.name = @NAME", _conn))
+                                                                        LEFT JOIN domains ON dns_zone.name = domains.name 
+                                                                            WHERE domains.name = @NAME", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@NAME", domainName);
 
@@ -307,7 +337,7 @@
                     {
                         while (_read.Read())
                         {
-                            _tmp.Name = DataExtensions.GetColumnValue<string>(_read, "name");
+                            _tmp.Name = DataExtensions.GetColumnValue<string>(_read, "name").ToLower();
                             _tmp.mininum = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "minimum"));
                             _tmp.refresh = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "refresh"));
                             _tmp.retry = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "retry"));
@@ -336,7 +366,9 @@
             using (MySqlConnection _conn = new MySqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT dns_recs.* FROM dns_zone LEFT JOIN dns_recs ON dns_recs.dns_zone_id = dns_zone.id WHERE dns_zone.name = @NAME", _conn))
+                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT dns_recs.* FROM dns_zone 
+                                                                        LEFT JOIN dns_recs ON dns_recs.dns_zone_id = dns_zone.id 
+                                                                            WHERE dns_zone.name = @NAME AND dns_recs.type <> 'PTR'", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@NAME", domainName);
 
@@ -345,9 +377,16 @@
                         while (_read.Read())
                         {
                             var _d = new DnsZoneRecord();
-                            _d.name = DataExtensions.GetColumnValue<string>(_read, "host");
+                            
+                            var hostName = DataExtensions.GetColumnValue<string>(_read, "host");
+
+                            if (hostName == domainName || hostName == String.Format("{0}.", domainName))
+                                _d.name = "@";
+                            else
+                                _d.name = hostName.Split('.').FirstOrDefault().ToLower();
+
                             _d.type = DataExtensions.GetColumnValue<string>(_read, "type");
-                            _d.value = DataExtensions.GetColumnValue<string>(_read, "val");
+                            _d.value = DataExtensions.GetColumnValue<string>(_read, "val").ToLower();
 
                             var options = DataExtensions.GetColumnValue<string>(_read, "opt");
                             if (!String.IsNullOrEmpty(options))
@@ -399,19 +438,35 @@
                 _conn.Open();
 
                 #region Disk Space
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT  CAST(SUM(httpdocs) AS DECIMAL) as httpdocs, 
-                                                                CAST((SUM(mysql_dbases) + SUM(mssql_dbases)) AS DECIMAL) as totaldbsize, 
-                                                                CAST(SUM(mailboxes) AS DECIMAL) as totalmailboxsize, 
-                                                                CAST(SUM(subdomains) AS DECIMAL) as subdomainsize FROM disk_usage", _conn))
-                {                    
+                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT  CAST(SUM(httpdocs) AS SIGNED) as httpdocs, 
+                                                                        CAST((SUM(mysql_dbases) + SUM(mssql_dbases)) AS SIGNED) as totaldbsize, 
+                                                                        CAST(SUM(mailboxes) AS SIGNED) as totalmailboxsize, 
+                                                                        CAST(SUM(subdomains) AS SIGNED) as subdomainsize 
+                                                            FROM disk_usage", _conn))
+                {
                     using (MySqlDataReader _read = _cmd.ExecuteReader())
-                    {                       
+                    {
                         while (_read.Read())
                         {
-                            pstats.TotalDomainDiskSpace = DataExtensions.GetColumnValue<decimal>(_read, "httpdocs");
-                            pstats.TotalDatabaseDiskSpace = DataExtensions.GetColumnValue<decimal>(_read, "totaldbsize");
-                            pstats.TotalEmailDiskSpace = DataExtensions.GetColumnValue<decimal>(_read, "totalmailboxsize");
-                            pstats.TotalSubdomainDiskSpace = DataExtensions.GetColumnValue<decimal>(_read, "subdomainsize");
+                            if (_read["httpdocs"] is System.Int64)
+                                pstats.TotalDomainDiskSpace = Convert.ToDecimal(DataExtensions.GetColumnValue<System.Int64>(_read, "httpdocs"));
+                            else
+                                pstats.TotalDomainDiskSpace = DataExtensions.GetColumnValue<decimal>(_read, "httpdocs");
+
+                            if (_read["totaldbsize"] is System.Int64)
+                                pstats.TotalDatabaseDiskSpace = Convert.ToDecimal(DataExtensions.GetColumnValue<Int64>(_read, "totaldbsize"));
+                            else
+                                pstats.TotalDatabaseDiskSpace = DataExtensions.GetColumnValue<decimal>(_read, "totaldbsize");
+
+                            if (_read["totalmailboxsize"] is System.Int64)
+                                pstats.TotalEmailDiskSpace = Convert.ToDecimal(DataExtensions.GetColumnValue<Int64>(_read, "totalmailboxsize"));
+                            else
+                                pstats.TotalEmailDiskSpace = DataExtensions.GetColumnValue<decimal>(_read, "totalmailboxsize");
+
+                            if (_read["subdomainsize"] is System.Int64)
+                                pstats.TotalSubdomainDiskSpace = Convert.ToDecimal(DataExtensions.GetColumnValue<Int64>(_read, "subdomainsize"));
+                            else
+                                pstats.TotalSubdomainDiskSpace = DataExtensions.GetColumnValue<decimal>(_read, "subdomainsize");
                         }
                     }
                 }
@@ -447,6 +502,112 @@
         public override void LoadConnectionString(string connectionString)
         {
             this.connectionString = connectionString;
+        }
+
+        public override HostLimit ResellerLimits(string clientName)
+        {
+            var _tmp_limits = new List<LimitRow>();
+
+            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            {
+                _conn.Open();
+                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT L.limit_name, L.value FROM clients C LEFT JOIN limits L ON L.id = C.limits_id WHERE C.login = @NAME", _conn))
+                {
+                    _cmd.Parameters.AddWithValue("@NAME", clientName);
+
+                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    {
+                        while (_read.Read())
+                        {
+                            var _d = new LimitRow();
+                            _d.Name = DataExtensions.GetColumnValue<string>(_read, "limit_name");
+
+                            var LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<string>(_read, "value"));                            
+
+                            if (_d.Name == "disk_space" || _d.Name == "max_traffic" || _d.Name == "mbox_quota" || _d.Name == "total_mboxes_quota")
+                            {
+                                _d.Value = (int)((LimitValue / 1024) / 1024);
+                            }
+                            else
+                            {
+                                _d.Value = Convert.ToInt32(LimitValue);
+                            }                            
+
+                            _tmp_limits.Add(_d);
+
+                        }
+                    }
+                }
+                _conn.Close();
+            }
+
+            return new HostLimit(_tmp_limits); 
+        }
+
+        public override bool SecurePasswords()
+        {
+            var securePass = false;
+
+            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            {
+                _conn.Open();
+                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT val FROM misc WHERE param = 'secure_passwords'", _conn))
+                {
+                    var secure_passwords = _cmd.ExecuteScalar();
+
+                    if (secure_passwords != null)
+                        bool.TryParse(secure_passwords.ToString(), out securePass);
+                }
+                _conn.Close();
+            }
+
+            return securePass;
+        }
+
+        public override List<Email> GetEmails(string domainName)
+        {
+            var _tmp = new List<Email>();
+
+            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            {
+                _conn.Open();
+                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT     
+	                                                        mail.mail_name, domains.name, 
+	                                                        accounts.password, domains.status, 
+	                                                        mail.redirect, mail.redir_addr, mail.mbox_quota
+                                                        FROM domains 
+	                                                        LEFT OUTER JOIN mail ON mail.dom_id = domains.id 
+	                                                        LEFT OUTER JOIN accounts ON accounts.id = mail.account_id
+                                                        WHERE     
+                                                        (mail.mail_name <> '') AND (domains.name = @NAME)", _conn))
+                {
+                    _cmd.Parameters.AddWithValue("@NAME", domainName);
+
+                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    {
+                        while (_read.Read())
+                        {
+                            var _d = new Email();
+                            _d.Name = DataExtensions.GetColumnValue<String>(_read, "mail_name").ToLower();
+                            _d.DomainName = DataExtensions.GetColumnValue<String>(_read, "name").ToLower();
+                            _d.Password = DataExtensions.GetColumnValue<String>(_read, "password");
+                            _d.Redirect = DataExtensions.GetColumnValue<String>(_read, "redirect");
+                            _d.RedirectedEmail = DataExtensions.GetColumnValue<String>(_read, "redir_addr");
+
+                            var mboxQuota = Convert.ToDouble(DataExtensions.GetColumnValue<Int64>(_read, "mbox_quota"));
+                            if (mboxQuota > 0)
+                                _d.Quota = Math.Round(((mboxQuota / 1024) / 1024),0);
+                            else
+                                _d.Quota = -1;                      
+                            
+                            _tmp.Add(_d);
+                        }
+                    }
+                }
+                _conn.Close();
+            }
+
+            return _tmp;
         }
     }
 }

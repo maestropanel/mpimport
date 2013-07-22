@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="CoreHelper.cs" />
     <Compile Include="Discovery\MaestroPanelDiscover.cs" />
+    <Compile Include="Discovery\Plesk_11_Discover.cs" />
     <Compile Include="Discovery\Plesk_86_Discover.cs" />
     <Compile Include="Entity\ImportPlan.cs" />
     <Compile Include="Entity\MaestroPanelHost.cs" />

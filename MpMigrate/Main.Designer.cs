@@ -45,8 +45,9 @@
             this.checkBox14 = new System.Windows.Forms.CheckBox();
             this.wizardPage1 = new AeroWizard.WizardPage();
             this.stepFinishPage = new AeroWizard.WizardPage();
+            this.buttonShowLogs = new System.Windows.Forms.Button();
             this.labelFinishCounter = new System.Windows.Forms.Label();
-            this.label24 = new System.Windows.Forms.Label();
+            this.labelFinishErrorCount = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
             this.labelFinishMessage = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
@@ -59,6 +60,7 @@
             this.filterReseller = new System.Windows.Forms.RadioButton();
             this.filterDomains = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.SelectResellerLimits = new System.Windows.Forms.CheckBox();
             this.SelectHostLimits = new System.Windows.Forms.CheckBox();
             this.SelectDnsRecords = new System.Windows.Forms.CheckBox();
             this.SelectResellers = new System.Windows.Forms.CheckBox();
@@ -295,8 +297,9 @@
             // 
             // stepFinishPage
             // 
+            this.stepFinishPage.Controls.Add(this.buttonShowLogs);
             this.stepFinishPage.Controls.Add(this.labelFinishCounter);
-            this.stepFinishPage.Controls.Add(this.label24);
+            this.stepFinishPage.Controls.Add(this.labelFinishErrorCount);
             this.stepFinishPage.Controls.Add(this.label23);
             this.stepFinishPage.Controls.Add(this.labelFinishMessage);
             this.stepFinishPage.Controls.Add(this.label21);
@@ -310,42 +313,53 @@
             this.stepFinishPage.Text = "Finish";
             this.stepFinishPage.Commit += new System.EventHandler<AeroWizard.WizardPageConfirmEventArgs>(this.stepFinishPage_Commit);
             // 
+            // buttonShowLogs
+            // 
+            this.buttonShowLogs.Enabled = false;
+            this.buttonShowLogs.Location = new System.Drawing.Point(19, 300);
+            this.buttonShowLogs.Name = "buttonShowLogs";
+            this.buttonShowLogs.Size = new System.Drawing.Size(96, 23);
+            this.buttonShowLogs.TabIndex = 9;
+            this.buttonShowLogs.Text = "Show Logs";
+            this.buttonShowLogs.UseVisualStyleBackColor = true;
+            this.buttonShowLogs.Click += new System.EventHandler(this.buttonShowLogs_Click);
+            // 
             // labelFinishCounter
             // 
             this.labelFinishCounter.AutoSize = true;
             this.labelFinishCounter.Font = new System.Drawing.Font("Segoe UI", 42F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelFinishCounter.Location = new System.Drawing.Point(189, 58);
+            this.labelFinishCounter.Location = new System.Drawing.Point(206, 56);
             this.labelFinishCounter.Name = "labelFinishCounter";
-            this.labelFinishCounter.Size = new System.Drawing.Size(121, 74);
+            this.labelFinishCounter.Size = new System.Drawing.Size(64, 74);
             this.labelFinishCounter.TabIndex = 8;
-            this.labelFinishCounter.Text = "0/0";
+            this.labelFinishCounter.Text = "0";
             // 
-            // label24
+            // labelFinishErrorCount
             // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(90, 232);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(13, 15);
-            this.label24.TabIndex = 7;
-            this.label24.Text = "0";
+            this.labelFinishErrorCount.AutoSize = true;
+            this.labelFinishErrorCount.Location = new System.Drawing.Point(90, 232);
+            this.labelFinishErrorCount.Name = "labelFinishErrorCount";
+            this.labelFinishErrorCount.Size = new System.Drawing.Size(13, 15);
+            this.labelFinishErrorCount.TabIndex = 7;
+            this.labelFinishErrorCount.Text = "0";
             // 
             // label23
             // 
             this.label23.AutoSize = true;
             this.label23.Location = new System.Drawing.Point(17, 232);
             this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(32, 15);
+            this.label23.Size = new System.Drawing.Size(68, 15);
             this.label23.TabIndex = 6;
-            this.label23.Text = "Error";
+            this.label23.Text = "Error Count";
             // 
             // labelFinishMessage
             // 
             this.labelFinishMessage.AutoSize = true;
             this.labelFinishMessage.Location = new System.Drawing.Point(90, 209);
             this.labelFinishMessage.Name = "labelFinishMessage";
-            this.labelFinishMessage.Size = new System.Drawing.Size(16, 15);
+            this.labelFinishMessage.Size = new System.Drawing.Size(105, 15);
             this.labelFinishMessage.TabIndex = 5;
-            this.labelFinishMessage.Text = "...";
+            this.labelFinishMessage.Text = "waiting response...";
             // 
             // label21
             // 
@@ -361,9 +375,9 @@
             this.labelFinisDomain.AutoSize = true;
             this.labelFinisDomain.Location = new System.Drawing.Point(90, 185);
             this.labelFinisDomain.Name = "labelFinisDomain";
-            this.labelFinisDomain.Size = new System.Drawing.Size(16, 15);
+            this.labelFinisDomain.Size = new System.Drawing.Size(105, 15);
             this.labelFinisDomain.TabIndex = 3;
-            this.labelFinisDomain.Text = "...";
+            this.labelFinisDomain.Text = "waiting response...";
             // 
             // label11
             // 
@@ -444,6 +458,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.SelectResellerLimits);
             this.groupBox1.Controls.Add(this.SelectHostLimits);
             this.groupBox1.Controls.Add(this.SelectDnsRecords);
             this.groupBox1.Controls.Add(this.SelectResellers);
@@ -454,25 +469,35 @@
             this.groupBox1.Controls.Add(this.SelectEmails);
             this.groupBox1.Location = new System.Drawing.Point(14, 69);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(465, 95);
+            this.groupBox1.Size = new System.Drawing.Size(465, 113);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Imports";
             // 
+            // SelectResellerLimits
+            // 
+            this.SelectResellerLimits.AutoSize = true;
+            this.SelectResellerLimits.Location = new System.Drawing.Point(18, 81);
+            this.SelectResellerLimits.Name = "SelectResellerLimits";
+            this.SelectResellerLimits.Size = new System.Drawing.Size(101, 19);
+            this.SelectResellerLimits.TabIndex = 4;
+            this.SelectResellerLimits.Text = "Reseller Limits";
+            this.SelectResellerLimits.UseVisualStyleBackColor = true;
+            // 
             // SelectHostLimits
             // 
             this.SelectHostLimits.AutoSize = true;
-            this.SelectHostLimits.Location = new System.Drawing.Point(209, 51);
+            this.SelectHostLimits.Location = new System.Drawing.Point(218, 53);
             this.SelectHostLimits.Name = "SelectHostLimits";
-            this.SelectHostLimits.Size = new System.Drawing.Size(86, 19);
+            this.SelectHostLimits.Size = new System.Drawing.Size(103, 19);
             this.SelectHostLimits.TabIndex = 3;
-            this.SelectHostLimits.Text = "Host Limits";
+            this.SelectHostLimits.Text = "Domain Limits";
             this.SelectHostLimits.UseVisualStyleBackColor = true;
             // 
             // SelectDnsRecords
             // 
             this.SelectDnsRecords.AutoSize = true;
-            this.SelectDnsRecords.Location = new System.Drawing.Point(107, 53);
+            this.SelectDnsRecords.Location = new System.Drawing.Point(121, 53);
             this.SelectDnsRecords.Name = "SelectDnsRecords";
             this.SelectDnsRecords.Size = new System.Drawing.Size(91, 19);
             this.SelectDnsRecords.TabIndex = 3;
@@ -488,11 +513,12 @@
             this.SelectResellers.TabIndex = 2;
             this.SelectResellers.Text = "Resellers";
             this.SelectResellers.UseVisualStyleBackColor = true;
+            this.SelectResellers.CheckedChanged += new System.EventHandler(this.SelectResellers_CheckedChanged);
             // 
             // SelectAliases
             // 
             this.SelectAliases.AutoSize = true;
-            this.SelectAliases.Location = new System.Drawing.Point(319, 51);
+            this.SelectAliases.Location = new System.Drawing.Point(334, 51);
             this.SelectAliases.Name = "SelectAliases";
             this.SelectAliases.Size = new System.Drawing.Size(62, 19);
             this.SelectAliases.TabIndex = 1;
@@ -502,7 +528,7 @@
             // SelectSubdomains
             // 
             this.SelectSubdomains.AutoSize = true;
-            this.SelectSubdomains.Location = new System.Drawing.Point(319, 26);
+            this.SelectSubdomains.Location = new System.Drawing.Point(334, 26);
             this.SelectSubdomains.Name = "SelectSubdomains";
             this.SelectSubdomains.Size = new System.Drawing.Size(92, 19);
             this.SelectSubdomains.TabIndex = 1;
@@ -512,7 +538,7 @@
             // SelectDatabases
             // 
             this.SelectDatabases.AutoSize = true;
-            this.SelectDatabases.Location = new System.Drawing.Point(209, 26);
+            this.SelectDatabases.Location = new System.Drawing.Point(218, 26);
             this.SelectDatabases.Name = "SelectDatabases";
             this.SelectDatabases.Size = new System.Drawing.Size(79, 19);
             this.SelectDatabases.TabIndex = 1;
@@ -528,11 +554,12 @@
             this.SelectDomains.TabIndex = 1;
             this.SelectDomains.Text = "Domains";
             this.SelectDomains.UseVisualStyleBackColor = true;
+            this.SelectDomains.CheckedChanged += new System.EventHandler(this.SelectDomains_CheckedChanged);
             // 
             // SelectEmails
             // 
             this.SelectEmails.AutoSize = true;
-            this.SelectEmails.Location = new System.Drawing.Point(107, 26);
+            this.SelectEmails.Location = new System.Drawing.Point(121, 26);
             this.SelectEmails.Name = "SelectEmails";
             this.SelectEmails.Size = new System.Drawing.Size(60, 19);
             this.SelectEmails.TabIndex = 0;
@@ -545,7 +572,7 @@
             this.groupBox4.Controls.Add(this.CopyDatabase);
             this.groupBox4.Controls.Add(this.CopyEmail);
             this.groupBox4.Controls.Add(this.CopyDomain);
-            this.groupBox4.Location = new System.Drawing.Point(14, 168);
+            this.groupBox4.Location = new System.Drawing.Point(14, 188);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(465, 65);
             this.groupBox4.TabIndex = 2;
@@ -660,13 +687,13 @@
             // 
             this.buttonApiTest.BackColor = System.Drawing.Color.Transparent;
             this.buttonApiTest.BackgroundImage = global::MpMigrate.Properties.Resources.connect1;
-            this.buttonApiTest.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.buttonApiTest.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.buttonApiTest.FlatAppearance.BorderSize = 0;
-            this.buttonApiTest.Location = new System.Drawing.Point(314, 30);
+            this.buttonApiTest.Location = new System.Drawing.Point(10, 326);
             this.buttonApiTest.Name = "buttonApiTest";
-            this.buttonApiTest.Size = new System.Drawing.Size(26, 23);
+            this.buttonApiTest.Size = new System.Drawing.Size(118, 23);
             this.buttonApiTest.TabIndex = 4;
-            this.buttonApiTest.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.buttonApiTest.Text = "Test API";
             this.buttonApiTest.UseVisualStyleBackColor = false;
             this.buttonApiTest.Click += new System.EventHandler(this.buttonApiTest_Click);
             // 
@@ -1116,7 +1143,7 @@
             this.stepSource.TabIndex = 0;
             this.stepSource.Title = "MaestroPanel Migration Tool";
             this.stepSource.TitleIcon = ((System.Drawing.Icon)(resources.GetObject("stepSource.TitleIcon")));
-            this.stepSource.SelectedPageChanged += new System.EventHandler(this.stepSource_SelectedPageChanged);
+            this.stepSource.Cancelling += new System.ComponentModel.CancelEventHandler(this.stepSource_Cancelling);
             // 
             // Main
             // 
@@ -1127,6 +1154,7 @@
             this.MaximizeBox = false;
             this.Name = "Main";
             this.ShowIcon = false;
+            this.Text = "MaestroPanel";
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
@@ -1234,7 +1262,7 @@
         private System.Windows.Forms.RadioButton filterDomains;
         private System.Windows.Forms.ProgressBar progressBarFinish;
         private System.Windows.Forms.Label labelFinishCounter;
-        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label labelFinishErrorCount;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.Label labelFinishMessage;
         private System.Windows.Forms.Label label21;
@@ -1244,6 +1272,8 @@
         private System.Windows.Forms.RadioButton copyFileRaw;
         private System.Windows.Forms.RadioButton copyFileZip;
         private System.Windows.Forms.CheckBox deleteAfterMoving;
+        private System.Windows.Forms.Button buttonShowLogs;
+        private System.Windows.Forms.CheckBox SelectResellerLimits;
 
     }
 }

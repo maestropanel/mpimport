@@ -5,6 +5,7 @@ namespace MpMigrate.Core.Entity
     {
         public bool Domains { get; set; }
         public bool Resellers { get; set; }
+        public bool ResellerLimits { get; set; }
         public bool Emails { get; set; }
         public bool Subdomains { get; set; }
         public bool DnsRecords { get; set; }
@@ -51,7 +52,8 @@ namespace MpMigrate.Core.Entity
 
     public enum FilterTypes
     {
+        None,
         Domain,
-        Reseller
+        Reseller        
     }
 }

@@ -1,4 +1,5 @@
-﻿namespace MpMigrate.MaestroPanel.Api.Entity
+﻿using Newtonsoft.Json.Converters;
+namespace MpMigrate.MaestroPanel.Api.Entity
 {
     public class Whoami
     {
@@ -11,4 +12,8 @@
         public string LastName { get; set; }
         public string Organization { get; set; }
     }
+
+
+
+   
 }

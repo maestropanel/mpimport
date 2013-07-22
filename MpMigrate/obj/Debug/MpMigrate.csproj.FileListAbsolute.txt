@@ -19,4 +19,5 @@ O:\Projects\MpImport\MpMigrate\bin\Debug\MpMigrate.MaestroPanel.Api.pdb
 O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.FilterDomains.resources
 O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.FilterReseller.resources
 O:\Projects\MpImport\MpMigrate\bin\Debug\System.Data.SQLite.dll
+O:\Projects\MpImport\MpMigrate\bin\Debug\Newtonsoft.Json.dll
 O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.csprojResolveAssemblyReference.cache

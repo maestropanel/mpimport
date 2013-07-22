@@ -14,7 +14,7 @@
         public long Status { get; set; }
         public DateTime? Expiration { get; set; }
 
-        public DomainLimit Limits { get; set; }
+        public HostLimit Limits { get; set; }
         public List<DomainAlias> Aliases { get; set; }
         public List<Subdomain> Subdomains { get; set; }
         public List<Email> Emails { get; set; }

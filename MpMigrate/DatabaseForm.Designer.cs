@@ -92,7 +92,6 @@
             this.textBoxHost.Name = "textBoxHost";
             this.textBoxHost.Size = new System.Drawing.Size(191, 20);
             this.textBoxHost.TabIndex = 0;
-            this.textBoxHost.Text = "127.0.0.1";
             // 
             // label3
             // 

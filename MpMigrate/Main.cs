@@ -9,32 +9,47 @@
     using MpMigrate.Core.Entity;
     using MpMigrate.Data.Entity;
     using System.Threading.Tasks;
+    using System.IO;
+    using System.Threading;
 
     public partial class Main : Form
     {        
         private MigrateManager _migrate = new MigrateManager();
         private PanelStats panelStats;
         private Task executeTask;
+        private CancellationTokenSource ctSource;
+        private CancellationToken cancelToken;
+
         private Whoami currentPanelUser;
 
         private bool DatabaseConnectionTest;
         private bool ApiConnectionTest;
+
         private bool DestinationWebTest;
         private bool DestinationMailTest;
+
+        private string defaultApiFormat = "JSON";
+        private bool apiSuppressStatusCode = true;
+        private int apiDefaultApiPort = 9715;
+        private int progressbarMaximum = 0;
 
         public Main()
         {
             DatabaseConnectionTest = false;
             ApiConnectionTest = false;
+            ctSource = new CancellationTokenSource();
+            cancelToken = ctSource.Token;
 
             InitializeComponent();
-            _migrate.Action += _migrate_Action;            
+
+            _migrate.Action += _migrate_Action;
+            executeTask = new Task(delegate { _migrate.Execute(); }, cancelToken);
         }
 
         private void buttonAutoDiscover_Click(object sender, System.EventArgs e)
         {
             _migrate.DetermineInstalledPanel();
-
+            
             if (_migrate.PanelType == PanelTypes.Unknown)
             {
                 MessageBox.Show("Panel cannot be determine", "MaestroPanel", 
@@ -42,7 +57,7 @@
 
                 return;
             }
-
+            
             if (_migrate.CurrentPanel == null)
             {
                 MessageBox.Show(String.Format("Panel is {0} but discovery time error. (Provider not found)", _migrate.PanelType), "MaestroPanel", 
@@ -53,14 +68,15 @@
 
             labelPanelVersion.Text = _migrate.CurrentPanel.Version();
 
-            SelectSourceDatabase(_migrate.CurrentPanel.GetDatabaseProvider());
             SelectSourcePanel(_migrate.PanelType);
-
+            SelectSourceDatabase(_migrate.CurrentPanel.GetDatabaseProvider());
+            
             textboxDefaultVhost.Text = _migrate.CurrentPanel.VhostPath();
             textboxSourceEmailPath.Text = _migrate.CurrentPanel.GetEmailPath();
 
             panelStats = _migrate.PanelData.GetPanelStats();
             SetPanelStats();
+
             DatabaseConnectionTest = true;
         }
 
@@ -165,18 +181,29 @@
 
         private void SelectSourcePanel(PanelTypes paneltype)
         {
+            //Plesk 11.x
+            //Plesk 10.x
+            //Plesk 9.x
+            //Plesk 8.x
+
             switch (paneltype)
             {
                 case PanelTypes.Unknown:
                     break;
                 case PanelTypes.Plesk_86:
-                    comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 8.6");
+                    comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 8.x");
                     break;
                 case PanelTypes.Plesk_95:
-                    comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 9.5");
+                    comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 9.x");
                     break;
                 case PanelTypes.MaestroPanel:
                     comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("MaestroPanel");
+                    break;
+                case PanelTypes.Plesk_11:
+                    comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 11.x");
+                    break;
+                case PanelTypes.Plesk_10:
+                    comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 10.x");
                     break;
                 default:
                     break;
@@ -208,6 +235,7 @@
                 if (dbform.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     DatabaseConnectionTest = true;
+
                     _migrate.SourceDatabase.Username = dbform.Username;
                     _migrate.SourceDatabase.Password = dbform.Password;
                     _migrate.SourceDatabase.Port = dbform.Port;
@@ -228,9 +256,15 @@
 
         private void buttonApiTest_Click(object sender, EventArgs e)
         {
+            int apiPort = apiDefaultApiPort;
+
+            if (int.TryParse(textPort.Text, out apiPort))
+                _migrate.Plan.Destination.ApiPort = int.Parse(textPort.Text);
+            else
+                _migrate.Plan.Destination.ApiPort = apiDefaultApiPort;
+
             _migrate.Plan.Destination.ApiHost = textHost.Text;
-            _migrate.Plan.Destination.ApiKey = textboxApiKey.Text;
-            _migrate.Plan.Destination.ApiPort = int.Parse(textPort.Text);
+            _migrate.Plan.Destination.ApiKey = textboxApiKey.Text;            
             _migrate.Plan.Destination.UseHttps = checkBoxHttps.Checked;
 
             if (String.IsNullOrEmpty(_migrate.Plan.Destination.ApiKey))
@@ -248,39 +282,37 @@
 
                 return;
             }
-            
-            //_migrate.Api = new ApiClient(_migrate.Plan.Destination.ApiKey, _migrate.Plan.Destination.ApiHost, 
-            //                                _migrate.Plan.Destination.ApiPort,  _migrate.Plan.Destination.UseHttps);
 
-            //try
-            //{
-           
-            //    currentPanelUser = _migrate.Api.Whoami();
+            _migrate.Api = new ApiClient(_migrate.Plan.Destination.ApiKey, _migrate.Plan.Destination.ApiHost,
+                                            _migrate.Plan.Destination.ApiPort, _migrate.Plan.Destination.UseHttps,
+                                            defaultApiFormat, apiSuppressStatusCode);
+            try
+            {                
+                var WhoApiResult = _migrate.Api.Whoami();
 
-            //    if (currentPanelUser.Id == 0)
-            //    {
-            //        MessageBox.Show("API Key Error. Unknow User", "MaestroPanel",
-            //            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (WhoApiResult.ErrorCode != 0)
+                {
+                    MessageBox.Show(String.Format("{0}\nResponse Code: {1}\nError Code: {2}", WhoApiResult.Message, WhoApiResult.StatusCode, WhoApiResult.ErrorCode),
+                        "MaestroPanel", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ApiConnectionTest = false;
+                }
+                else
+                {
+                    currentPanelUser = WhoApiResult.Details;
 
-            //        ApiConnectionTest = false;
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show(String.Format("Connected Successful. \n\r Username: {0}", currentPanelUser.Username), "API Test",
-            //            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(String.Format("Connected Successful. \n\r Username: {0}", currentPanelUser.Username), "API Test",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            //        ApiConnectionTest = true;
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(String.Format(ex.Message), "API Test",
-            //        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ApiConnectionTest = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(String.Format(ex.Message), "API Test",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-            //    ApiConnectionTest = false;
-            //}
-
-            ApiConnectionTest = true;
+                ApiConnectionTest = false;
+            }
         }
 
         private void buttonDestination_Click(object sender, EventArgs e)
@@ -302,23 +334,34 @@
 
         private void _migrate_Action(MigrateManager m, ApiAction e)
         {
-            this.UIThread(delegate {
+            this.UIThread(delegate 
+            {
                 progressBarFinish.Value = e.Count;
                 labelFinisDomain.Text = e.DomainName;
-                labelFinishMessage.Text = e.ApiResult.Message;
-                labelFinishCounter.Text = String.Format("{0}/{1}", e.Count, panelStats.TotalDomainCount);
+                labelFinishMessage.Text = e.Message;
+                labelFinishCounter.Text = String.Format("{0}/{1}", e.Count, progressbarMaximum);
+                labelFinishErrorCount.Text = e.ErrorCount.ToString();
 
-                if (executeTask.IsCompleted)                
+                if (executeTask.IsCompleted)
+                {
                     MessageBox.Show("Migration Complete", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                
+                    buttonShowLogs.Enabled = true;
+                }
 
+                if (executeTask.IsCanceled)
+                {
+                    MessageBox.Show("Operation cancelled by user", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    buttonShowLogs.Enabled = true;
+                }
+
+                if (executeTask.IsFaulted)
+                {
+                    MessageBox.Show("Error: "+ executeTask.Exception.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    buttonShowLogs.Enabled = true;
+                }
             });            
         }        
 
-        private void stepSource_SelectedPageChanged(object sender, EventArgs e)
-        {            
-            
-        }
 
         private void comboSourcePanel_SelectedIndexChanged(object sender, EventArgs e)
         {            
@@ -355,31 +398,70 @@
                 return;
             }
 
-            //if (!DatabaseConnectionTest)
-            //{
-            //    e.Cancel = true;
+            if (!DatabaseConnectionTest)
+            {
+                e.Cancel = true;
 
-            //    MessageBox.Show("The database connection could not be tested.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            //    connectionButton.Focus();
+                MessageBox.Show("The database connection could not be tested.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                connectionButton.Focus();
 
-            //    return;
-            //}
+                return;
+            }
+        }
+
+        private void SetProgressBar()
+        {
+            progressBarFinish.Minimum = 0;
+
+            if (_migrate.Plan.Filter)
+            {
+                if (_migrate.Plan.FilterType == FilterTypes.Domain)
+                {
+                    progressBarFinish.Maximum = _migrate.Plan.FilterDomains.Count;
+                }
+
+                if (_migrate.Plan.FilterType == FilterTypes.Reseller)
+                {
+                    progressBarFinish.Maximum = _migrate.PanelData.GetDomains()
+                                                            .Where(m => _migrate.Plan.FilterResellers.Contains(m.ClientName))
+                                                            .Count();
+                }
+            }
+            else
+            {                
+                    progressBarFinish.Maximum = (int)panelStats.TotalDomainCount;
+            }
+
+            progressbarMaximum = progressBarFinish.Maximum;
+            
         }
 
         private void stepFinishPage_Commit(object sender, AeroWizard.WizardPageConfirmEventArgs e)
         {
-                        
-            progressBarFinish.Minimum = 0;
-            progressBarFinish.Maximum = (int)panelStats.TotalDomainCount;
+            SetProgressBar();
 
-            if (executeTask == null)
-            {
-                executeTask = new Task(delegate { _migrate.Execute(); });
-                executeTask.Start();                
+            if (!executeTask.IsCompleted && !executeTask.IsCanceled && !executeTask.IsFaulted)
+            {                
+                executeTask.Start();
+                executeTask.ContinueWith((t) => 
+                {
+                    MessageBox.Show("Operation Completed","", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    if (t.Exception != null)
+                    {
+                        foreach (var item in t.Exception.InnerExceptions)
+                        {
+                            MessageBox.Show(item.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+
+                    buttonShowLogs.Enabled = true;
+
+                }, TaskContinuationOptions.OnlyOnFaulted);
             }
             else
             {
-                MessageBox.Show("Migration already start. Please wait.", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Migration already start. Please wait.", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);                
             }
         }
 
@@ -416,11 +498,24 @@
             {
                 e.Cancel = true;
 
-                MessageBox.Show("The API connection could not be tested.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("The API connection could not be tested. Please press test button.", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 buttonApiTest.Focus();
 
                 return;
             }
+
+            _migrate.Plan.Destination.ApiHost = textHost.Text;
+            _migrate.Plan.Destination.ApiKey = textboxApiKey.Text;
+
+            int apiPort = apiDefaultApiPort;
+
+            if (int.TryParse(textPort.Text, out apiPort))
+                _migrate.Plan.Destination.ApiPort = int.Parse(textPort.Text);
+            else
+                _migrate.Plan.Destination.ApiPort = apiDefaultApiPort;
+
+            _migrate.Plan.Destination.UseHttps = checkBoxHttps.Checked;
+            _migrate.Plan.Destination.DefaultPlan = textPlanName.Text;            
         }
 
         private void buttonDestinationMail_Click(object sender, EventArgs e)
@@ -463,47 +558,64 @@
 
         private void filterDomains_CheckedChanged(object sender, EventArgs e)
         {
-            using (var dbform = new FilterDomains(_migrate.PanelData))
+            if (filterDomains.Checked)
             {
-                if (dbform.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                using (var domainForm = new FilterDomains(_migrate.PanelData))
                 {
-                    _migrate.Plan.Filter = true;
-                    _migrate.Plan.FilterType = FilterTypes.Domain;
-                    _migrate.Plan.FilterDomains = dbform.Domains;
-                }
+                    if (domainForm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        _migrate.Plan.Filter = true;
+                        _migrate.Plan.FilterType = FilterTypes.Domain;
+                        _migrate.Plan.FilterDomains = domainForm.Domains;
+                    }
 
-                dbform.Dispose();
+                    domainForm.Close();
+                    domainForm.Dispose();
+                }
             }
         }
 
         private void filterReseller_CheckedChanged(object sender, EventArgs e)
         {
-            using (var dbform = new FilterReseller(_migrate.PanelData))
+            if (filterReseller.Checked)
             {
-                if (dbform.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                using (var resellerform = new FilterReseller(_migrate.PanelData))
                 {
-                    _migrate.Plan.Filter = true;
-                    _migrate.Plan.FilterType = FilterTypes.Domain;
-                    _migrate.Plan.FilterResellers = dbform.Resellers;
-                }                
+                    if (resellerform.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        _migrate.Plan.Filter = true;
+                        _migrate.Plan.FilterType = FilterTypes.Reseller;
+                        _migrate.Plan.FilterResellers = resellerform.Resellers;
+                    }
 
-                dbform.Dispose();
+                    resellerform.Close();
+                    resellerform.Dispose();
+                }
             }
         }
 
         private void filterNone_CheckedChanged(object sender, EventArgs e)
         {
-            _migrate.Plan.Filter = false;            
+            if (filterNone.Checked)
+            {
+                _migrate.Plan.Filter = false;
+                _migrate.Plan.FilterType = FilterTypes.None;
+                _migrate.Plan.FilterDomains.Clear();
+                _migrate.Plan.FilterResellers.Clear();
+            }
         }
 
         private void stepSelectedPage_Commit(object sender, AeroWizard.WizardPageConfirmEventArgs e)
         {
             _migrate.Plan.DomainAliases = SelectAliases.Checked;
             _migrate.Plan.Domains = SelectDomains.Checked;
-            _migrate.Plan.Emails = SelectDomains.Checked;
+            _migrate.Plan.Emails = SelectEmails.Checked;
             _migrate.Plan.HostLimits = SelectHostLimits.Checked;
             _migrate.Plan.Resellers = SelectResellers.Checked;
+            _migrate.Plan.ResellerLimits = SelectResellerLimits.Checked;
             _migrate.Plan.Subdomains = SelectSubdomains.Checked;
+            _migrate.Plan.Databases = SelectDatabases.Checked;
+            _migrate.Plan.DnsRecords = SelectDnsRecords.Checked;
 
             _migrate.Plan.CopyDatabase = CopyDatabase.Checked;
             _migrate.Plan.CopyEmailFiles = CopyEmail.Checked;
@@ -511,6 +623,67 @@
 
             _migrate.Plan.DeletePackageAfterMoving = deleteAfterMoving.Checked;
         }
+
+        private void SelectResellers_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void SelectDomains_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonShowLogs_Click(object sender, EventArgs e)
+        {
+            var LogFilePath = Path.Combine(Environment.CurrentDirectory, "mpimport_log.html");
+
+            if (File.Exists(LogFilePath))
+            {
+                System.Diagnostics.Process.Start(LogFilePath);
+            }
+            else
+            {
+                MessageBox.Show("Log file not found: mpimport_log.html", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void label19_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void stepSource_Cancelling(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (MessageBox.Show("Are you sure cancel this operation?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.Yes)
+            {
+                if (!executeTask.IsCompleted && !executeTask.IsCanceled)
+                {                    
+                    buttonShowLogs.Enabled = true;
+
+                    MessageBox.Show("Operation cancelled", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    Application.Exit();
+                }
+            }
+        }
+
+        //private void stepSource_Cancelled(object sender, EventArgs e)
+        //{
+
+        //    MessageBox.Show("Cancel", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+        //    //if (MessageBox.Show("Are you sure cancel this operation?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.Yes)
+        //    //{
+        //    //    if (!executeTask.IsCompleted && !executeTask.IsCanceled)
+        //    //    {
+        //    //        cancelToken.ThrowIfCancellationRequested();
+        //    //        buttonShowLogs.Enabled = true;
+
+        //    //        MessageBox.Show("Operation cancelled", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        //    //    }
+        //    //}            
+        //}
+
     }
 
     static class ControlExtensions
@@ -532,6 +705,7 @@
                 control.Invoke(code);
                 return;
             }
+
             code.Invoke();
         }
     }

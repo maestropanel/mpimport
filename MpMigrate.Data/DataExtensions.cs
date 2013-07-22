@@ -12,10 +12,11 @@
 
         public static T GetColumnValue<T>(this IDataRecord record, string columnName, T defaultValue)
         {
-            object value = record[columnName];
+            object value = null;
 
             try
             {
+                value = record[columnName];
                            
                 if (value == null || value == DBNull.Value)
                 {
@@ -25,12 +26,13 @@
                 {                    
                     return (T)value;
                 }
-
             }
             catch (Exception ex)
             {
 
-                throw new Exception(String.Format("{0}, {1}, {2}", columnName, value.GetType().ToString(), ex.Message), ex);
+                throw new Exception(String.Format("{0}, {1}, {2}", columnName, 
+                                value != null ? value.GetType().ToString() : "Null-Object"
+                                , ex.Message), ex);
             }
         }
     }

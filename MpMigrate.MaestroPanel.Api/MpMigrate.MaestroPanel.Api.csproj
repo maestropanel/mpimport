@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -43,9 +46,15 @@
   <ItemGroup>
     <Compile Include="ApiClient.cs" />
     <Compile Include="ApiResult.cs" />
+    <Compile Include="Entity\DnsZoneRecord.cs" />
+    <Compile Include="Entity\DomainOperationsResult.cs" />
+    <Compile Include="Entity\LogEntry.cs" />
+    <Compile Include="Entity\ResellerOperationResult.cs" />
     <Compile Include="Entity\Whoami.cs" />
     <Compile Include="JsonHelper.cs" />
+    <Compile Include="LogHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XmlHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -8,7 +8,10 @@
     {
         public string Version()
         {
-            return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config","PRODUCT_VERSION");
+            if (Environment.Is64BitOperatingSystem)                
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\PLESK\PSA Config\Config", "PRODUCT_VERSION");
+            else
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "PRODUCT_VERSION");            
         }
 
         public string VhostPath()
@@ -59,34 +62,53 @@
         public string GetEmailPath()
         {
             var mailproviderPath = String.Empty;
-            var mailprovider = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "MAIL_PROVIDERW_DLL");
+
+            var mailprovider = Environment.Is64BitOperatingSystem 
+                ?  CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\PLESK\PSA Config\Config", "MAIL_PROVIDERW_DLL")
+                : CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "MAIL_PROVIDERW_DLL");
+
             var isMailEnable = mailprovider.EndsWith("mailenableproviderw.dll");
 
             if (isMailEnable)
-                mailproviderPath = Path.Combine(CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Mail Enable\Mail Enable", "Mail Root"),"{DOMAIN}","MAILROOT","{MAILBOX}");
+                mailproviderPath =  Path.Combine(CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\Mail Enable\Mail Enable", "Mail Root"), "{DOMAIN}", "MAILROOT", "{MAILBOX}");
 
             return mailproviderPath;
         }
 
         public DatabaseProviders GetDatabaseProvider()
         {
-            var providerName = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "PLESK_DATABASE_PROVIDER_NAME");
+            var providerName = String.Empty;
+
+            if (Environment.Is64BitOperatingSystem)
+                providerName = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\PLESK\PSA Config\Config", "PLESK_DATABASE_PROVIDER_NAME");
+            else
+                providerName = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "PLESK_DATABASE_PROVIDER_NAME");
+
             return PleskDatabaseProvider(providerName);
         }
 
         public string GetDatabaseHost()
-        {
-            return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "MySQL_DB_HOST");
+        {            
+            if (Environment.Is64BitOperatingSystem)                
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\PLESK\PSA Config\Config", "MySQL_DB_HOST");
+            else
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "MySQL_DB_HOST");
         }
 
         public int GetDatabasePort()
-        {
-            return int.Parse(CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "MySQL_DB_PORT"));
+        {            
+            if (Environment.Is64BitOperatingSystem)                
+                return int.Parse(CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\PLESK\PSA Config\Config", "MySQL_DB_PORT"));
+            else
+                return int.Parse(CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "MySQL_DB_PORT"));
         }
 
         public string GetDatabaseUsername()
         {
-            return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "PLESK_DATABASE_LOGIN");
+            if (Environment.Is64BitOperatingSystem)
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\PLESK\PSA Config\Config", "PLESK_DATABASE_LOGIN");
+            else
+               return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "PLESK_DATABASE_LOGIN");            
         }
 
         public string GetDatabasePassword()
@@ -96,7 +118,10 @@
 
         public string GetDatabaseName()
         {
-            return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "mySQLDBName");
+            if (Environment.Is64BitOperatingSystem)
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\PLESK\PSA Config\Config", "mySQLDBName");
+            else
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "mySQLDBName");            
         }
 
         public string GetDatabaseFile()
@@ -108,7 +133,13 @@
         {
             var installed = false;
             var check_environment = Environment.GetEnvironmentVariable("plesk_dir", EnvironmentVariableTarget.Machine);
-            var plesk_version = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "PRODUCT_VERSION");
+            
+            var plesk_version = String.Empty;
+
+            if (Environment.Is64BitOperatingSystem)
+                plesk_version = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\PLESK\PSA Config\Config", "PRODUCT_VERSION");
+            else
+                plesk_version = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "PRODUCT_VERSION");
 
             if (Directory.Exists(check_environment))                            
                 if (plesk_version.StartsWith("8.6"))

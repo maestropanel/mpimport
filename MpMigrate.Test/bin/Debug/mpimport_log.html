@@ -1,0 +1,77 @@
+	<table style="width:98%;border:1px solid #ECECEC;border-spacing:0;border-collapse:collapse;">
+                                        <tr>
+		                                    <td style="width:10%;text-align:center;vertical-align:middle;background-color:#d0f6c0">OK</td>
+		                                    <td>		
+			                                    <strong>Request</strong><br/>
+			                                    DELETE http://localhost:28411/Api/v1/Domain/Delete?key=1_9bd61d3da73040c3a8b214afb25e4656&format=XML&suppress_response_codes=false
+                                                <br/>
+                                                <strong>Parameters</strong>
+                                                <br/>
+                                                <blockquote>
+                                                    name: akamai.com
+                                                </blockquote>
+			                                    <hr>
+			                                    <strong>Response</strong><br/>
+                                                Http Status Code: 200 <br/>
+			                                    Error Code: 0 <br/>
+                                                Message: Domain deleted successfully: akamai.com <br/>
+			                                    </td>
+	                                    </tr>
+                                            </table><br/>	<table style="width:98%;border:1px solid #ECECEC;border-spacing:0;border-collapse:collapse;">
+                                        <tr>
+		                                    <td style="width:10%;text-align:center;vertical-align:middle;background-color:#d0f6c0">OK</td>
+		                                    <td>		
+			                                    <strong>Request</strong><br/>
+			                                    POST http://localhost:28411/Api/v1/Domain/AddDnsRecord?key=1_9bd61d3da73040c3a8b214afb25e4656&format=XML&suppress_response_codes=true
+                                                <br/>
+                                                <strong>Parameters</strong>
+                                                <br/>
+                                                <blockquote>
+                                                    name: bayidomain.com<br/>rec_type: A<br/>rec_name: mail<br/>rec_value: 10.0.0.2<br/>priority: 0
+                                                </blockquote>
+			                                    <hr>
+			                                    <strong>Response</strong><br/>
+                                                Http Status Code: 200 <br/>
+			                                    Error Code: 0 <br/>
+                                                Message: Record Added: mail <br/>
+			                                    </td>
+	                                    </tr>
+                                            </table><br/>	<table style="width:98%;border:1px solid #ECECEC;border-spacing:0;border-collapse:collapse;">
+                                        <tr>
+		                                    <td style="width:10%;text-align:center;vertical-align:middle;background-color:#d0f6c0">OK</td>
+		                                    <td>		
+			                                    <strong>Request</strong><br/>
+			                                    POST http://localhost:28411/Api/v1/Domain/Create?key=1_9bd61d3da73040c3a8b214afb25e4656&format=JSON&suppress_response_codes=false
+                                                <br/>
+                                                <strong>Parameters</strong>
+                                                <br/>
+                                                <blockquote>
+                                                    name: akamai.com<br/>planAlias: default<br/>username: akamai.com<br/>password: osman12!<br/>activedomainuser: True<br/>firstname: Hakan<br/>lastname: Akyol<br/>email: hakyol@mail.com<br/>expiration: 2014-07-19
+                                                </blockquote>
+			                                    <hr>
+			                                    <strong>Response</strong><br/>
+                                                Http Status Code: 200 <br/>
+			                                    Error Code: 0 <br/>
+                                                Message: Domain created successfully: akamai.com <br/>
+			                                    </td>
+	                                    </tr>
+                                            </table><br/>	<table style="width:98%;border:1px solid #ECECEC;border-spacing:0;border-collapse:collapse;">
+                                        <tr>
+		                                    <td style="width:10%;text-align:center;vertical-align:middle;background-color:#fabfbf">Error</td>
+		                                    <td>		
+			                                    <strong>Request</strong><br/>
+			                                    POST http://localhost:28411/Api/v1/Domain/ChangeReseller?key=1_9bd61d3da73040c3a8b214afb25e4656&format=XML&suppress_response_codes=true
+                                                <br/>
+                                                <strong>Parameters</strong>
+                                                <br/>
+                                                <blockquote>
+                                                    name: bayidomainx.com<br/>resellerName: c1982
+                                                </blockquote>
+			                                    <hr>
+			                                    <strong>Response</strong><br/>
+                                                Http Status Code: 403 <br/>
+			                                    Error Code: 7 <br/>
+                                                Message: Access Denied <br/>
+			                                    </td>
+	                                    </tr>
+                                            </table><br/>

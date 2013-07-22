@@ -49,6 +49,20 @@
             return obj;
         }
 
+        public static T JsonDeserialize(string jsonString, Type[] extraTypes)
+        {
+            //Convert "yyyy-MM-dd HH:mm:ss" String as "\/Date(1319266795390+0800)\/"
+            string p = @"\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}";
+            MatchEvaluator matchEvaluator = new MatchEvaluator(
+                ConvertDateStringToJsonDate);
+            Regex reg = new Regex(p);
+            jsonString = reg.Replace(jsonString, matchEvaluator);
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(T), extraTypes);
+            MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(jsonString));
+            T obj = (T)ser.ReadObject(ms);
+            return obj;
+        }
+
         /// <summary>
         /// Convert Serialization Time /Date(1319266795390+0800) as String
         /// </summary>
