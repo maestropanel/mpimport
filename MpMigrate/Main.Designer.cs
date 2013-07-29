@@ -328,7 +328,7 @@
             // 
             this.labelFinishCounter.AutoSize = true;
             this.labelFinishCounter.Font = new System.Drawing.Font("Segoe UI", 42F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelFinishCounter.Location = new System.Drawing.Point(206, 56);
+            this.labelFinishCounter.Location = new System.Drawing.Point(167, 56);
             this.labelFinishCounter.Name = "labelFinishCounter";
             this.labelFinishCounter.Size = new System.Drawing.Size(64, 74);
             this.labelFinishCounter.TabIndex = 8;

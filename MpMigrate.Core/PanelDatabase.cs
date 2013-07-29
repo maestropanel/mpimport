@@ -75,7 +75,9 @@
 
         private string MicrosoftAccessConnectionString()
         {
-            return String.Format("Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}", DataseFile);
+            return String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};User Id={1};Password={2};", DataseFile, Username, Password);
+            //return String.Format("Provider=Microsoft.Jet.OLEDB.4.0;Data Source={0}", DataseFile);
+            //return String.Format("Driver={{Microsoft Access Driver (*.mdb, *.accdb)}};Dbq={0}", DataseFile);            
         }
 
         private bool MicrosoftAccessConnectionTest(string connectionString, out string errormsg)
@@ -111,7 +113,6 @@
                 Username,
                 Password);
         }
-
 
         private bool MsSqlConnectionTest(string connectionString, out string errormsg)
         {

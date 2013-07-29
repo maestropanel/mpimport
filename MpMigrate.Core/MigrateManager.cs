@@ -74,8 +74,6 @@
 
         private List<Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>> variationList;
 
-        //private List<ApiResult<DomainOperationsResult>> domainLogs = new List<ApiResult<DomainOperationsResult>>();
-        //private List<ApiResult<ResellerOperationResult>> resellerLogs = new List<ApiResult<ResellerOperationResult>>();
 
         private int totalCount;
         private int errorCount;
@@ -361,6 +359,9 @@
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                                 (PanelTypes.Plesk_86, DatabaseProviders.MYSQL, new Plesk_86_MySql(), new Plesk_86_Discover()));
 
+            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery> 
+                            (PanelTypes.Plesk_95, DatabaseProviders.ACCESS, new Plesk_9_Access(), new Plesk_9_Discover()));
+
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                                 (PanelTypes.Plesk_11, DatabaseProviders.MYSQL, new Plesk_11_MySql(), new Plesk_11_Discover()));
         }
@@ -379,9 +380,7 @@
         private ApiAction CreateActionEventAndLogging(ApiResult<DomainOperationsResult> action)
         {
             if (action.ErrorCode != 0)
-                errorCount++;
-
-            //domainLogs.Add(action);
+                errorCount++;            
 
             return new ApiAction()
             {                
@@ -396,9 +395,7 @@
         private ApiAction CreateActionEventAndLogging(ApiResult<ResellerOperationResult> action)
         {
             if (action.ErrorCode != 0)
-                errorCount++;
-
-            //resellerLogs.Add(action);
+                errorCount++;            
 
             return new ApiAction()
             {

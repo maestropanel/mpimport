@@ -65,7 +65,7 @@
 
                 return;
             }
-
+            
             labelPanelVersion.Text = _migrate.CurrentPanel.Version();
 
             SelectSourcePanel(_migrate.PanelType);
