@@ -121,7 +121,7 @@
 
                             res.FirstName = DataExtensions.GetColumnValue<string>(_read, "pname");
 
-                            res.Password = securePassword ? DataHelper.GetPassword() : DataExtensions.GetColumnValue<string>(_read, "passwd");
+                            res.Password = securePassword ? DataHelper.GetPassword() : DataExtensions.GetColumnValue<string>(_read, "password");
                             res.Username = DataExtensions.GetColumnValue<string>(_read, "login");
                             res.Email = DataExtensions.GetColumnValue<string>(_read, "email");
                             res.Organization = DataExtensions.GetColumnValue<string>(_read, "cname");

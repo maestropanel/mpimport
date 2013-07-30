@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CoreHelper.cs" />
+    <Compile Include="Discovery\Plesk_10_Discover.cs" />
     <Compile Include="Discovery\Plesk_9_Discover.cs" />
     <Compile Include="Discovery\MaestroPanelDiscover.cs" />
     <Compile Include="Discovery\Plesk_11_Discover.cs" />
