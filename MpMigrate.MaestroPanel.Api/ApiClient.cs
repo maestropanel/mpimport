@@ -19,15 +19,27 @@
         private string _apiUri;
         private string _format;
         private bool _SuppressResponse;
+        private bool _SuppressDnsZoneIp;
+        private bool _GeneratePassword;
+
 
         private LogHelper _log;
 
-        public ApiClient(string ApiKey, string apiHostdomain, int port = 9715, bool ssl = false, string format = "JSON", bool suppressResponse = true)
+        public ApiClient(string ApiKey, 
+                string apiHostdomain, 
+                int port = 9715, 
+                bool ssl = false, 
+                string format = "JSON", 
+                bool suppressResponse = true, 
+                bool suppressDnsZoneIP = false, 
+                bool generatePassword = false)
         {
             this._format = format;
             this._apiKey = ApiKey;
             this._apiUri = String.Format("{2}://{0}:{1}/Api/v1", apiHostdomain, port, ssl ? "https" : "http");
             this._SuppressResponse = suppressResponse;
+            this._SuppressDnsZoneIp = suppressDnsZoneIP;
+            this._GeneratePassword = generatePassword;
 
             _log = new LogHelper();
         }
@@ -57,9 +69,14 @@
             return ExecuteDomainOperation("Domain/Stop", "POST", _args);
         }
 
-        public string GeneratePassword(int Length)
+        private string GeneratePassword(int Length)
         {
             return System.Web.Security.Membership.GeneratePassword(8, 2);
+        }
+
+        public string SetPassword(string password)
+        {
+            return _GeneratePassword ? GeneratePassword(8) : password;
         }
 
         public ApiResult<DomainOperationsResult> DomainCreate(string name, string planAlias, string username, string password, bool activedomainuser,
@@ -69,7 +86,7 @@
             _args.Add("name", name);
             _args.Add("planAlias", planAlias);
             _args.Add("username", username);
-            _args.Add("password", password);
+            _args.Add("password", SetPassword(password));
             _args.Add("activedomainuser", activedomainuser.ToString());
             _args.Add("firstname", firstName);
             _args.Add("lastname", lastName);
@@ -86,7 +103,7 @@
             var _args = new NameValueCollection();            
             _args.Add("name", name);
             _args.Add("account", account);
-            _args.Add("password", password);
+            _args.Add("password", SetPassword(password));
             _args.Add("quota", quota.ToString());
             _args.Add("redirect", redirect);
             _args.Add("remail", redirectEmail);
@@ -103,7 +120,7 @@
             _args.Add("dbtype", dbtype);
             _args.Add("database", database);
             _args.Add("username", username);
-            _args.Add("password", password);
+            _args.Add("password", SetPassword(password));
             _args.Add("quota", quota.ToString());
 
             return ExecuteDomainOperation("Domain/AddDatabase", "POST", _args);
@@ -129,7 +146,7 @@
             _args.Add("dbtype", dbtype);
             _args.Add("database", database);
             _args.Add("username", username);
-            _args.Add("password", password);
+            _args.Add("password", SetPassword(password));
             
             return ExecuteDomainOperation("Domain/AddDatabaseUser", "POST", _args);
         }
@@ -158,7 +175,7 @@
             var _args = new NameValueCollection();            
             _args.Add("name", name);
             _args.Add("account", account);
-            _args.Add("password", password);
+            _args.Add("password", SetPassword(password));
             _args.Add("homePath", homePath);
             _args.Add("ronly", ronly.ToString());
 
@@ -185,7 +202,7 @@
         {
             var _args = new NameValueCollection();            
             _args.Add("username", username);
-            _args.Add("password", password);
+            _args.Add("password", SetPassword(password));
             _args.Add("planAlias", planAlias);
             _args.Add("firstName", firstName);
             _args.Add("lastname", lastName);
@@ -284,7 +301,7 @@
             _args.Add(new KeyValuePair<string, string>("soa_retry", soa_retry.ToString()));
             _args.Add(new KeyValuePair<string, string>("soa_serial", soa_serial.ToString()));
             _args.Add(new KeyValuePair<string, string>("primaryServer", primaryServer));
-            _args.Add(new KeyValuePair<string, string>("suppress_host_ip", "false"));
+            _args.Add(new KeyValuePair<string, string>("suppress_host_ip", _SuppressDnsZoneIp.ToString()));
 
             foreach (var item in records)
                 _args.Add(new KeyValuePair<string, string>("record", String.Format("{0},{1},{2},{3}", item.name, item.type, item.value, item.priority)));                        

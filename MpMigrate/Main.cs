@@ -622,6 +622,11 @@
             _migrate.Plan.CopyHttpFiles = CopyDomain.Checked;
 
             _migrate.Plan.DeletePackageAfterMoving = deleteAfterMoving.Checked;
+            _migrate.Plan.MiscGeneratePassword = MiscGeneratePassword.Checked;
+
+            _migrate.Api = new ApiClient(_migrate.Plan.Destination.ApiKey, _migrate.Plan.Destination.ApiHost,
+                                            _migrate.Plan.Destination.ApiPort, _migrate.Plan.Destination.UseHttps,
+                                            defaultApiFormat, apiSuppressStatusCode, generatePassword: MiscGeneratePassword.Checked);
         }
 
         private void SelectResellers_CheckedChanged(object sender, EventArgs e)

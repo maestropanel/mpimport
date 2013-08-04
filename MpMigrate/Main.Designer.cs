@@ -55,6 +55,8 @@
             this.label11 = new System.Windows.Forms.Label();
             this.progressBarFinish = new System.Windows.Forms.ProgressBar();
             this.stepSelectedPage = new AeroWizard.WizardPage();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.MiscGeneratePassword = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.filterNone = new System.Windows.Forms.RadioButton();
             this.filterReseller = new System.Windows.Forms.RadioButton();
@@ -128,6 +130,7 @@
             this.wizardPage1.SuspendLayout();
             this.stepFinishPage.SuspendLayout();
             this.stepSelectedPage.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -398,6 +401,7 @@
             // stepSelectedPage
             // 
             this.stepSelectedPage.AllowCancel = false;
+            this.stepSelectedPage.Controls.Add(this.groupBox5);
             this.stepSelectedPage.Controls.Add(this.groupBox6);
             this.stepSelectedPage.Controls.Add(this.groupBox1);
             this.stepSelectedPage.Controls.Add(this.groupBox4);
@@ -408,6 +412,26 @@
             this.stepSelectedPage.TabIndex = 4;
             this.stepSelectedPage.Text = "Select Items";
             this.stepSelectedPage.Commit += new System.EventHandler<AeroWizard.WizardPageConfirmEventArgs>(this.stepSelectedPage_Commit);
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.MiscGeneratePassword);
+            this.groupBox5.Location = new System.Drawing.Point(14, 259);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(465, 51);
+            this.groupBox5.TabIndex = 1;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Misc";
+            // 
+            // MiscGeneratePassword
+            // 
+            this.MiscGeneratePassword.AutoSize = true;
+            this.MiscGeneratePassword.Location = new System.Drawing.Point(18, 22);
+            this.MiscGeneratePassword.Name = "MiscGeneratePassword";
+            this.MiscGeneratePassword.Size = new System.Drawing.Size(153, 19);
+            this.MiscGeneratePassword.TabIndex = 0;
+            this.MiscGeneratePassword.Text = "Generate New Password";
+            this.MiscGeneratePassword.UseVisualStyleBackColor = true;
             // 
             // groupBox6
             // 
@@ -582,7 +606,7 @@
             // deleteAfterMoving
             // 
             this.deleteAfterMoving.AutoSize = true;
-            this.deleteAfterMoving.Location = new System.Drawing.Point(319, 28);
+            this.deleteAfterMoving.Location = new System.Drawing.Point(334, 28);
             this.deleteAfterMoving.Name = "deleteAfterMoving";
             this.deleteAfterMoving.Size = new System.Drawing.Size(130, 19);
             this.deleteAfterMoving.TabIndex = 16;
@@ -592,7 +616,7 @@
             // CopyDatabase
             // 
             this.CopyDatabase.AutoSize = true;
-            this.CopyDatabase.Location = new System.Drawing.Point(209, 28);
+            this.CopyDatabase.Location = new System.Drawing.Point(218, 28);
             this.CopyDatabase.Name = "CopyDatabase";
             this.CopyDatabase.Size = new System.Drawing.Size(74, 19);
             this.CopyDatabase.TabIndex = 0;
@@ -602,7 +626,7 @@
             // CopyEmail
             // 
             this.CopyEmail.AutoSize = true;
-            this.CopyEmail.Location = new System.Drawing.Point(107, 28);
+            this.CopyEmail.Location = new System.Drawing.Point(121, 28);
             this.CopyEmail.Name = "CopyEmail";
             this.CopyEmail.Size = new System.Drawing.Size(55, 19);
             this.CopyEmail.TabIndex = 0;
@@ -738,6 +762,7 @@
             this.textPlanName.Name = "textPlanName";
             this.textPlanName.Size = new System.Drawing.Size(231, 23);
             this.textPlanName.TabIndex = 5;
+            this.textPlanName.Text = "default";
             // 
             // label8
             // 
@@ -1163,6 +1188,8 @@
             this.stepFinishPage.ResumeLayout(false);
             this.stepFinishPage.PerformLayout();
             this.stepSelectedPage.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -1274,6 +1301,8 @@
         private System.Windows.Forms.CheckBox deleteAfterMoving;
         private System.Windows.Forms.Button buttonShowLogs;
         private System.Windows.Forms.CheckBox SelectResellerLimits;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.CheckBox MiscGeneratePassword;
 
     }
 }

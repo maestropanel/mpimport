@@ -36,7 +36,7 @@
                                                                 LEFT JOIN accounts ON accounts.id = sys_users.account_id
                                                                 LEFT JOIN clients ON clients.id = domains.cl_id
                                                                 LEFT JOIN dom_level_usrs ON dom_level_usrs.dom_id = domains.id
-                                                                LEFT JOIN limits ON domains.limits_id = limits.id AND limits.limit_name = 'expiration'", _conn))
+                                                                LEFT JOIN limits ON domains.limits_id = limits.id AND limits.limit_name = 'expiration' ORDER BY domains.name", _conn))
                 {
                     using (MySqlDataReader _read = _cmd.ExecuteReader())
                     {
@@ -148,13 +148,22 @@
                             _d.Name = DataExtensions.GetColumnValue<string>(_read, "limit_name");
 
                             var LimitValue = DataExtensions.GetColumnValue<Int64>(_read, "value");
+
                             if (_d.Name == "disk_space" || _d.Name == "max_traffic" || _d.Name == "mbox_quota"
-                                || _d.Name == "mssql_dbase_space" || _d.Name == "mysql_dbase_space")
+                                || _d.Name == "mssql_dbase_space" || _d.Name == "mysql_dbase_space" 
+                                || _d.Name == "max_traffic_soft" || _d.Name == "disk_space_soft")
                             {
                                 _d.Value = (int)((LimitValue / 1024) / 1024);
                             }
+                            else if (_d.Name == "expiration")
+                            {
+
+                            }
                             else
                             {
+                                if(LimitValue > int.MaxValue)
+                                    throw new InvalidCastException(_d.Name +": "+ LimitValue.ToString());
+
                                 _d.Value = Convert.ToInt32(LimitValue);
                             }
 
@@ -298,7 +307,7 @@
                             var _d = new DomainAlias();
                             _d.Domain = DataExtensions.GetColumnValue<String>(_read, "domain");
                             _d.Alias = DataExtensions.GetColumnValue<String>(_read, "alias");
-                            _d.Status = DataExtensions.GetColumnValue<long>(_read, "status");
+                            _d.Status = Convert.ToInt64(DataExtensions.GetColumnValue<UInt64>(_read, "status"));
 
                             _tmp.Add(_d);
                         }
@@ -385,7 +394,11 @@
             using (MySqlConnection _conn = new MySqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT  subdomains.name, domains.name AS domain, sys_users.login, accounts.password
+                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT  
+                                                                subdomains.name, 
+                                                                domains.name AS domain, 
+                                                                sys_users.login, 
+                                                                accounts.password
                                                                 FROM accounts RIGHT OUTER JOIN
                                                         sys_users ON accounts.id = sys_users.account_id RIGHT OUTER JOIN
                                                         subdomains ON sys_users.id = subdomains.sys_user_id LEFT OUTER JOIN
@@ -403,7 +416,7 @@
                             _d.Login = DataExtensions.GetColumnValue<string>(_read, "login");
                             _d.Password = securePassword ? DataHelper.GetPassword() : DataExtensions.GetColumnValue<string>(_read, "password");
                             _d.Name = DataExtensions.GetColumnValue<string>(_read, "name");
-                            _d.UserType = DataExtensions.GetColumnValue<string>(_read, "sys_user_type");
+                            _d.UserType = "";
 
                             _tmp.Add(_d);
                         }
@@ -551,9 +564,11 @@
                             var _d = new LimitRow();
                             _d.Name = DataExtensions.GetColumnValue<string>(_read, "limit_name");                            
 
-                            var LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<string>(_read, "value"));
+                            var LimitValue = DataExtensions.GetColumnValue<Int64>(_read, "value");
 
-                            if (_d.Name == "disk_space" || _d.Name == "max_traffic" || _d.Name == "mbox_quota" || _d.Name == "total_mboxes_quota")
+                            if (_d.Name == "disk_space" || _d.Name == "max_traffic" || _d.Name == "mbox_quota"
+                                || _d.Name == "mssql_dbase_space" || _d.Name == "mysql_dbase_space" 
+                                || _d.Name == "max_traffic_soft" || _d.Name == "disk_space_soft")
                             {
                                 _d.Value = (int)((LimitValue / 1024) / 1024);
                             }

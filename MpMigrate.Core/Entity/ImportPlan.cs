@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-namespace MpMigrate.Core.Entity
+﻿namespace MpMigrate.Core.Entity
 {
+    using System.Collections.Generic;
+
     public class ImportPlan
     {
         public bool Domains { get; set; }
@@ -20,6 +21,7 @@ namespace MpMigrate.Core.Entity
         public bool CopyDatabase { get; set; }
 
         public bool DeletePackageAfterMoving { get; set; }
+        public bool MiscGeneratePassword { get; set; }
 
         public bool Filter { get; set; }
 
