@@ -410,7 +410,10 @@
         private ApiAction CreateActionEventAndLogging(ApiResult<DomainOperationsResult> action)
         {
             if (action.ErrorCode != 0)
-                errorCount++;            
+                errorCount++;
+
+            if (action == null)
+                return new ApiAction() { Count = totalCount, ErrorCode = -1, DomainName = "Unknown", ErrorCount = errorCount, Message = "Action is null" };
 
             return new ApiAction()
             {                

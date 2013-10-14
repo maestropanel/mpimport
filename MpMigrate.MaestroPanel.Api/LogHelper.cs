@@ -40,6 +40,15 @@
             AddRow(url, method, Explode(_parameters), result.ErrorCode, result.Message, result.StatusCode);
         }
 
+        public void WriteLog(string url, string method, List<KeyValuePair<string, string>> _parameters, string result)
+        {
+            AddRow(url, method, Explode(_parameters), -1, result, -1);
+        }
+
+        public void WriteLog(string url, string method, NameValueCollection _parameters, string result)
+        {
+            AddRow(url, method, Explode(_parameters), -1, result, -1);
+        }
 
         private void AddRow(string url, string method, string request, int errorCode, string message, int statusCode)
         {

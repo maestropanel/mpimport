@@ -376,7 +376,15 @@
             return ExecuteDomainOperation("Domain/DeleteDnsRecord", "POST", _args);
         }
 
+        public ApiResult<DomainOperationsResult> ChangeEmailPassword(string name, string account, string newpassword)
+        {
+            var _args = new NameValueCollection();
+            _args.Add("name", name);
+            _args.Add("account", account);
+            _args.Add("newpassword", newpassword);
 
+            return ExecuteDomainOperation("Domain/ChangeMailBoxPassword", "POST", _args);
+        }
 
 
         #region Privates
@@ -500,6 +508,7 @@
         private T SendApi<T>(string action, string method, NameValueCollection _parameters, Type[] extraTypes, out string RequestUri)
         {
             var _result = default(T);
+
             var contentType = String.Empty;
 
             if (method == "GET")
@@ -518,21 +527,29 @@
 
             RequestUri = _uri.ToString();
 
-            HttpWebRequest request = WebRequest.Create(_uri) as HttpWebRequest;
-            request.Method = method;
-            request.Timeout = 240 * 1000;
-            request.ContentType = "application/x-www-form-urlencoded";
+            try
+            {
+                HttpWebRequest request = WebRequest.Create(_uri) as HttpWebRequest;
+                request.Method = method;
+                request.Timeout = 240 * 1000;
+                request.ContentType = "application/x-www-form-urlencoded";
 
-            if (method != "GET")
-                WriteData(ref request, _parameters);
+                if (method != "GET")
+                    WriteData(ref request, _parameters);
 
-            var _responseText = GetData(request, out contentType);
+                var _responseText = GetData(request, out contentType);
 
-            if (_format == "JSON")
-                _result = JsonConvert.DeserializeObject<T>(_responseText, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects });
-            else
-                _result = XmlHelper.DeSerializeObject<T>(_responseText);
-            
+                if (_format == "JSON")
+                    _result = JsonConvert.DeserializeObject<T>(_responseText, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects });
+                else
+                    _result = XmlHelper.DeSerializeObject<T>(_responseText);
+
+            }
+            catch (Exception ex)
+            {
+                _log.WriteLog(RequestUri, method, _parameters, String.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+            }
+
             return _result;
         }
 
@@ -558,21 +575,28 @@
 
             RequestUri = _uri.ToString();
 
-            HttpWebRequest request = WebRequest.Create(_uri) as HttpWebRequest;
-            request.Method = method;
-            request.Timeout = 240 * 1000;
-            request.ContentType = "application/x-www-form-urlencoded";
+            try
+            {           
+                HttpWebRequest request = WebRequest.Create(_uri) as HttpWebRequest;
+                request.Method = method;
+                request.Timeout = 240 * 1000;
+                request.ContentType = "application/x-www-form-urlencoded";
             
+                if (method != "GET")
+                    WriteData(ref request, _parameters);
 
-            if (method != "GET")
-                WriteData(ref request, _parameters);
+                var _responseText = GetData(request, out contentType);
 
-            var _responseText = GetData(request, out contentType);
+                if (_format == "JSON")
+                    _result = JsonConvert.DeserializeObject<T>(_responseText, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects });
+                else
+                    _result = XmlHelper.DeSerializeObject<T>(_responseText);
 
-            if (_format == "JSON")
-                _result = JsonConvert.DeserializeObject<T>(_responseText, new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects });
-            else
-                _result = XmlHelper.DeSerializeObject<T>(_responseText);
+            }
+            catch (Exception ex)
+            {
+                _log.WriteLog(RequestUri, method, _parameters, String.Format("{0}\r\n{1}", ex.Message, ex.StackTrace));
+            }
 
             return _result;
         }

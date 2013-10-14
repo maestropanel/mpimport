@@ -68,8 +68,13 @@
                                 _d.Password = DataHelper.GetPassword();
 
                             _d.Status = Convert.ToInt64(DataExtensions.GetColumnValue<ulong>(_read, "Status"));
+                            var expirationString = String.Empty;
 
-                            var expirationString = DataExtensions.GetColumnValue<string>(_read, "expiration");
+                            if (_read["expiration"] is System.Int64)
+                                expirationString = DataExtensions.GetColumnValue<Int64>(_read, "expiration").ToString();
+                            else
+                                expirationString = DataExtensions.GetColumnValue<string>(_read, "expiration");
+
                             var expirationUnitTime = String.IsNullOrEmpty(expirationString) ? -1D : Convert.ToDouble(expirationString);
                             if (expirationUnitTime != -1)
                                 _d.Expiration = DataHelper.UnixTimeStampToDateTime(expirationUnitTime);   
@@ -163,7 +168,11 @@
                             var _d = new DomainAlias();
                             _d.Domain = DataExtensions.GetColumnValue<String>(_read, "domain");
                             _d.Alias = DataExtensions.GetColumnValue<String>(_read, "alias");
-                            _d.Status = DataExtensions.GetColumnValue<long>(_read, "status");
+
+                            if(_read["status"] is System.UInt64)
+                                _d.Status = Convert.ToInt64(DataExtensions.GetColumnValue<UInt64>(_read, "status"));
+                            else
+                                _d.Status = DataExtensions.GetColumnValue<long>(_read, "status");
 
                             _tmp.Add(_d);
                         }
@@ -260,7 +269,12 @@
                             var _d = new LimitRow();
                             _d.Name = DataExtensions.GetColumnValue<string>(_read, "limit_name");
 
-                            var LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<string>(_read, "value"));
+                            var LimitValue = 0L;
+
+                            if (_read["value"] is System.Int64)
+                                LimitValue = DataExtensions.GetColumnValue<Int64>(_read, "value");
+                            else
+                                LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<string>(_read, "value"));
 
                             if (_d.Name == "disk_space" || _d.Name == "max_traffic" || _d.Name == "mbox_quota"
                                 || _d.Name == "mssql_dbase_space" || _d.Name == "mysql_dbase_space")
@@ -511,7 +525,8 @@
             using (MySqlConnection _conn = new MySqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT L.limit_name, L.value FROM clients C LEFT JOIN limits L ON L.id = C.limits_id WHERE C.login = @NAME", _conn))
+                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT L.limit_name, L.value FROM clients 
+                                                                        C LEFT JOIN limits L ON L.id = C.limits_id WHERE C.login = @NAME", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@NAME", clientName);
 
@@ -522,7 +537,11 @@
                             var _d = new LimitRow();
                             _d.Name = DataExtensions.GetColumnValue<string>(_read, "limit_name");
 
-                            var LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<string>(_read, "value"));                            
+                            var LimitValue = 0L;
+                            if (_read["value"] is System.Int64)
+                                LimitValue = DataExtensions.GetColumnValue<Int64>(_read, "value");
+                            else
+                                LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<string>(_read, "value"));                            
 
                             if (_d.Name == "disk_space" || _d.Name == "max_traffic" || _d.Name == "mbox_quota" || _d.Name == "total_mboxes_quota")
                             {

@@ -160,7 +160,7 @@
                             var _d = new DomainAlias();
                             _d.Domain = DataExtensions.GetColumnValue<String>(_read, "domain");
                             _d.Alias = DataExtensions.GetColumnValue<String>(_read, "alias");
-                            _d.Status = DataExtensions.GetColumnValue<long>(_read, "status");
+                            //_d.Status = DataExtensions.GetColumnValue<long>(_read, "status");
 
                             _tmp.Add(_d);
                         }
@@ -358,6 +358,7 @@
         public override List<DnsZoneRecord> GetZoneRecords(string domainName)
         {            
             var _tmp = new List<DnsZoneRecord>();
+            var priority = 0;
 
             using (MySqlConnection _conn = new MySqlConnection(connectionString))
             {
@@ -386,10 +387,15 @@
                             _d.value = DataExtensions.GetColumnValue<string>(_read, "val").ToLower();
 
                             var options = DataExtensions.GetColumnValue<string>(_read, "opt");
+
                             if (!String.IsNullOrEmpty(options))
-                                _d.priority = Convert.ToInt32(options);
+                                if (int.TryParse(options, out priority))
+                                    _d.priority = priority;
+                                else
+                                    _d.priority = 0;
                             else
                                 _d.priority = 0;
+
                             _tmp.Add(_d);
                         }
                     }
@@ -524,7 +530,13 @@
                             _d.Name = DataExtensions.GetColumnValue<string>(_read, "limit_name");
                             //_d.Value = Convert.ToInt32(DataExtensions.GetColumnValue<Int64>(_read, "value"));
 
-                            var LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<string>(_read, "value"));
+                            long LimitValue = -1;
+
+                            if (_read["value"] is System.Int64)                            
+                                LimitValue = DataExtensions.GetColumnValue<Int64>(_read, "value");                            
+                            else                            
+                                LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<string>(_read, "value"));
+                                                        
 
                             if (_d.Name == "disk_space" || _d.Name == "max_traffic" || _d.Name == "mbox_quota" || _d.Name == "total_mboxes_quota")
                             {
