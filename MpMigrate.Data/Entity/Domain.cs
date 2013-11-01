@@ -26,8 +26,7 @@
 
 
         public Domain()
-        {
-            
+        {            
             Aliases = new List<DomainAlias>();
             Subdomains = new List<Subdomain>();
             Emails = new List<Email>();

@@ -22,7 +22,6 @@
         private bool _SuppressDnsZoneIp;
         private bool _GeneratePassword;
 
-
         private LogHelper _log;
 
         public ApiClient(string ApiKey, 

@@ -119,6 +119,9 @@
                 case "MaestroPanel":
                     ptype = PanelTypes.MaestroPanel;
                     break;
+                case "Entrenix":
+                    ptype = PanelTypes.Entrenix;
+                    break;
             }
 
             return ptype;
@@ -172,6 +175,7 @@
                     comboSourceDatabase.SelectedIndex = comboSourceDatabase.FindStringExact("SQLCE");
                     break;
                 case DatabaseProviders.ACCESS:
+                case DatabaseProviders.ACCESS_ODBC:
                     comboSourceDatabase.SelectedIndex = comboSourceDatabase.FindStringExact("MS Access");
                     break;
                 default:
@@ -204,6 +208,9 @@
                     break;
                 case PanelTypes.Plesk_10:
                     comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 10.x");
+                    break;
+                case PanelTypes.Entrenix:
+                    comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Entrenix");
                     break;
                 default:
                     break;

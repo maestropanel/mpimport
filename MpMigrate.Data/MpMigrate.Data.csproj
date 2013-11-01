@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MailEnable.Administration">
+      <HintPath>..\MailEnable.Administration.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data, Version=6.6.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MySql.Data.dll</HintPath>
@@ -44,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dal\Entrenix_Access.cs" />
+    <Compile Include="Dal\MaestroPanel_MsSQL.cs" />
     <Compile Include="Dal\Plesk_10_MySql.cs" />
     <Compile Include="Dal\Plesk_9_Access.cs" />
     <Compile Include="Dal\Plesk_11_MySql.cs" />

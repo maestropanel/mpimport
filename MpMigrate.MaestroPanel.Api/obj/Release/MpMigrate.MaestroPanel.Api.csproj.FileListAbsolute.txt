@@ -1,0 +1,6 @@
+O:\Projects\MpImport\MpMigrate.MaestroPanel.Api\bin\Release\MpMigrate.MaestroPanel.Api.dll
+O:\Projects\MpImport\MpMigrate.MaestroPanel.Api\bin\Release\MpMigrate.MaestroPanel.Api.pdb
+O:\Projects\MpImport\MpMigrate.MaestroPanel.Api\bin\Release\Newtonsoft.Json.dll
+O:\Projects\MpImport\MpMigrate.MaestroPanel.Api\obj\Release\MpMigrate.MaestroPanel.Api.csprojResolveAssemblyReference.cache
+O:\Projects\MpImport\MpMigrate.MaestroPanel.Api\obj\Release\MpMigrate.MaestroPanel.Api.dll
+O:\Projects\MpImport\MpMigrate.MaestroPanel.Api\obj\Release\MpMigrate.MaestroPanel.Api.pdb

@@ -1066,7 +1066,8 @@
             "Plesk 10.x",
             "Plesk 9.x",
             "Plesk 8.x",
-            "MaestroPanel"});
+            "MaestroPanel",
+            "Entrenix"});
             this.comboSourcePanel.Location = new System.Drawing.Point(6, 20);
             this.comboSourcePanel.Name = "comboSourcePanel";
             this.comboSourcePanel.Size = new System.Drawing.Size(223, 23);
