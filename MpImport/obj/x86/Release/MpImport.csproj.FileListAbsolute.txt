@@ -7,8 +7,4 @@ O:\Projects\MpImport\MpImport\obj\x86\Release\mpimport.exe
 O:\Projects\MpImport\MpImport\obj\x86\Release\mpimport.pdb
 O:\Projects\MpImport\MpImport\bin\Release\MailEnable.Administration.dll
 O:\Projects\MpImport\MpImport\bin\Release\Ionic.Zip.dll
-O:\Projects\MpImport\MpImport\bin\Release\Microsoft.SqlServer.ConnectionInfo.dll
-O:\Projects\MpImport\MpImport\bin\Release\Microsoft.SqlServer.Management.Sdk.Sfc.dll
-O:\Projects\MpImport\MpImport\bin\Release\Microsoft.SqlServer.Smo.dll
-O:\Projects\MpImport\MpImport\bin\Release\Microsoft.SqlServer.SqlEnum.dll
-O:\Projects\MpImport\MpImport\bin\Release\MySqlBackup.dll
+O:\Projects\MpImport\MpImport\obj\x86\Release\MpImport.csprojResolveAssemblyReference.cache

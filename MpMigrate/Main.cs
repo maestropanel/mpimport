@@ -65,7 +65,9 @@
 
                 return;
             }
-            
+
+            //MessageBox.Show(_migrate.SourceDatabase.ConnectionString());
+
             labelPanelVersion.Text = _migrate.CurrentPanel.Version();
 
             SelectSourcePanel(_migrate.PanelType);

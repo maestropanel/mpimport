@@ -7,7 +7,7 @@
     public class Plesk_86_Discover : IDiscovery
     {
         public string Version()
-        {
+        {            
             if (Environment.Is64BitOperatingSystem)                
                 return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\PLESK\PSA Config\Config", "PRODUCT_VERSION");
             else
@@ -35,6 +35,9 @@
                     break;
                 case "MsSQL":
                     provider = DatabaseProviders.MSSQL;
+                    break;
+                case "Jet":
+                    provider = DatabaseProviders.ACCESS;
                     break;
             }
 
@@ -96,11 +99,23 @@
         }
 
         public int GetDatabasePort()
-        {            
+        {
+            var portNumberStr = String.Empty;
+
             if (Environment.Is64BitOperatingSystem)                
-                return int.Parse(CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\PLESK\PSA Config\Config", "MySQL_DB_PORT"));
+                portNumberStr = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\PLESK\PSA Config\Config", "MySQL_DB_PORT");
             else
-                return int.Parse(CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "MySQL_DB_PORT"));
+                portNumberStr = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "MySQL_DB_PORT");
+
+            if (String.IsNullOrEmpty(portNumberStr))
+                return 0;
+            else
+            {
+                int portNumber = 0;
+                int.TryParse(portNumberStr, out portNumber);
+
+                return portNumber;
+            }
         }
 
         public string GetDatabaseUsername()
@@ -126,7 +141,10 @@
 
         public string GetDatabaseFile()
         {
-            return "";
+            if (Environment.Is64BitOperatingSystem)
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\PLESK\PSA Config\Config", "mySQLDBName");
+            else
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "mySQLDBName");    
         }
 
         public bool isInstalled()

@@ -74,52 +74,55 @@
             var errorMsg = String.Empty;
             var currentPort = 0;
 
-            if (String.IsNullOrEmpty(textBoxHost.Text))
+            if (Provider == DatabaseProviders.MSSQL || Provider == DatabaseProviders.MYSQL)
             {
-                MessageBox.Show("Host cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxHost.Focus();
+                if (String.IsNullOrEmpty(textBoxHost.Text))
+                {
+                    MessageBox.Show("Host cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBoxHost.Focus();
 
-                return;
-            }
+                    return;
+                }
 
-            if (!int.TryParse(textBoxPort.Text, out currentPort))
-            {
-                MessageBox.Show("Invlid Port Number", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxPort.Focus();
+                if (!int.TryParse(textBoxPort.Text, out currentPort))
+                {
+                    MessageBox.Show("Invlid Port Number", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBoxPort.Focus();
 
-                return;
-            }
+                    return;
+                }
 
-            if (String.IsNullOrEmpty(textBoxDatabase.Text))
-            {
-                MessageBox.Show("Database Name cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxDatabase.Focus();
+                if (String.IsNullOrEmpty(textBoxDatabase.Text))
+                {
+                    MessageBox.Show("Database Name cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBoxDatabase.Focus();
 
-                return;
-            }
+                    return;
+                }
 
-            if (String.IsNullOrEmpty(textBoxDatabase.Text))
-            {
-                MessageBox.Show("Database Name cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxDatabase.Focus();
+                if (String.IsNullOrEmpty(textBoxDatabase.Text))
+                {
+                    MessageBox.Show("Database Name cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBoxDatabase.Focus();
 
-                return;
-            }
+                    return;
+                }
 
-            if (String.IsNullOrEmpty(textBoxUsername.Text))
-            {
-                MessageBox.Show("User Name cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxUsername.Focus();
+                if (String.IsNullOrEmpty(textBoxUsername.Text))
+                {
+                    MessageBox.Show("User Name cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBoxUsername.Focus();
 
-                return;
-            }
+                    return;
+                }
 
-            if (String.IsNullOrEmpty(textBoxPassword.Text))
-            {
-                MessageBox.Show("Password cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxPassword.Focus();
+                if (String.IsNullOrEmpty(textBoxPassword.Text))
+                {
+                    MessageBox.Show("Password cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBoxPassword.Focus();
 
-                return;
+                    return;
+                }
             }
 
             SetSourceDatabaseType();
@@ -181,52 +184,56 @@
         {
             var currentPort = 0;
 
-            if (String.IsNullOrEmpty(textBoxHost.Text))
+            if (Provider == DatabaseProviders.MSSQL || Provider == DatabaseProviders.MYSQL)
             {
-                MessageBox.Show("Host cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxHost.Focus();
-                
-                return;
-            }
+                if (String.IsNullOrEmpty(textBoxHost.Text))
+                {
+                    MessageBox.Show("Host cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBoxHost.Focus();
 
-            if (!int.TryParse(textBoxPort.Text, out currentPort))
-            {
-                MessageBox.Show("Invalid Port Number", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxPort.Focus();
+                    return;
+                }
 
-                return;
-            }
+                if (!int.TryParse(textBoxPort.Text, out currentPort))
+                {
+                    MessageBox.Show("Invalid Port Number", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBoxPort.Focus();
 
-            if (String.IsNullOrEmpty(textBoxDatabase.Text))
-            {
-                MessageBox.Show("Database Name cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxDatabase.Focus();
+                    return;
+                }
 
-                return;
-            }
+                if (String.IsNullOrEmpty(textBoxDatabase.Text))
+                {
+                    MessageBox.Show("Database Name cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBoxDatabase.Focus();
 
-            if (String.IsNullOrEmpty(textBoxDatabase.Text))
-            {
-                MessageBox.Show("Database Name cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxDatabase.Focus();
+                    return;
+                }
 
-                return;
-            }
+                if (String.IsNullOrEmpty(textBoxDatabase.Text))
+                {
+                    MessageBox.Show("Database Name cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBoxDatabase.Focus();
 
-            if (String.IsNullOrEmpty(textBoxUsername.Text))
-            {
-                MessageBox.Show("User Name cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxUsername.Focus();
+                    return;
+                }
 
-                return;
-            }
+                if (String.IsNullOrEmpty(textBoxUsername.Text))
+                {
+                    MessageBox.Show("User Name cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBoxUsername.Focus();
 
-            if (String.IsNullOrEmpty(textBoxPassword.Text))
-            {
-                MessageBox.Show("Password cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                textBoxPassword.Focus();
-                
-                return;
+                    return;
+                }
+
+                if (String.IsNullOrEmpty(textBoxPassword.Text))
+                {
+                    MessageBox.Show("Password cannot be null", "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    textBoxPassword.Focus();
+
+                    return;
+                }
+
             }
 
             SetConnectionParams();            
@@ -242,12 +249,16 @@
 
         private void SetConnectionParams()
         {
+            int portNumber = 0;
+
             Host = textBoxHost.Text;
             Username = textBoxUsername.Text;
             Password = textBoxPassword.Text;
             DatabaseFile = textboxDatabaseFile.Text;
             DatabaseName = textBoxDatabase.Text;
-            Port = int.Parse(textBoxPort.Text);
+
+            if(int.TryParse(textBoxPort.Text, out portNumber))
+                Port = portNumber;
         }
     }
 }

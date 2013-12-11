@@ -35,7 +35,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MailEnable.Administration">
+      <HintPath>..\MailEnable.Administration.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MySql.Data, Version=5.2.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Newtonsoft.Json.dll</HintPath>
@@ -65,9 +72,14 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ApiClientTest.cs" />
+    <Compile Include="Plesk_86_AccessTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MpMigrate.Data\MpMigrate.Data.csproj">
+      <Project>{B8BA0694-648E-4FFF-9570-925A33A57FD9}</Project>
+      <Name>MpMigrate.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MpMigrate.MaestroPanel.Api\MpMigrate.MaestroPanel.Api.csproj">
       <Project>{8A4B7361-268F-422B-9701-E971BFBF2B0E}</Project>
       <Name>MpMigrate.MaestroPanel.Api</Name>

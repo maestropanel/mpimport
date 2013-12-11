@@ -1,0 +1,12 @@
+O:\Projects\MpImport\MpMigrate.Test\bin\Release\MpMigrate.Test.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Release\MpMigrate.Test.pdb
+O:\Projects\MpImport\MpMigrate.Test\bin\Release\MailEnable.Administration.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Release\MpMigrate.Data.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Release\MpMigrate.MaestroPanel.Api.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Release\MySql.Data.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Release\Newtonsoft.Json.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Release\MpMigrate.Data.pdb
+O:\Projects\MpImport\MpMigrate.Test\bin\Release\MpMigrate.MaestroPanel.Api.pdb
+O:\Projects\MpImport\MpMigrate.Test\obj\Release\MpMigrate.Test.csprojResolveAssemblyReference.cache
+O:\Projects\MpImport\MpMigrate.Test\obj\Release\MpMigrate.Test.dll
+O:\Projects\MpImport\MpMigrate.Test\obj\Release\MpMigrate.Test.pdb

@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MpMigrate.Core")]
+[assembly: AssemblyTitle("MaestroPanel Migration Tool")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MpMigrate.Core")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyCompany("MaestroPanel")]
+[assembly: AssemblyProduct("MaestroPanel Migration Tool")]
+[assembly: AssemblyCopyright("Copyright ©  2013 MaestroPanel")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

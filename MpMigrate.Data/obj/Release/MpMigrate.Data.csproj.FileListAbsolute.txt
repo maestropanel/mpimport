@@ -4,4 +4,3 @@ O:\Projects\MpImport\MpMigrate.Data\bin\Release\MySql.Data.dll
 O:\Projects\MpImport\MpMigrate.Data\obj\Release\MpMigrate.Data.dll
 O:\Projects\MpImport\MpMigrate.Data\obj\Release\MpMigrate.Data.pdb
 O:\Projects\MpImport\MpMigrate.Data\bin\Release\MailEnable.Administration.dll
-O:\Projects\MpImport\MpMigrate.Data\obj\Release\MpMigrate.Data.csprojResolveAssemblyReference.cache

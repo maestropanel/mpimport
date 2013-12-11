@@ -3,6 +3,7 @@
     using MySql.Data.MySqlClient;
     using System;
     using System.Data.Odbc;
+    using System.Data.OleDb;
     using System.Data.SqlClient;
     using System.Data.SQLite;
 
@@ -52,6 +53,8 @@
             var result = false;
             var connectionString = ConnectionString();
 
+            System.Windows.Forms.MessageBox.Show(connectionString);
+
             switch (Provider)
             {
                 case DatabaseProviders.Unknown:
@@ -69,8 +72,10 @@
                     result = false;
                     break;
                 case DatabaseProviders.ACCESS:
+                    result = MicrosoftAccessOleDbConnectionTest(connectionString, out errorMsg);
+                    break;
                 case DatabaseProviders.ACCESS_ODBC:
-                    result = MicrosoftAccessConnectionTest(connectionString, out errorMsg);
+                    result = MicrosoftAccessOdbcConnectionTest(connectionString, out errorMsg);
                     break;
             }
 
@@ -79,7 +84,7 @@
 
         private string MicrosoftAccessConnectionString()
         {
-            return String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};User Id={1};Password={2};", DataseFile, Username, Password);            
+            return String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};User Id={1};Password={2};", DataseFile, Username, "");            
         }
 
         private string MicrosoftAccessOdbcConnectionString()
@@ -87,13 +92,39 @@
             return "Driver={Microsoft Access Driver (*.mdb)};Dbq=" + DataseFile;            
         }
 
-        private bool MicrosoftAccessConnectionTest(string connectionString, out string errormsg)
+        private bool MicrosoftAccessOleDbConnectionTest(string connectionString, out string errormsg)
         {
             errormsg = String.Empty;
             var result = false;
 
             try
             {
+                using (OleDbConnection myConnection = new OleDbConnection())
+                {
+                    myConnection.ConnectionString = connectionString;
+                    myConnection.Open();
+
+                    myConnection.Close();
+                }
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                errormsg = ex.Message;
+            }
+
+            return result;
+        }
+
+        private bool MicrosoftAccessOdbcConnectionTest(string connectionString, out string errormsg)
+        {
+            errormsg = String.Empty;
+            var result = false;
+
+            try
+            {
+                
                 using (OdbcConnection myConnection = new OdbcConnection())
                 {
                     myConnection.ConnectionString = connectionString;

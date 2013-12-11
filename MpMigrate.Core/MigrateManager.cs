@@ -116,8 +116,9 @@
                     CurrentPanel = item.Item4;
                     SetSourceDatabaseAutomatically(item.Item4);
 
-                    PanelData = item.Item3;                    
-                    PanelData.LoadConnectionString(SourceDatabase.ConnectionString());
+                    PanelData = item.Item3;
+                    var connectionString = SourceDatabase.ConnectionString();                    
+                    PanelData.LoadConnectionString(connectionString);
 
                     break;
                 }
@@ -387,6 +388,9 @@
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                                 (PanelTypes.Plesk_86, DatabaseProviders.MYSQL, new Plesk_86_MySql(), new Plesk_86_Discover()));
 
+            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
+                                (PanelTypes.Plesk_86, DatabaseProviders.ACCESS, new Plesk_86_Access(), new Plesk_86_Discover()));
+
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery> 
                             (PanelTypes.Plesk_95, DatabaseProviders.ACCESS, new Plesk_9_Access(), new Plesk_9_Discover()));
 
@@ -397,7 +401,7 @@
                                 (PanelTypes.Plesk_10, DatabaseProviders.MYSQL, new Plesk_10_MySql(), new Plesk_10_Discover()));
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
-                                (PanelTypes.Entrenix, DatabaseProviders.ACCESS_ODBC, new Entrenix_Access(), new Entrenix_Discover()));
+                                (PanelTypes.Entrenix, DatabaseProviders.ACCESS_ODBC, new Entrenix_Access(), new Entrenix_Discover()));            
         }
 
         private void SetSourceDatabaseAutomatically(IDiscovery discover)
