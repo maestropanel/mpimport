@@ -245,6 +245,11 @@
         private void buttonDatabaseFileBrowse_Click(object sender, EventArgs e)
         {
 
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                textboxDatabaseFile.Text = openFileDialog1.FileName;
+                openFileDialog1.Dispose();
+            }
         }
 
         private void SetConnectionParams()

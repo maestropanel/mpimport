@@ -155,13 +155,16 @@
                             var LimitValue = DataExtensions.GetColumnValue<decimal>(_read, "value");
 
                             if (_d.Name == "disk_space" || _d.Name == "max_traffic" || _d.Name == "mbox_quota"
-                                || _d.Name == "mssql_dbase_space" || _d.Name == "mysql_dbase_space")
+                                || _d.Name == "mssql_dbase_space" || _d.Name == "mysql_dbase_space" ||_d.Name == "max_traffic_soft")
                             {
                                 _d.Value = (int)((LimitValue / 1024) / 1024);
                             }
                             else
                             {
-                                _d.Value = Convert.ToInt32(LimitValue);
+                                if(LimitValue <= int.MaxValue)
+                                    _d.Value = Convert.ToInt32(LimitValue);
+                                else
+                                    _d.Value = (int)((LimitValue / 1024) / 1024);
                             }
 
                             _tmp_limits.Add(_d);
@@ -312,7 +315,7 @@
                             var _d = new DomainAlias();
                             _d.Domain = DataExtensions.GetColumnValue<String>(_read, "domain");
                             _d.Alias = DataExtensions.GetColumnValue<String>(_read, "alias");
-                            _d.Status = DataExtensions.GetColumnValue<long>(_read, "status");
+                            _d.Status = Convert.ToInt64(DataExtensions.GetColumnValue<decimal>(_read, "status"));
 
                             _tmp.Add(_d);
                         }
@@ -443,7 +446,7 @@
                         while (_read.Read())
                         {
                             var res = new Reseller();
-                            res.Id = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "id"));
+                            res.Id = Convert.ToInt32(DataExtensions.GetColumnValue<int>(_read, "id"));
                             res.Address1 = DataExtensions.GetColumnValue<string>(_read, "address");
                             res.City = DataExtensions.GetColumnValue<string>(_read, "city");
                             res.Country = DataExtensions.GetColumnValue<string>(_read, "country");
@@ -565,7 +568,7 @@
                             var _d = new LimitRow();
                             _d.Name = DataExtensions.GetColumnValue<string>(_read, "limit_name");
 
-                            var LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<string>(_read, "value"));
+                            var LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<decimal>(_read, "value"));
 
                             if (_d.Name == "disk_space" || _d.Name == "max_traffic" 
                                 || _d.Name == "mbox_quota" || _d.Name == "total_mboxes_quota")
@@ -574,7 +577,10 @@
                             }
                             else
                             {
-                                _d.Value = Convert.ToInt32(LimitValue);
+                                if (LimitValue <= int.MaxValue)
+                                    _d.Value = Convert.ToInt32(LimitValue);
+                                else
+                                    _d.Value = (int)((LimitValue / 1024) / 1024);                                
                             }
 
                             _tmp_limits.Add(_d);

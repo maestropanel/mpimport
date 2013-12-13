@@ -12,7 +12,6 @@ O:\Projects\MpImport\MpMigrate\bin\Release\MpMigrate.Core.pdb
 O:\Projects\MpImport\MpMigrate\bin\Release\MpMigrate.Data.pdb
 O:\Projects\MpImport\MpMigrate\bin\Release\MpMigrate.MaestroPanel.Api.pdb
 O:\Projects\MpImport\MpMigrate\bin\Release\AeroWizard.xml
-O:\Projects\MpImport\MpMigrate\obj\Release\MpMigrate.csprojResolveAssemblyReference.cache
 O:\Projects\MpImport\MpMigrate\obj\Release\MpMigrate.AuthenticationForm.resources
 O:\Projects\MpImport\MpMigrate\obj\Release\MpMigrate.DatabaseForm.resources
 O:\Projects\MpImport\MpMigrate\obj\Release\MpMigrate.FilterDomains.resources
@@ -22,3 +21,4 @@ O:\Projects\MpImport\MpMigrate\obj\Release\MpMigrate.Properties.Resources.resour
 O:\Projects\MpImport\MpMigrate\obj\Release\MpMigrate.csproj.GenerateResource.Cache
 O:\Projects\MpImport\MpMigrate\obj\Release\mpmigrate.exe
 O:\Projects\MpImport\MpMigrate\obj\Release\mpmigrate.pdb
+O:\Projects\MpImport\MpMigrate\obj\Release\MpMigrate.csprojResolveAssemblyReference.cache

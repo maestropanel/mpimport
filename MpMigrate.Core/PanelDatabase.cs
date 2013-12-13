@@ -51,9 +51,7 @@
         {
             errorMsg = String.Empty;
             var result = false;
-            var connectionString = ConnectionString();
-
-            System.Windows.Forms.MessageBox.Show(connectionString);
+            var connectionString = ConnectionString();            
 
             switch (Provider)
             {

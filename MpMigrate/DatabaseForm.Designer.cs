@@ -43,12 +43,12 @@
             this.label6 = new System.Windows.Forms.Label();
             this.buttonOK = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.textboxDatabaseFile = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonDatabaseFileBrowse = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // comboProvider
@@ -222,6 +222,10 @@
             this.buttonDatabaseFileBrowse.UseVisualStyleBackColor = true;
             this.buttonDatabaseFileBrowse.Click += new System.EventHandler(this.buttonDatabaseFileBrowse_Click);
             // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
             // DatabaseForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -273,11 +277,11 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.TextBox textboxDatabaseFile;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button buttonDatabaseFileBrowse;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }

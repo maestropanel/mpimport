@@ -9,11 +9,11 @@ namespace MpMigrate.Test
     
     
     /// <summary>
-    ///This is a test class for Plesk_86_AccessTest and is intended
-    ///to contain all Plesk_86_AccessTest Unit Tests
+    ///This is a test class for Plesk_9_AccessTest and is intended
+    ///to contain all Plesk_9_AccessTest Unit Tests
     ///</summary>
     [TestClass()]
-    public class Plesk_86_AccessTest
+    public class Plesk_9_AccessTest
     {
 
 
@@ -70,10 +70,10 @@ namespace MpMigrate.Test
         ///A test for GetDomains
         ///</summary>
         [TestMethod()]
-        public void GetDomainsTest()
+        public void Plesk9AccessGetDomainsTest()
         {
-            Plesk_86_Access target = new Plesk_86_Access();
-            target.LoadConnectionString(String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=O:\\psa\\plesk_86.mdb;User Id=;Password=;"));
+            Plesk_9_Access target = new Plesk_9_Access();
+            target.LoadConnectionString("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=O:\\psa\\Plesk95.mdb;User Id=;Password=;");
             List<Domain> actual = target.GetDomains();
 
             Assert.AreNotEqual(null, actual);            
@@ -83,13 +83,15 @@ namespace MpMigrate.Test
         ///A test for GetResellers
         ///</summary>
         [TestMethod()]
-        public void GetResellersTest()
+        public void Plesk9AccessGetResellersTest()
         {
-            Plesk_86_Access target = new Plesk_86_Access(); // TODO: Initialize to an appropriate value
-            target.LoadConnectionString(String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=O:\\psa\\plesk_86.mdb;User Id=;Password=;"));
-           
+            Plesk_9_Access target = new Plesk_9_Access(); // TODO: Initialize to an appropriate value    
+            target.LoadConnectionString("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=O:\\psa\\Plesk95.mdb;User Id=;Password=;");
+
             List<Reseller> actual = target.GetResellers();
-            Assert.AreNotEqual(null, actual); 
+
+            Assert.AreNotEqual(null, actual);     
+            
         }
     }
 }

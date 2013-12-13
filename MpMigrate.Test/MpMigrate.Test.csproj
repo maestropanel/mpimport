@@ -72,8 +72,9 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ApiClientTest.cs" />
-    <Compile Include="Plesk_86_AccessTest.cs" />
+    <Compile Include="Plesk_9_AccessTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitTest1.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MpMigrate.Data\MpMigrate.Data.csproj">
