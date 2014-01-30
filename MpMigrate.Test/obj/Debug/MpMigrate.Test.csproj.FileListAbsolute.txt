@@ -6,3 +6,8 @@ O:\Projects\MpImport\MpMigrate.Test\obj\Debug\MpMigrate.Test.csprojResolveAssemb
 O:\Projects\MpImport\MpMigrate.Test\obj\Debug\MpMigrate.Test.dll
 O:\Projects\MpImport\MpMigrate.Test\obj\Debug\MpMigrate.Test.pdb
 O:\Projects\MpImport\MpMigrate.Test\bin\Debug\MpMigrate.Test.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Debug\MailEnable.Administration.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Debug\MpMigrate.Data.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Debug\MySql.Data.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Debug\System.Data.SQLite.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Debug\MpMigrate.Data.pdb

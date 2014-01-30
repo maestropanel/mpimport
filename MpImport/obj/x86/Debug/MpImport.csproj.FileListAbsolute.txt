@@ -21,3 +21,4 @@ O:\Projects\MpImport\MpImport\bin\Debug\MySql.Data.dll
 O:\Projects\MpImport\MpImport\bin\Debug\System.Data.SQLite.dll
 O:\Projects\MpImport\MpImport\bin\Debug\MailEnable.Administration.dll
 O:\Projects\MpImport\MpImport\bin\Debug\Ionic.Zip.dll
+O:\Projects\MpImport\MpImport\obj\x86\Debug\MpImport.csprojResolveAssemblyReference.cache

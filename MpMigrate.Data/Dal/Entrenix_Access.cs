@@ -70,7 +70,7 @@
 
             var domainNames = System.IO.Directory.GetDirectories(_root_dir).Select(m => Path.GetFileName(m)).ToList();
             var user_path = Path.Combine(Path.Combine(_root_dir, domainName), "MAILROOT");
-
+                    
             if (System.IO.Directory.Exists(user_path))
             {
                 foreach (var user_item in System.IO.Directory.GetDirectories(user_path).Select(m => Path.GetFileName(m)).ToList())

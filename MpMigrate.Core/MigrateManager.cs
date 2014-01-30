@@ -401,7 +401,13 @@
                                 (PanelTypes.Plesk_10, DatabaseProviders.MYSQL, new Plesk_10_MySql(), new Plesk_10_Discover()));
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
-                                (PanelTypes.Entrenix, DatabaseProviders.ACCESS_ODBC, new Entrenix_Access(), new Entrenix_Discover()));            
+                                (PanelTypes.Entrenix, DatabaseProviders.ACCESS_ODBC, new Entrenix_Access(), new Entrenix_Discover()));
+
+            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
+                                (PanelTypes.MaestroPanel, DatabaseProviders.MSSQL, new MaestroPanel_MsSQL(), new MaestroPanelDiscover()));
+
+            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
+                                (PanelTypes.MaestroPanel, DatabaseProviders.SQLITE, new MaestroPanel_SQLite(), new MaestroPanelDiscover()));
         }
 
         private void SetSourceDatabaseAutomatically(IDiscovery discover)

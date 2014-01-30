@@ -60,6 +60,31 @@ namespace MpMigrate.Data.Entity
             MaxMailTraffic = -1;
         }
 
+        public HostLimit(List<LimitRow> limitRows, bool isMaestroPanel)
+        {
+            MaxDomain = GetLimitValue(limitRows, "DOMAINQUOTA");
+            MaxWebTraffic = GetLimitValue(limitRows, "IIS_LIMIT_TRAFFIC");
+
+            DiskSpace = GetLimitValue(limitRows, "MSFTP_FTPQUOTA");
+            MaxFtpUser = GetLimitValue(limitRows, "MSFTP_FTPACCOUNTCOUNT");
+            MaxDomainAlias = GetLimitValue(limitRows, "DOMAIN_ALIAS_LIMIT");
+            MaxSubDomain = GetLimitValue(limitRows, "IISSUBDOMAINLIMITI");
+
+            MaxMailBox = GetLimitValue(limitRows, "MAILBOXCOUNT");
+            TotalMailBoxQuota = GetLimitValue(limitRows, "MAILBOXSIZEQUOTA");
+
+            MaxMySqlDb = GetLimitValue(limitRows, "MYSQLDATABASECOUNT");
+            MaxMySqlDbSpace = GetLimitValue(limitRows, "MYSQLDATABASESIZE");
+            MaxMySqlUser = GetLimitValue(limitRows, "MYSQLDATABASEUSERCOUNT");
+
+            MaxMsSqlDb = GetLimitValue(limitRows, "max_mssql_db");
+            MaxMsSqlDbSpace = GetLimitValue(limitRows, "MSSQLDATABASESIZE");
+            MaxMsSqlDbUser = GetLimitValue(limitRows, "MSSQLDATABASEUSERCOUNT");
+
+            MaxFtpTraffic = GetLimitValue(limitRows, "FTP_TRAFFIC_LIMIT");
+            MaxMailTraffic = GetLimitValue(limitRows, "MAILENABLE_TRAFFIC_LIMIT");
+        }
+        
         private int GetLimitValue(List<LimitRow> limitRows, string name)
         {
             int val = -1;

@@ -35,6 +35,7 @@
       <HintPath>..\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.SQLite">
       <HintPath>..\..\Maestro\assembly\System.Data.SQLite.dll</HintPath>

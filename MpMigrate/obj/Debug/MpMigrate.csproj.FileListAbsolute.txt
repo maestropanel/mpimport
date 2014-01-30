@@ -20,3 +20,5 @@ O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.Properties.Resources.resource
 O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.csproj.GenerateResource.Cache
 O:\Projects\MpImport\MpMigrate\obj\Debug\mpmigrate.exe
 O:\Projects\MpImport\MpMigrate\obj\Debug\mpmigrate.pdb
+O:\Projects\MpImport\MpMigrate\obj\Debug\MpMigrate.csprojResolveAssemblyReference.cache
+O:\Projects\MpImport\MpMigrate\bin\Debug\MailEnable.Administration.dll

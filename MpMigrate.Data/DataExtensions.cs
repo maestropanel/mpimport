@@ -37,6 +37,8 @@
 
             try
             {
+                var index = record.GetOrdinal(columnName);
+
                 value = record[columnName];
                            
                 if (value == null || value == DBNull.Value)
@@ -48,11 +50,14 @@
                     return (T)value;
                 }
             }
-            catch (Exception ex)
+            catch(IndexOutOfRangeException ex)
             {
-
+                throw new Exception(String.Format("{0}, Invalid Field Name, {1}", columnName, ex.Message));
+            }
+            catch (Exception ex)
+            {                                
                 throw new Exception(String.Format("{0}, {1}, {2}", columnName, 
-                                value != null ? value.GetType().ToString() : "Null-Object"
+                                value != null ? value.GetType().ToString() : ex.Message
                                 , ex.Message), ex);
             }
         }
