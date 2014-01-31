@@ -35,8 +35,9 @@
 
         public Main()
         {
-            DatabaseConnectionTest = true;
-            ApiConnectionTest = true;
+            DatabaseConnectionTest = false;
+            ApiConnectionTest = false;
+
             ctSource = new CancellationTokenSource();
             cancelToken = ctSource.Token;
 
