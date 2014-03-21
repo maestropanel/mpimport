@@ -71,6 +71,7 @@
 
             labelPanelVersion.Text = _migrate.CurrentPanel.Version();
 
+
             SelectSourcePanel(_migrate.PanelType);
             SelectSourceDatabase(_migrate.CurrentPanel.GetDatabaseProvider());
             
@@ -177,8 +178,7 @@
                 case DatabaseProviders.SQLCE:
                     comboSourceDatabase.SelectedIndex = comboSourceDatabase.FindStringExact("SQLCE");
                     break;
-                case DatabaseProviders.ACCESS:
-                case DatabaseProviders.ACCESS_ODBC:
+                case DatabaseProviders.ACCESS:                
                     comboSourceDatabase.SelectedIndex = comboSourceDatabase.FindStringExact("MS Access");
                     break;
                 default:

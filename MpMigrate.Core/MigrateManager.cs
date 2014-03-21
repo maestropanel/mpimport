@@ -380,8 +380,9 @@
 
         private void LoadVariations()
         {
-            if (variationList != null)
-                return;
+            variationList = new List<Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>>();
+
+            variationList.Clear();
 
             variationList = new List<Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>>();
 
@@ -395,13 +396,16 @@
                             (PanelTypes.Plesk_95, DatabaseProviders.ACCESS, new Plesk_9_Access(), new Plesk_9_Discover()));
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
+                            (PanelTypes.Plesk_95, DatabaseProviders.MYSQL, new Plesk_9_MySql(), new Plesk_9_Discover()));
+
+            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                                 (PanelTypes.Plesk_11, DatabaseProviders.MYSQL, new Plesk_11_MySql(), new Plesk_11_Discover()));
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                                 (PanelTypes.Plesk_10, DatabaseProviders.MYSQL, new Plesk_10_MySql(), new Plesk_10_Discover()));
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
-                                (PanelTypes.Entrenix, DatabaseProviders.ACCESS_ODBC, new Entrenix_Access(), new Entrenix_Discover()));
+                                (PanelTypes.Entrenix, DatabaseProviders.ACCESS, new Entrenix_Access(), new Entrenix_Discover()));
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                                 (PanelTypes.MaestroPanel, DatabaseProviders.MSSQL, new MaestroPanel_MsSQL(), new MaestroPanelDiscover()));

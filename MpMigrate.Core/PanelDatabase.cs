@@ -36,10 +36,7 @@
                     break;
                 case DatabaseProviders.SQLCE:
                     break;
-                case DatabaseProviders.ACCESS:
-                    connectionStr = MicrosoftAccessConnectionString();
-                    break;
-                case DatabaseProviders.ACCESS_ODBC:
+                case DatabaseProviders.ACCESS:                
                     connectionStr = MicrosoftAccessOdbcConnectionString();
                     break;
             }
@@ -51,7 +48,7 @@
         {
             errorMsg = String.Empty;
             var result = false;
-            var connectionString = ConnectionString();            
+            var connectionString = ConnectionString();
 
             switch (Provider)
             {
@@ -69,10 +66,7 @@
                 case DatabaseProviders.SQLCE:
                     result = false;
                     break;
-                case DatabaseProviders.ACCESS:
-                    result = MicrosoftAccessOleDbConnectionTest(connectionString, out errorMsg);
-                    break;
-                case DatabaseProviders.ACCESS_ODBC:
+                case DatabaseProviders.ACCESS:                
                     result = MicrosoftAccessOdbcConnectionTest(connectionString, out errorMsg);
                     break;
             }
@@ -248,7 +242,6 @@
         MYSQL,
         SQLITE,
         SQLCE,
-        ACCESS,
-        ACCESS_ODBC
+        ACCESS
     }
 }

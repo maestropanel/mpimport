@@ -5,6 +5,7 @@
     using System;
     using System.Linq;
     using System.Collections.Generic;
+    using System.Globalization;
 
     public class Plesk_11_MySql : DboFactory
     {
@@ -16,15 +17,13 @@
         }
 
         public Plesk_11_MySql(string connectionString)
-        {
-            
+        {            
             this.connectionString = connectionString;
         }
 
         public override List<Domain> GetDomains()
         {
             var tmp = new List<Domain>();
-
             var securePassword = SecurePasswords();
 
             using (MySqlConnection _conn = new MySqlConnection(connectionString))
@@ -55,7 +54,7 @@
                         {                            
                             var _d = new Domain();
                             _d.Id = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "id"));
-                            _d.Name = DataExtensions.GetColumnValue<String>(_read, "name").ToLower();
+                            _d.Name = DataExtensions.GetColumnValue<String>(_read, "name").ToLower(CultureInfo.GetCultureInfo("en-US"));
                             _d.ClientName = DataExtensions.GetColumnValue<String>(_read, "login");                            
                             _d.DomainPassword = securePassword ? DataHelper.GetPassword() :  DataExtensions.GetColumnValue<String>(_read, "DomainPass");
                             _d.Username = DataExtensions.GetColumnValue<String>(_read, "fp_adm");
@@ -261,13 +260,22 @@
                                                        
                             var LimitValue = DataExtensions.GetColumnValue<Int64>(_read, "value");
                             if (_d.Name == "disk_space" || _d.Name == "max_traffic" || _d.Name == "mbox_quota"
-                                || _d.Name == "mssql_dbase_space" || _d.Name == "mysql_dbase_space")
+                                || _d.Name == "mssql_dbase_space" || _d.Name == "mysql_dbase_space" || _d.Name == "max_traffic_soft")
                             {
                                 _d.Value = (int)((LimitValue / 1024) / 1024);
                             }
                             else
                             {
-                                _d.Value = Convert.ToInt32(LimitValue);
+                                if (LimitValue > int.MaxValue)
+                                {
+                                    _d.Value = -1;
+                                }
+                                else
+                                {
+                                    _d.Value = Convert.ToInt32(LimitValue);
+                                }
+
+                                
                             }
 
                             _tmp_limits.Add(_d);
@@ -544,7 +552,14 @@
                             }
                             else
                             {
-                                _d.Value = Convert.ToInt32(LimitValue);
+                                if (LimitValue > int.MaxValue)
+                                {
+                                    _d.Value = -1;
+                                }
+                                else
+                                {
+                                    _d.Value = Convert.ToInt32(LimitValue);
+                                }
                             }
 
                             _tmp_limits.Add(_d);

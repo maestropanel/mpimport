@@ -19,6 +19,9 @@
             if (isInstalled())
             {
                 currentConnectionString = GetConnectionString(out currentProvider);
+                if (currentConnectionString.EndsWith(";"))
+                    currentConnectionString = currentConnectionString.Remove(currentConnectionString.Length-1, 1);
+
                 connectionStringKeys = currentConnectionString.Split(';')
                                                                 .Select(t => t.Split(new char[] { '=' }, 2))
                                                                 .ToDictionary(t => t[0].Trim(), t => t[1].Trim(), StringComparer.InvariantCultureIgnoreCase);
@@ -27,8 +30,15 @@
 
         public string Version()
         {
-            var agent_exe = Path.Combine(Environment.GetEnvironmentVariable("MaestroPanelPath", EnvironmentVariableTarget.Machine), "Web", "www", "bin", "maestropanel.web.dll");           
-            return CoreHelper.FileVersion(agent_exe);
+            if (isInstalled())
+            {
+                var agent_exe = Path.Combine(Environment.GetEnvironmentVariable("MaestroPanelPath", EnvironmentVariableTarget.Machine), "Web", "www", "bin", "maestropanel.web.dll");
+                return CoreHelper.FileVersion(agent_exe);
+            }
+            else
+            {
+                return "";
+            }
         }
 
         public string VhostPath()
@@ -100,7 +110,6 @@
                 return "";
         }
 
-
         public string GetDatabaseFile()
         {
             if (currentProvider == DatabaseProviders.MSSQL)
@@ -113,9 +122,15 @@
 
         public bool isInstalled()
         {
-            var agent_exe = Path.Combine(Environment.GetEnvironmentVariable("MaestroPanelPath", EnvironmentVariableTarget.Machine), "Web", "www", "bin", "maestropanel.web.dll");
-
-            return File.Exists(agent_exe);
+            if (Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine).Contains("MaestroPanelPath"))
+            {
+                var agent_exe = Path.Combine(Environment.GetEnvironmentVariable("MaestroPanelPath", EnvironmentVariableTarget.Machine), "Web", "www", "bin", "maestropanel.web.dll");
+                return File.Exists(agent_exe);
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private string GetConnectionString(out DatabaseProviders provider)
@@ -141,8 +156,6 @@
                 provider = DatabaseProviders.SQLITE;
 
             return web_config.ConnectionStrings.ConnectionStrings["MaestroConnection"].ConnectionString;
-        }
-
-        
+        }        
     }
 }

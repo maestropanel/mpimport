@@ -541,7 +541,7 @@
                             if (_read["value"] is System.Int64)
                                 LimitValue = DataExtensions.GetColumnValue<Int64>(_read, "value");
                             else
-                                LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<string>(_read, "value"));                            
+                                LimitValue = Convert.ToInt64(DataExtensions.GetColumnValue<string>(_read, "value"));
 
                             if (_d.Name == "disk_space" || _d.Name == "max_traffic" || _d.Name == "mbox_quota" || _d.Name == "total_mboxes_quota")
                             {
@@ -549,8 +549,15 @@
                             }
                             else
                             {
-                                _d.Value = Convert.ToInt32(LimitValue);
-                            }                            
+                                if (LimitValue > int.MaxValue)
+                                {
+                                    _d.Value = -1;
+                                }
+                                else
+                                {
+                                    _d.Value = Convert.ToInt32(LimitValue);
+                                }
+                            }                    
 
                             _tmp_limits.Add(_d);
 

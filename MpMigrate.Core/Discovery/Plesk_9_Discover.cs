@@ -155,6 +155,7 @@
             else
                 plesk_version = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\PLESK\PSA Config\Config", "PRODUCT_VERSION");
 
+            
             if (Directory.Exists(check_environment))                            
                 if (plesk_version.StartsWith("9"))
                     installed = true;

@@ -7,7 +7,10 @@
     {
         public string Version()
         {
-            return "v" + CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Entrenix\ServerSettings", "UpdateV");
+            if(Environment.Is64BitOperatingSystem)
+                return "v" + CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\Entrenix\ServerSettings", "UpdateV");
+            else
+                return "v" + CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Entrenix\ServerSettings", "UpdateV");
         }
 
         public string VhostPath()
@@ -20,7 +23,7 @@
 
         public DatabaseProviders GetDatabaseProvider()
         {
-            return DatabaseProviders.ACCESS_ODBC;
+            return DatabaseProviders.ACCESS;
         }
 
         public string GetDatabaseHost()
@@ -45,17 +48,26 @@
 
         public string GetDatabaseName()
         {
-            return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Entrenix\ServerSettings", "DBPath");
+            if (Environment.Is64BitOperatingSystem)
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\Entrenix\ServerSettings", "DBPath");
+            else
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Entrenix\ServerSettings", "DBPath");
         }
 
         public string GetDatabaseFile()
         {
-            return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Entrenix\ServerSettings", "DBPath");
+            if (Environment.Is64BitOperatingSystem)
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\Entrenix\ServerSettings", "DBPath");
+            else
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Entrenix\ServerSettings", "DBPath");
         }
 
         public string InstallPath()
         {
-            return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Entrenix\ServerSettings", "Entrenix_Path");
+            if (Environment.Is64BitOperatingSystem)
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\Entrenix\ServerSettings", "Entrenix_Path");
+            else
+                return CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Entrenix\ServerSettings", "Entrenix_Path");
         }
 
         public string GetPanelPassword()
@@ -65,14 +77,16 @@
 
         public string GetEmailPath()
         {
-            var emailPath = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Mail Enable\Mail Enable", "Mail Root");
+            var emailPath = Environment.Is64BitOperatingSystem ? CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\Mail Enable\Mail Enable", "Mail Root") :
+                                                                CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Mail Enable\Mail Enable", "Mail Root"); ;
 
             return emailPath +"\\{DOMAIN}\\MAILROOT\\{MAILBOX}";
         }
 
         public bool isInstalled()
         {
-            return CoreHelper.isRegistryKeyExists(@"SOFTWARE\Entrenix\ServerSettings");
+            return Environment.Is64BitOperatingSystem ? CoreHelper.isRegistryKeyExists(@"SOFTWARE\Wow6432Node\Entrenix\ServerSettings") :
+                                                            CoreHelper.isRegistryKeyExists(@"SOFTWARE\Entrenix\ServerSettings");
         }
 
         private string GetServerSettings(string fieldName)
@@ -99,7 +113,10 @@
 
         private string CreateConnectionString()
         {
-            var mdb_path = CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Entrenix\ServerSettings", "DBPath");            
+            var mdb_path = Environment.Is64BitOperatingSystem ?
+                CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Wow6432Node\Entrenix\ServerSettings", "DBPath") :
+                CoreHelper.GetRegistryKeyValue(@"SOFTWARE\Entrenix\ServerSettings", "DBPath");            
+
             var connStr = "DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=" + mdb_path;
 
             return connStr;
