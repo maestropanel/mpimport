@@ -39,6 +39,9 @@
                 case DatabaseProviders.ACCESS:                
                     connectionStr = MicrosoftAccessOdbcConnectionString();
                     break;
+                case DatabaseProviders.OLEDB_ACCESS:
+                    connectionStr = MicrosoftAccessConnectionString();
+                    break;
             }
 
             return connectionStr;
@@ -68,6 +71,9 @@
                     break;
                 case DatabaseProviders.ACCESS:                
                     result = MicrosoftAccessOdbcConnectionTest(connectionString, out errorMsg);
+                    break;
+                case DatabaseProviders.OLEDB_ACCESS:
+                    result = MicrosoftAccessOleDbConnectionTest(connectionString, out errorMsg);
                     break;
             }
 
@@ -242,6 +248,7 @@
         MYSQL,
         SQLITE,
         SQLCE,
-        ACCESS
+        ACCESS,
+        OLEDB_ACCESS
     }
 }

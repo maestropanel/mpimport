@@ -470,12 +470,19 @@
         private ApiResult<DomainOperationsResult> ExecuteDomainOperation(string action, string method, NameValueCollection args)
         {
             var requestUri = String.Empty;
+            var result = new ApiResult<DomainOperationsResult>();
 
-            var result =  SendApi<ApiResult<DomainOperationsResult>>(action, method, args,
-                    new[] { typeof(DomainOperationsResult), typeof(DomainOperationModuleResult) }, out requestUri);
+            try
+            {
+                result = SendApi<ApiResult<DomainOperationsResult>>(action, method, args,
+                        new[] { typeof(DomainOperationsResult), typeof(DomainOperationModuleResult) }, out requestUri);
 
-
-            _log.WriteLog(requestUri, method, args, result);
+                _log.WriteLog(requestUri, method, args, result);
+            }
+            catch (Exception ex)
+            {
+                result = new ApiResult<DomainOperationsResult>() { ErrorCode = 500, Message = ex.Message, StatusCode = 200 };
+            }
 
             return result;
         }
@@ -483,11 +490,19 @@
         private ApiResult<DomainOperationsResult> ExecuteDomainOperation(string action, string method, List<KeyValuePair<string, string>> args)
         {
             var requestUri = String.Empty;
+            var result = new ApiResult<DomainOperationsResult>();
 
-            var result = SendApi<ApiResult<DomainOperationsResult>>(action, method, args,
+            try
+            {
+                result = SendApi<ApiResult<DomainOperationsResult>>(action, method, args,
                     new[] { typeof(DomainOperationsResult), typeof(DomainOperationModuleResult) }, out requestUri);
 
-            _log.WriteLog(requestUri, method, args, result);
+                _log.WriteLog(requestUri, method, args, result);
+            }
+            catch (Exception ex)
+            {
+                result = new ApiResult<DomainOperationsResult>() { ErrorCode = 500, Message = ex.Message, StatusCode = 200 };
+            }
 
             return result;
         }
@@ -496,10 +511,21 @@
         {
             var requestUri = String.Empty;
 
-            var result = SendApi<ApiResult<ResellerOperationResult>>(action, method, args,
-                    new[] { typeof(ResellerOperationResult) }, out requestUri);
+            var result = new ApiResult<ResellerOperationResult>();
 
-            _log.WriteLog(requestUri, method, args, result);
+            try
+            {
+
+                result = SendApi<ApiResult<ResellerOperationResult>>(action, method, args,
+                        new[] { typeof(ResellerOperationResult) }, out requestUri);
+
+                _log.WriteLog(requestUri, method, args, result);
+
+            }
+            catch (Exception ex)
+            {
+                result = new ApiResult<ResellerOperationResult>() { ErrorCode = 500, Message = ex.Message, StatusCode = 200 };
+            }
 
             return result;
         }

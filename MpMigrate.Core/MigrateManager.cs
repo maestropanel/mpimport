@@ -390,10 +390,10 @@
                                 (PanelTypes.Plesk_86, DatabaseProviders.MYSQL, new Plesk_86_MySql(), new Plesk_86_Discover()));
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
-                                (PanelTypes.Plesk_86, DatabaseProviders.ACCESS, new Plesk_86_Access(), new Plesk_86_Discover()));
+                                (PanelTypes.Plesk_86, DatabaseProviders.OLEDB_ACCESS, new Plesk_86_Access(), new Plesk_86_Discover()));
 
-            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery> 
-                            (PanelTypes.Plesk_95, DatabaseProviders.ACCESS, new Plesk_9_Access(), new Plesk_9_Discover()));
+            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
+                            (PanelTypes.Plesk_95, DatabaseProviders.OLEDB_ACCESS, new Plesk_9_Access(), new Plesk_9_Discover()));
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                             (PanelTypes.Plesk_95, DatabaseProviders.MYSQL, new Plesk_9_MySql(), new Plesk_9_Discover()));

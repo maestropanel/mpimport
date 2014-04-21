@@ -37,7 +37,7 @@
                     provider = DatabaseProviders.MSSQL;
                     break;
                 case "Jet":
-                    provider = DatabaseProviders.ACCESS;
+                    provider = DatabaseProviders.OLEDB_ACCESS;
                     break;
             }
 

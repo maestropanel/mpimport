@@ -149,6 +149,9 @@
                 case "MS Access":
                     dbtype = DatabaseProviders.ACCESS;
                     break;
+                case "MS Access OLEDB":
+                    dbtype = DatabaseProviders.OLEDB_ACCESS;
+                    break;
                 case "SQLCe":
                     dbtype = DatabaseProviders.SQLCE;
                     break;
@@ -178,8 +181,11 @@
                 case DatabaseProviders.SQLCE:
                     comboSourceDatabase.SelectedIndex = comboSourceDatabase.FindStringExact("SQLCE");
                     break;
-                case DatabaseProviders.ACCESS:                
+                case DatabaseProviders.ACCESS:                                
                     comboSourceDatabase.SelectedIndex = comboSourceDatabase.FindStringExact("MS Access");
+                    break;
+                case DatabaseProviders.OLEDB_ACCESS:
+                    comboSourceDatabase.SelectedIndex = comboSourceDatabase.FindStringExact("MS Access OLEDB");
                     break;
                 default:
                     break;
