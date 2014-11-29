@@ -16,9 +16,12 @@
         Plesk_86,
         Plesk_95,
         Plesk_11,
+        Plesk_12,
         Plesk_10,
         MaestroPanel,
-        Entrenix
+        Entrenix,
+        Helm
+
     }
 
     public class ApiAction : EventArgs
@@ -412,6 +415,9 @@
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                                 (PanelTypes.MaestroPanel, DatabaseProviders.SQLITE, new MaestroPanel_SQLite(), new MaestroPanelDiscover()));
+
+            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
+                                (PanelTypes.Plesk_12, DatabaseProviders.MYSQL, new Plesk_12_MySql(), new Plesk_12_Discover()));
         }
 
         private void SetSourceDatabaseAutomatically(IDiscovery discover)

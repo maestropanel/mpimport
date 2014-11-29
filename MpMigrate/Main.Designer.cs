@@ -1062,12 +1062,14 @@
             this.comboSourcePanel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboSourcePanel.FormattingEnabled = true;
             this.comboSourcePanel.Items.AddRange(new object[] {
+            "Plesk 12.x",
             "Plesk 11.x",
             "Plesk 10.x",
             "Plesk 9.x",
             "Plesk 8.x",
             "MaestroPanel",
-            "Entrenix"});
+            "Entrenix",
+            "Helm"});
             this.comboSourcePanel.Location = new System.Drawing.Point(6, 20);
             this.comboSourcePanel.Name = "comboSourcePanel";
             this.comboSourcePanel.Size = new System.Drawing.Size(223, 23);

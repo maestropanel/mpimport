@@ -52,6 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dal\Helm_MsSQL.cs" />
+    <Compile Include="Dal\Plesk_12_MySql.cs" />
     <Compile Include="Dal\MaestroPanel_SQLite.cs" />
     <Compile Include="Dal\Plesk_86_Access.cs" />
     <Compile Include="Dal\Entrenix_Access.cs" />
