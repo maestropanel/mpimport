@@ -87,27 +87,27 @@ namespace MpMigrate.Data.Entity
 
         public void LoadHelmLimits(List<LimitRow> limitRows)
         {
-            MaxDomain = GetLimitValue(limitRows, "DOMAINQUOTA");
-            MaxWebTraffic = GetLimitValue(limitRows, "IIS_LIMIT_TRAFFIC");
+            MaxDomain = GetLimitValue(limitRows, "MaxNumDomains");
+            MaxWebTraffic = GetLimitValue(limitRows, "MaxBandwidth");
 
-            DiskSpace = GetLimitValue(limitRows, "MSFTP_FTPQUOTA");
-            MaxFtpUser = GetLimitValue(limitRows, "MSFTP_FTPACCOUNTCOUNT");
-            MaxDomainAlias = GetLimitValue(limitRows, "DOMAIN_ALIAS_LIMIT");
-            MaxSubDomain = GetLimitValue(limitRows, "IISSUBDOMAINLIMITI");
+            DiskSpace = GetLimitValue(limitRows, "MaxDiskSpace");
+            MaxFtpUser = GetLimitValue(limitRows, "MaxFTP");
+            MaxDomainAlias = GetLimitValue(limitRows, "MaxDomainAliases");
+            MaxSubDomain = GetLimitValue(limitRows, "MaxSubDomains");
 
-            MaxMailBox = GetLimitValue(limitRows, "MAILBOXCOUNT");
-            TotalMailBoxQuota = GetLimitValue(limitRows, "MAILBOXSIZEQUOTA");
+            MaxMailBox = GetLimitValue(limitRows, "MaxPOP3");
+            TotalMailBoxQuota = GetLimitValue(limitRows, "MaxDiskSpace");
 
-            MaxMySqlDb = GetLimitValue(limitRows, "MYSQLDATABASECOUNT");
-            MaxMySqlDbSpace = GetLimitValue(limitRows, "MYSQLDATABASESIZE");
-            MaxMySqlUser = GetLimitValue(limitRows, "MYSQLDATABASEUSERCOUNT");
+            MaxMySqlDb = GetLimitValue(limitRows, "MaxMSSQL2KDBs");
+            MaxMySqlDbSpace = GetLimitValue(limitRows, "MaxDiskSpace");
+            MaxMySqlUser = GetLimitValue(limitRows, "MaxDBUsers");
 
-            MaxMsSqlDb = GetLimitValue(limitRows, "max_mssql_db");
-            MaxMsSqlDbSpace = GetLimitValue(limitRows, "MSSQLDATABASESIZE");
-            MaxMsSqlDbUser = GetLimitValue(limitRows, "MSSQLDATABASEUSERCOUNT");
+            MaxMsSqlDb = GetLimitValue(limitRows, "MaxMSSQL2KDBs");
+            MaxMsSqlDbSpace = GetLimitValue(limitRows, "MaxDiskSpace");
+            MaxMsSqlDbUser = GetLimitValue(limitRows, "MaxDBUsers");
 
-            MaxFtpTraffic = GetLimitValue(limitRows, "FTP_TRAFFIC_LIMIT");
-            MaxMailTraffic = GetLimitValue(limitRows, "MAILENABLE_TRAFFIC_LIMIT");
+            MaxFtpTraffic = GetLimitValue(limitRows, "MaxBandwidth");
+            MaxMailTraffic = GetLimitValue(limitRows, "MaxBandwidth");
         }
 
         private int GetLimitValue(List<LimitRow> limitRows, string name)

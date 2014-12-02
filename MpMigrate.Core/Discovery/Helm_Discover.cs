@@ -78,7 +78,9 @@
 
         public bool isInstalled()
         {
-            var getVersion = GetRegistryKey(@"SOFTWARE\WebHostAutomation\Helm\SystemSettings", @"SOFTWARE\Wow6432Node\WebHostAutomation\Helm\SystemSettings", "SoftwareVersion");
+            var getVersion = GetRegistryKey(@"SOFTWARE\WebHostAutomation\Helm\SystemSettings", 
+                                                @"SOFTWARE\Wow6432Node\WebHostAutomation\Helm\SystemSettings", "SoftwareVersion");
+
             return !String.IsNullOrEmpty(getVersion);
         }
 

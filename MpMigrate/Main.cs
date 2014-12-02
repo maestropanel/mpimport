@@ -129,6 +129,9 @@
                 case "Entrenix":
                     ptype = PanelTypes.Entrenix;
                     break;
+                case "Helm":
+                    ptype = PanelTypes.Helm;
+                    break;
             }
 
             return ptype;
@@ -226,6 +229,9 @@
                     break;
                 case PanelTypes.Entrenix:
                     comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Entrenix");
+                    break;
+                case PanelTypes.Helm:
+                    comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Helm");
                     break;
                 default:
                     break;
@@ -358,7 +364,8 @@
         {
             this.UIThread(delegate 
             {
-                progressBarFinish.Value = e.Count;
+                progressBarFinish.Value = e.Count > progressBarFinish.Maximum ? progressBarFinish.Maximum : e.Count;
+
                 labelFinisDomain.Text = e.DomainName;
                 labelFinishMessage.Text = e.Message;
                 labelFinishCounter.Text = String.Format("{0}/{1}", e.Count, progressbarMaximum);

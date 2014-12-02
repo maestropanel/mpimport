@@ -418,6 +418,9 @@
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                                 (PanelTypes.Plesk_12, DatabaseProviders.MYSQL, new Plesk_12_MySql(), new Plesk_12_Discover()));
+
+            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
+                                (PanelTypes.Helm, DatabaseProviders.MSSQL, new Helm_MsSQL(), new Helm_Discover()));
         }
 
         private void SetSourceDatabaseAutomatically(IDiscovery discover)

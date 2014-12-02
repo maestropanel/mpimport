@@ -9,6 +9,7 @@
 
     public class Plesk_12_MySql : DboFactory
     {
+        //Sync
         private string connectionString;        
 
         public Plesk_12_MySql()
