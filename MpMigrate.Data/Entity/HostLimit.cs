@@ -85,6 +85,71 @@ namespace MpMigrate.Data.Entity
             MaxMailTraffic = GetLimitValue(limitRows, "MAILENABLE_TRAFFIC_LIMIT");
         }
 
+        public HostLimit(List<LimitRow> limitRows, int WebSitePanel)
+        {            
+            MaxDomain = GetLimitValue(limitRows, "OS.Domains");
+            MaxWebTraffic = GetLimitValue(limitRows, "OS.Bandwidth");
+
+            DiskSpace = GetLimitValue(limitRows, "OS.Diskspace");
+            MaxFtpUser = GetLimitValue(limitRows, "FTP.Accounts");
+            MaxDomainAlias = GetLimitValue(limitRows, "OS.DomainPointers");
+            MaxSubDomain = GetLimitValue(limitRows, "OS.SubDomains");
+            
+            MaxMailBox = GetLimitValue(limitRows, "Mail.Accounts");
+            TotalMailBoxQuota = GetLimitValue(limitRows, "Mail.MaxBoxSize");
+
+            if (isExists(limitRows, "MySQL4.Databases"))
+            {
+                MaxMySqlDb = GetLimitValue(limitRows, "MySQL4.Databases");
+                MaxMySqlDbSpace = GetLimitValue(limitRows, "MySQL4.MaxDatabaseSize");
+                MaxMySqlUser = GetLimitValue(limitRows, "MySQL4.Users");
+            }
+
+            if (isExists(limitRows, "MySQL5.Databases"))
+            {
+                MaxMySqlDb = GetLimitValue(limitRows, "MySQL5.Databases");
+                MaxMySqlDbSpace = GetLimitValue(limitRows, "MySQL5.MaxDatabaseSize");
+                MaxMySqlUser = GetLimitValue(limitRows, "MySQL5.Users");
+            }
+
+            if (isExists(limitRows, "MsSQL2000.Databases"))
+            {
+                MaxMsSqlDb = GetLimitValue(limitRows, "MsSQL2000.Databases");
+                MaxMsSqlDbSpace = GetLimitValue(limitRows, "MsSQL2000.MaxDatabaseSize");
+                MaxMsSqlDbUser = GetLimitValue(limitRows, "MsSQL2000.Users");
+            }
+            
+            if (isExists(limitRows, "MsSQL2005.Databases"))
+            {
+                MaxMsSqlDb = GetLimitValue(limitRows, "MsSQL2005.Databases");
+                MaxMsSqlDbSpace = GetLimitValue(limitRows, "MsSQL2005.MaxDatabaseSize");
+                MaxMsSqlDbUser = GetLimitValue(limitRows, "MsSQL2005.Users");
+            }
+            
+            if (isExists(limitRows, "MsSQL2008.Databases"))
+            {
+                MaxMsSqlDb = GetLimitValue(limitRows, "MsSQL2008.Databases");
+                MaxMsSqlDbSpace = GetLimitValue(limitRows, "MsSQL2008.MaxDatabaseSize");
+                MaxMsSqlDbUser = GetLimitValue(limitRows, "MsSQL2008.Users");
+            }
+            
+            if (isExists(limitRows, "MsSQL2012.Databases"))
+            {
+                MaxMsSqlDb = GetLimitValue(limitRows, "MsSQL2012.Databases");
+                MaxMsSqlDbSpace = GetLimitValue(limitRows, "MsSQL2012.MaxDatabaseSize");
+                MaxMsSqlDbUser = GetLimitValue(limitRows, "MsSQL2012.Users");
+            }
+
+            MaxFtpTraffic = -1;
+            MaxMailTraffic = -1;
+        }
+
+
+        private bool isExists(List<LimitRow> limitRows, string key)
+        {
+            return limitRows.Where(m => m.Name == key).Any();
+        }
+
         public void LoadHelmLimits(List<LimitRow> limitRows)
         {
             MaxDomain = GetLimitValue(limitRows, "MaxNumDomains");

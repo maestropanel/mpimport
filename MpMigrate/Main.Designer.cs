@@ -1069,7 +1069,8 @@
             "Plesk 8.x",
             "MaestroPanel",
             "Entrenix",
-            "Helm"});
+            "Helm",
+            "WebsitePanel"});
             this.comboSourcePanel.Location = new System.Drawing.Point(6, 20);
             this.comboSourcePanel.Name = "comboSourcePanel";
             this.comboSourcePanel.Size = new System.Drawing.Size(223, 23);

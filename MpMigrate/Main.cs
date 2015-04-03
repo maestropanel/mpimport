@@ -132,6 +132,9 @@
                 case "Helm":
                     ptype = PanelTypes.Helm;
                     break;
+                case "WebsitePanel":
+                    ptype = PanelTypes.WebsitePanel;
+                    break;
             }
 
             return ptype;
@@ -232,6 +235,9 @@
                     break;
                 case PanelTypes.Helm:
                     comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Helm");
+                    break;
+                case PanelTypes.WebsitePanel:
+                    comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("WebsitePanel");
                     break;
                 default:
                     break;

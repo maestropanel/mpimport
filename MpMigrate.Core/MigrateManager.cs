@@ -20,7 +20,8 @@
         Plesk_10,
         MaestroPanel,
         Entrenix,
-        Helm
+        Helm,
+        WebsitePanel
 
     }
 
@@ -421,6 +422,9 @@
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                                 (PanelTypes.Helm, DatabaseProviders.MSSQL, new Helm_MsSQL(), new Helm_Discover()));
+
+            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
+                    (PanelTypes.WebsitePanel, DatabaseProviders.MSSQL, new WebSitePanel_MsSQL(), new WebsitePanel_Discover()));
         }
 
         private void SetSourceDatabaseAutomatically(IDiscovery discover)

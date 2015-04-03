@@ -6,6 +6,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3rd", "3rd", "{3E716B09-4AE8-426D-B428-3273D4F6C7F9}"
 	ProjectSection(SolutionItems) = preProject
 		7za.exe = 7za.exe
+		WebsitePanel.EnterPriseServer.Web.config.txt = WebsitePanel.EnterPriseServer.Web.config.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MpMigrate", "MpMigrate\MpMigrate.csproj", "{73D9B0E4-F96A-4147-A69A-09261C7D552B}"

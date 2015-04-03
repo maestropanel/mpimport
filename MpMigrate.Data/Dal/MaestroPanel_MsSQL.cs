@@ -613,8 +613,7 @@
 
             return _tmp;   
         }
-
-
+        
         private int GetScalarValue(object obj)
         {
             int _value = 0;
@@ -759,7 +758,6 @@
         {
             return false;
         }
-
 
         private class FtpAccount
         {

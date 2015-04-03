@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Maestro\assembly\Microsoft.Web.Administration.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data, Version=6.6.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MySql.Data.dll</HintPath>
@@ -41,6 +45,7 @@
     <Reference Include="System.Data.SQLite">
       <HintPath>..\..\Maestro\assembly\System.Data.SQLite.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -58,6 +63,7 @@
     <Compile Include="Discovery\MaestroPanelDiscover.cs" />
     <Compile Include="Discovery\Plesk_11_Discover.cs" />
     <Compile Include="Discovery\Plesk_86_Discover.cs" />
+    <Compile Include="Discovery\WebsitePanel_Discover.cs" />
     <Compile Include="Entity\ImportPlan.cs" />
     <Compile Include="Entity\MaestroPanelHost.cs" />
     <Compile Include="Entity\SourceHost.cs" />
