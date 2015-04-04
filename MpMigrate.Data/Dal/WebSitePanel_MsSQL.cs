@@ -11,12 +11,13 @@
     using System.Linq;
     using System.Security.Cryptography;
     using System.Text;
+    using System.Windows.Forms;
     
 
     public class WebSitePanel_MsSQL : DboFactory
     {
-
         private string DEFAULT_WEBSITE_NAME = "websitepanel.info";
+        private readonly string WEBSITEPANEL_WEBSITE_NAME = "WebsitePanel Enterprise Server";
 
         /// User role ID:
         /// 		Administrator = 1,
@@ -35,11 +36,13 @@
 
         public WebSitePanel_MsSQL()
         {
-            SetCryptoKey();
+            
         }
 
         public override List<Domain> GetDomains()
         {
+            SetCryptoKey();
+
             var _tmp = new List<Domain>();
 
             //WebsitePanel veritabanlarını herhangi bir yere bağlanamdığından dolayı. 
@@ -65,7 +68,11 @@
 			                                                    ISNULL(D.MailDomainID, 0) AS MailDomainID, D.DomainName,  Users.Username As Owner
                                                                 FROM Domains AS D INNER JOIN
                                                                     Packages AS P ON D.PackageID = P.PackageID INNER JOIN
-                                                        Users ON P.UserID = Users.UserID WHERE (D.IsDomainPointer = 0) AND (D.IsSubDomain = 0) AND (D.IsInstantAlias = 0)", _conn))
+                                                        Users ON P.UserID = Users.UserID WHERE (D.IsDomainPointer = 0) AND (D.IsSubDomain = 0) AND (D.IsInstantAlias = 0)
+                                                        AND D.DomainName IN (SELECT ServiceItems.ItemName
+                                                        FROM ServiceItems INNER JOIN
+                                                               ServiceItemTypes ON ServiceItems.ItemTypeID = ServiceItemTypes.ItemTypeID
+                                                        WHERE (ServiceItemTypes.DisplayName = N'WebSite'))", _conn))
                 {
                     using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
@@ -73,7 +80,7 @@
                         {
                             var _d = new Domain();
                             _d.Id = DataExtensions.GetColumnValue<int>(_read, "DomainID");
-                            _d.Name = DataExtensions.GetColumnValue<String>(_read, "Name").ToLower();
+                            _d.Name = DataExtensions.GetColumnValue<String>(_read, "DomainName").ToLower();
                             _d.ClientName = DataExtensions.GetColumnValue<String>(_read, "Owner");
                             _d.DomainPassword = DataHelper.GetPassword();
                             
@@ -114,23 +121,30 @@
             {
                 _conn.Open();
 
-                using (SqlCommand _cmd = new SqlCommand(@"", _conn))
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT ServiceItems.ItemID, ServiceItems.ItemName, ServiceItemTypes.DisplayName, ServiceItemProperties.PropertyValue, Packages.UserID
+                                                    FROM ServiceItems INNER JOIN
+                                                                          ServiceItemTypes ON ServiceItems.ItemTypeID = ServiceItemTypes.ItemTypeID INNER JOIN
+                                                                          ServiceItemProperties ON ServiceItems.ItemID = ServiceItemProperties.ItemID INNER JOIN
+                                                                          Packages ON ServiceItems.PackageID = Packages.PackageID
+                                                    WHERE (ServiceItemTypes.DisplayName IN ('MailAccount')) AND 
+                                                                          (ServiceItemProperties.PropertyName = N'Password') AND (ServiceItems.ItemName LIKE @NAME)", _conn))
                 {
-                    _cmd.Parameters.AddWithValue("@NAME", domainName);
+                    _cmd.Parameters.AddWithValue("@NAME", String.Format("%@{0}",domainName));
 
                     using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
-                            var password = DataExtensions.GetColumnValue<string>(_read, "Password");
+                            var password = DataExtensions.GetColumnValue<string>(_read, "PropertyValue");
+                            var ItemName = DataExtensions.GetColumnValue<string>(_read, "ItemName");
 
                             var da = new Email();
                             da.DomainName = domainName;
-                            da.Name = DataExtensions.GetColumnValue<string>(_read, "Username");
+                            da.Name = ItemName.Split('@').FirstOrDefault();
                             da.Password = Decrypt(password);
                             da.Quota = domainMailBoxSizeQuota;
                             da.Redirect = String.Empty;
-                            da.RedirectedEmail = String.Empty;                            
+                            da.RedirectedEmail = String.Empty;
 
                             _tmp.Add(da);
                         }
@@ -246,7 +260,8 @@
 
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT ServiceItems.ItemID, ServiceItems.ItemName, ServiceItemTypes.DisplayName 
                                                             FROM ServiceItems INNER JOIN ServiceItemTypes ON ServiceItems.ItemTypeID = ServiceItemTypes.ItemTypeID 
-                                                            WHERE (ServiceItemTypes.DisplayName IN ('MsSQL2000Database', 'MySQL4Database', 'MsSQL2005Database', 'MySQL5Database', 'MsSQL2008Database', 'MsSQL2012Database'))", _conn))
+                                                            WHERE (ServiceItemTypes.DisplayName IN 
+                                            ('MsSQL2000Database', 'MySQL4Database', 'MsSQL2005Database', 'MySQL5Database', 'MsSQL2008Database', 'MsSQL2012Database'))", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@NAME", domainName);
 
@@ -439,7 +454,7 @@
             string dbHost = String.Empty;
             string rootLogin = String.Empty;
             string rootPassword = String.Empty;
-            string dbtype = "mssql";            
+            string dbtype = "mssql";
 
             using (SqlConnection _conn = new SqlConnection(connectionString))
             {
@@ -455,13 +470,15 @@
                 {
                     _cmd.Parameters.AddWithValue("@ID", dbitem.Id);
 
-                    using (SqlDataReader _read = _cmd.ExecuteReader(System.Data.CommandBehavior.SingleRow))
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
                             var serviceName = DataExtensions.GetColumnValue<String>(_read, "ServiceName");
                             var propertyName = DataExtensions.GetColumnValue<String>(_read, "PropertyName");
                             var propertyValue = DataExtensions.GetColumnValue<String>(_read, "PropertyValue");
+                            
+                            //MessageBox.Show(String.Format("ID: {3}, DBName: {4}, Service: {0}, Name: {1}, Value: {2}", serviceName, propertyName, propertyValue, dbitem.Id, dbitem.Name));
 
                             if (propertyName == "internaladdress")
                                 dbHost = propertyValue;
@@ -476,7 +493,7 @@
                                 rootLogin = propertyValue;
 
                             if (propertyName == "sapassword")
-                                rootLogin = Decrypt(propertyValue);
+                                rootPassword = Decrypt(propertyValue);
 
                             if (serviceName.StartsWith("MySQL"))
                                 dbtype = "mysql";
@@ -486,6 +503,8 @@
 
                 _conn.Close();
             }
+
+            //MessageBox.Show(String.Format("ID: {1}, Type: {0}, Name: {2}, Login: {3} Pass: {4}", dbitem, dbitem.Id, dbitem.Name, rootLogin, rootPassword));
 
             return createConnectionString(dbtype, dbHost, dbitem.Name, rootLogin, rootPassword);
         }
@@ -499,14 +518,14 @@
 
             var msssql_conn = String.Format("Server={0};Database={1};User Id={2};Password={3};",
                 host,
-                database,
+                "master",
                 username,
                 password);
 
             var mysql_conn = String.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4};",
                 hostname,
                 port,
-                database,
+                "mysql",
                 username,
                 password);
 
@@ -523,17 +542,7 @@
             {
                 _conn.Open();
 
-                using (MySqlCommand _cmd = new MySqlCommand(String.Format("SELECT User FROM db WHERE Db='{0}' AND Host='%' AND " +
-                "Select_priv = 'Y' AND " +
-                "Insert_priv = 'Y' AND " +
-                "Update_priv = 'Y' AND  " +
-                "Delete_priv = 'Y' AND  " +
-                "Index_priv = 'Y' AND  " +
-                "Alter_priv = 'Y' AND  " +
-                "Create_priv = 'Y' AND  " +
-                "Drop_priv = 'Y' AND  " +
-                "Create_tmp_table_priv = 'Y' AND  " +
-                "Lock_tables_priv = 'Y'",dbitem.Name), _conn))
+                using (MySqlCommand _cmd = new MySqlCommand(String.Format("SELECT User FROM db WHERE Db='{0}' AND Host='%' AND Select_priv = 'Y' AND Insert_priv = 'Y' AND Update_priv = 'Y' AND Delete_priv = 'Y' AND Index_priv = 'Y' AND Alter_priv = 'Y' AND Create_priv = 'Y' AND Drop_priv = 'Y' AND Create_tmp_table_priv = 'Y' AND Lock_tables_priv = 'Y'",dbitem.Name), _conn))
                 {                    
                     using (MySqlDataReader _read = _cmd.ExecuteReader())
                     {
@@ -556,7 +565,9 @@
 
             var _con = GetSQLConnectionString(dbitem);
 
-            using (SqlConnection _conn = new SqlConnection(connectionString))
+            //MessageBox.Show(_con);
+
+            using (SqlConnection _conn = new SqlConnection(_con))
             {
                 _conn.Open();
 
@@ -646,7 +657,7 @@
                             da.FirstName = DataExtensions.GetColumnValue<String>(_read, "FirstName");
                             da.LastName = DataExtensions.GetColumnValue<String>(_read, "LastName");
                             da.Organization = DataExtensions.GetColumnValue<String>(_read, "CompanyName");
-                            da.Phone = DataExtensions.GetColumnValue<String>(_read, "Phone");
+                            da.Phone = DataExtensions.GetColumnValue<String>(_read, "PrimaryPhone");
                             da.PostalCode = DataExtensions.GetColumnValue<String>(_read, "Zip");
                             da.Province = DataExtensions.GetColumnValue<String>(_read, "State");
                             da.Limits = ResellerLimits(da.Username);
@@ -708,13 +719,13 @@
                             var gname = DataExtensions.GetColumnValue<String>(_read, "GroupName");
 
                             if (gname == "MsSQL2008" || gname == "MySQL5")
-                                pstats.TotalDatabaseDiskSpace += DataExtensions.GetColumnValue<int>(_read, "Diskspace");
+                                pstats.TotalDatabaseDiskSpace += Convert.ToDecimal(DataExtensions.GetColumnValue<double>(_read, "Diskspace"));
 
                             if (gname == "Mail")
-                                pstats.TotalEmailDiskSpace = DataExtensions.GetColumnValue<int>(_read, "Diskspace");
+                                pstats.TotalEmailDiskSpace = Convert.ToDecimal(DataExtensions.GetColumnValue<double>(_read, "Diskspace"));
 
                             if (gname == "OS")
-                                pstats.TotalDomainDiskSpace = DataExtensions.GetColumnValue<int>(_read, "OS");
+                                pstats.TotalDomainDiskSpace = Convert.ToDecimal(DataExtensions.GetColumnValue<double>(_read, "Diskspace"));
                         }
                     }
                 }
@@ -958,6 +969,7 @@
         private string GetPhysicalPathByDomainName(string siteName)
         {
             var _physicalPath = "";
+
             using (ServerManager _server = new ServerManager())
             {                
                     var _site = _server.Sites[siteName];
@@ -971,16 +983,24 @@
             return _physicalPath;
         }
 
-        private void SetCryptoKey()
+        private bool isWebSiteExists()
+        {
+            using (ServerManager _server = new ServerManager())
+            {
+                return _server.Sites.Where(m => m.Name == WEBSITEPANEL_WEBSITE_NAME).Any();
+            }
+        }
+
+        public void SetCryptoKey()
         {
             //WebSitePanel Parolaları Endoce edilmiş mi?
-            var rootPath = GetPhysicalPathByDomainName("WebsitePanel Enterprise Server");
-            var webConfigPath = Path.Combine(rootPath, "Web.config");
+            if (isWebSiteExists())
+            {
+                System.Configuration.Configuration rootWebConfig1 = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/", WEBSITEPANEL_WEBSITE_NAME);
 
-            System.Configuration.Configuration rootWebConfig1 = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(rootPath);
-
-            CryptoKey = rootWebConfig1.AppSettings.Settings["WebsitePanel.AltCryptoKey"].Value;
-            EncryptionEnabled = ConfigurationManager.AppSettings["WebsitePanel.EncryptionEnabled"] != null ? Boolean.Parse(ConfigurationManager.AppSettings["WebsitePanel.EncryptionEnabled"]) : true;                        
+                CryptoKey = rootWebConfig1.AppSettings.Settings["WebsitePanel.CryptoKey"].Value;
+                EncryptionEnabled = ConfigurationManager.AppSettings["WebsitePanel.EncryptionEnabled"] != null ? Boolean.Parse(ConfigurationManager.AppSettings["WebsitePanel.EncryptionEnabled"]) : true;
+            }
         }
     }
 

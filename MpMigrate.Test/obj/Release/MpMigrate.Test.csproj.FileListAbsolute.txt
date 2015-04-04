@@ -10,3 +10,6 @@ O:\Projects\MpImport\MpMigrate.Test\bin\Release\MpMigrate.MaestroPanel.Api.pdb
 O:\Projects\MpImport\MpMigrate.Test\obj\Release\MpMigrate.Test.csprojResolveAssemblyReference.cache
 O:\Projects\MpImport\MpMigrate.Test\obj\Release\MpMigrate.Test.dll
 O:\Projects\MpImport\MpMigrate.Test\obj\Release\MpMigrate.Test.pdb
+O:\Projects\MpImport\MpMigrate.Test\bin\Release\MpMigrate.Core.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Release\System.Data.SQLite.dll
+O:\Projects\MpImport\MpMigrate.Test\bin\Release\MpMigrate.Core.pdb

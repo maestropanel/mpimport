@@ -26,13 +26,15 @@
         public string Version()
         {
             WEBSITEPANEL_PATH = GetPhysicalPathByDomainName(WEBSITEPANEL_WEBSITE_NAME);
+
             var filePath = Path.Combine(WEBSITEPANEL_PATH, "WebsitePanel.EnterpriseServer.Base.dll");
 
-            if (!File.Exists(filePath))            
+            if (!File.Exists(filePath))
                 return "";
 
             FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(filePath);
-            return fvi.ProductVersion;            
+
+            return fvi.ProductVersion;
         }
 
         public string VhostPath()
@@ -42,6 +44,8 @@
 
         public DatabaseProviders GetDatabaseProvider()
         {
+            SetDatabase();
+
             return DatabaseProviders.MSSQL;
         }
 
@@ -98,6 +102,7 @@
         private string GetPhysicalPathByDomainName(string siteName)
         {
             var _physicalPath = "";
+
             using (ServerManager _server = new ServerManager())
             {
                 var _site = _server.Sites[siteName];
@@ -119,20 +124,22 @@
             }
         }
 
-        private void SetDatabase()
-        {            
-            System.Configuration.Configuration rootWebConfig1 = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(WEBSITEPANEL_WEBSITE_NAME);
-            var connectionStr = rootWebConfig1.ConnectionStrings.ConnectionStrings["EnterpriseServer"].ConnectionString;
+        public void SetDatabase()
+        {
+            if (isWebSiteExists())
+            {
 
-            //server=localhost\sqlexpress;database=WebsitePanel;uid=WebsitePanel;pwd=kla!kk!;
-            System.Data.SqlClient.SqlConnectionStringBuilder builder = new System.Data.SqlClient.SqlConnectionStringBuilder(connectionStr);
+                System.Configuration.Configuration rootWebConfig1 = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/", WEBSITEPANEL_WEBSITE_NAME);
+                var connectionStr = rootWebConfig1.ConnectionStrings.ConnectionStrings["EnterpriseServer"].ConnectionString;
+                
+                //server=localhost\sqlexpress;database=WebsitePanel;uid=WebsitePanel;pwd=kla!kk!;
+                System.Data.SqlClient.SqlConnectionStringBuilder builder = new System.Data.SqlClient.SqlConnectionStringBuilder(connectionStr);
 
-            _dbhost = builder.InitialCatalog;
-            
-            
+                _dbhost = builder.DataSource;
+                _username = builder.UserID;
+                _password = builder.Password;
+                _databaseName = builder.InitialCatalog;
+            }
         }
-
-
-        
     }
 }

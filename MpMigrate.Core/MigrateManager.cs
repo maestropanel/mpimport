@@ -121,7 +121,7 @@
                     SetSourceDatabaseAutomatically(item.Item4);
 
                     PanelData = item.Item3;
-                    var connectionString = SourceDatabase.ConnectionString();                    
+                    var connectionString = SourceDatabase.ConnectionString();
                     PanelData.LoadConnectionString(connectionString);
 
                     break;
