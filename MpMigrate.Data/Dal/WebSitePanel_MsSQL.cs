@@ -57,7 +57,11 @@
             _def.Expiration = DateTime.Now.AddYears(1);
             _def.DomainPassword = _def.Password;      
             _def.Databases = GetDatabases(_def.Name);
-
+            _def.Limits = new HostLimit();
+            _def.Subdomains = new List<Subdomain>();
+            _def.Zone = new DnsZone();
+            _def.Aliases = new List<DomainAlias>();
+            
             _tmp.Add(_def);
 
             using (SqlConnection _conn = new SqlConnection(connectionString))
@@ -203,7 +207,8 @@
                                                   HostingPlans ON Packages.PlanID = HostingPlans.PlanID INNER JOIN
                                                   HostingPlanQuotas ON HostingPlans.PlanID = HostingPlanQuotas.PlanID INNER JOIN
                                                   Quotas ON HostingPlanQuotas.QuotaID = Quotas.QuotaID
-                            WHERE     (Domains.DomainName = @NAME) AND (Domains.IsSubDomain = 0) AND (Domains.IsInstantAlias = 0) AND (Domains.IsDomainPointer = 0)", _conn))
+                            WHERE     (Domains.DomainName = @NAME) AND
+(Domains.IsSubDomain = 0) AND (Domains.IsInstantAlias = 0) AND (Domains.IsDomainPointer = 0)", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@NAME", domainName);
 
@@ -224,7 +229,7 @@
                 _conn.Close();
             }
 
-            return new HostLimit(_tmp_limits, WebSitePanel:1);
+            return new HostLimit(_tmp_limits, WebSitePanel:1){ Expiration = DateTime.Now};
         }
 
         public override DnsZone GetDnsZone(string domainName)
@@ -275,6 +280,8 @@
                             da.Domain = domainName;
                             da.DbType = getDbType(DataExtensions.GetColumnValue<String>(_read, "DisplayName"));                            
                             da.Users = GetDatabaseUsers(da.Id);
+
+                            //MessageBox.Show(String.Format("Databsae: {0}, User: {1}", da.Name, da.Users.Count));
 
                             _tmp.Add(da);
                         }
@@ -328,16 +335,35 @@
             var websitePanelDatabaseUsers = GetDatabaseUsersFromWebSitePanel(websitePanelUserId);
 
             //Database Kullanıcıları
-            var currentUser = websitePanelDatabaseUsers.Where(m => m.UserType == db.dbtype && databaseUsers.Contains(m.Username)).FirstOrDefault();
+            var currentUser = databaseUsers.FirstOrDefault();
 
-            if (!String.IsNullOrEmpty(currentUser.Username))
-            {                
+            //foreach (var item in databaseUsers)
+            //    MessageBox.Show(String.Format("Tip:{0}, Database: {1}, User: {2}", db.dbtype,  db.Name, item));
+
+            var websitePanelDbUser = websitePanelDatabaseUsers.Where(m => m.Username == currentUser).FirstOrDefault();
+
+            //MessageBox.Show(String.Format("Database: {2}, Current User: {0}, WebsitePanel User: {1}, Password: {3}", 
+                //currentUser, websitePanelDbUser.Username, db.Name, websitePanelDbUser.Password));
+
+            if (!String.IsNullOrEmpty(currentUser))
+            {
                 var dbuser = new DatabaseUser();
-                dbuser.Username = currentUser.Username;
-                dbuser.Password = Decrypt(currentUser.Password);                
+                dbuser.Username = currentUser;
+                dbuser.Password = String.IsNullOrEmpty(websitePanelDbUser.Password) ?
+                                        DataHelper.GetPassword() :
+                                        websitePanelDbUser.Password;
 
                 _tmp.Add(dbuser);
             }
+            else
+            {
+                var dbuser = new DatabaseUser();
+                dbuser.Username = String.Format("usr_{0}",database_id);
+                dbuser.Password = DataHelper.GetPassword();
+
+                _tmp.Add(dbuser);
+            }
+
             
             return _tmp;
         }
@@ -356,11 +382,12 @@
                                                                           ServiceItemProperties ON ServiceItems.ItemID = ServiceItemProperties.ItemID INNER JOIN
                                                                           Packages ON ServiceItems.PackageID = Packages.PackageID
                                                     WHERE (ServiceItemTypes.DisplayName IN ('MsSQL2000User', 'MySQL4User', 'MsSQL2005User', 'MySQL5User', 'MsSQL2008User', 'MsSQL2012User')) AND 
-                                                                          (ServiceItemProperties.PropertyName = N'Password') AND (Packages.UserID = @ID)", _conn))
+                                                                          (ServiceItemProperties.PropertyName = N'Password') 
+                                                    AND (Packages.UserID = @ID)", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@ID", websiteUserID);
 
-                    using (SqlDataReader _read = _cmd.ExecuteReader(System.Data.CommandBehavior.SingleRow))
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -395,12 +422,12 @@
                                         FROM  ServiceItems INNER JOIN
                                         ServiceItemTypes ON ServiceItems.ItemTypeID = ServiceItemTypes.ItemTypeID INNER JOIN
                                         Packages ON ServiceItems.PackageID = Packages.PackageID
-                                        WHERE     (ServiceItemTypes.DisplayName IN ('MsSQL2000Database', 'MySQL4Database', 'MsSQL2005Database', 'MySQL5Database', 'MsSQL2008Database', 'MsSQL2012Database'))  
+                                        WHERE (ServiceItemTypes.DisplayName IN ('MsSQL2000Database', 'MySQL4Database', 'MsSQL2005Database', 'MySQL5Database', 'MsSQL2008Database', 'MsSQL2012Database'))  
                                         AND ServiceItems.ItemID = @ID", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@ID", dbitem.Id);
 
-                    using (SqlDataReader _read = _cmd.ExecuteReader(System.Data.CommandBehavior.SingleRow))
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         if (_read.Read())
                             websiteuserId = DataExtensions.GetColumnValue<int>(_read, "UserID");
@@ -429,13 +456,12 @@
                 {
                     _cmd.Parameters.AddWithValue("@ID", database_id);
 
-                    using (SqlDataReader _read = _cmd.ExecuteReader(System.Data.CommandBehavior.SingleRow))
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         if (_read.Read())
                         {
-                            db.Name = DataExtensions.GetColumnValue<String>(_read, "ItemName");
+                            db.Name = DataExtensions.GetColumnValue<String>(_read, "ItemName");                            
                             var displayName = DataExtensions.GetColumnValue<String>(_read, "DisplayName");
-
                             db.dbtype = displayName.StartsWith("MySQL") ? "mysql" : "mssql";                            
                         }
                     }
@@ -454,6 +480,7 @@
             string dbHost = String.Empty;
             string rootLogin = String.Empty;
             string rootPassword = String.Empty;
+
             string dbtype = "mssql";
 
             using (SqlConnection _conn = new SqlConnection(connectionString))
@@ -535,14 +562,20 @@
         private List<String> GetDatabaseUsersFromMySQL(DataBaseItem dbitem)
         {
             var list = new List<String>();
-
             var _con = GetSQLConnectionString(dbitem);
+
+            //MessageBox.Show(String.Format("Databae:{0} ; Connection: {1} ; Connection 2: {2}", dbitem.Name, _con, dbitem.connectionStr));
 
             using (MySqlConnection _conn = new MySqlConnection(_con))
             {
                 _conn.Open();
 
-                using (MySqlCommand _cmd = new MySqlCommand(String.Format("SELECT User FROM db WHERE Db='{0}' AND Host='%' AND Select_priv = 'Y' AND Insert_priv = 'Y' AND Update_priv = 'Y' AND Delete_priv = 'Y' AND Index_priv = 'Y' AND Alter_priv = 'Y' AND Create_priv = 'Y' AND Drop_priv = 'Y' AND Create_tmp_table_priv = 'Y' AND Lock_tables_priv = 'Y'",dbitem.Name), _conn))
+                using (MySqlCommand _cmd = new MySqlCommand(String.Format(@"SELECT User FROM db WHERE Db='{0}' 
+                                        AND Host='%' AND Select_priv = 'Y' 
+                                        AND Insert_priv = 'Y' AND Update_priv = 'Y' 
+                                        AND Delete_priv = 'Y' AND Index_priv = 'Y' 
+                                        AND Alter_priv = 'Y' AND Create_priv = 'Y' 
+                                        AND Drop_priv = 'Y' AND Create_tmp_table_priv = 'Y' AND Lock_tables_priv = 'Y'", dbitem.Name), _conn))
                 {                    
                     using (MySqlDataReader _read = _cmd.ExecuteReader())
                     {
@@ -600,9 +633,9 @@
             {
                 _conn.Open();
 
-                using (SqlCommand _cmd = new SqlCommand(@"SELECT DomainName, DomainID
-                                                        FROM Domains
-                                                        WHERE (IsSubDomain = 1) AND (DomainName LIKE @NAME)", _conn))
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT DomainName
+                                                            FROM Domains
+                                                        WHERE (IsSubDomain = 1) AND (IsDomainPointer = 0) AND (DomainName LIKE @NAME)", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@NAME", String.Format("%{0}",domainName));
 
@@ -610,11 +643,16 @@
                     {
                         while (_read.Read())
                         {
+                            //en.mertekscorap.com.tr
+                            var subdomain = DataExtensions.GetColumnValue<String>(_read, "DomainName");
+                            subdomain = subdomain.Replace(domainName, "");
+                            subdomain = subdomain.Remove(subdomain.Length - 1, 1);
+
                             var da = new Subdomain();
                             da.Domain = domainName;
                             da.Login = domainName;
-                            da.Name = DataExtensions.GetColumnValue<String>(_read, "DomainName");
-                            da.Password = "";                            
+                            da.Name = subdomain;
+                            da.Password = "";
 
                             _tmp.Add(da);
                         }
@@ -636,7 +674,7 @@
 
                 using (SqlCommand _cmd = new SqlCommand(@"SELECT UserID, OwnerID, RoleID, StatusID, Username, Password, IsPeer, IsDemo, FirstName, 
                                                         LastName, Email, Address, City, State, Country, Zip, PrimaryPhone, Fax, CompanyName
-                                                            FROM Users
+                                                        FROM Users
                                                         WHERE (IsDemo = 0) AND (RoleID IN (2,3)) AND (StatusID = 1)", _conn))
                 {
                     using (SqlDataReader _read = _cmd.ExecuteReader())
@@ -731,7 +769,14 @@
                 }
 
 
-                using (SqlCommand _cmd = new SqlCommand(@"SELECT COUNT(*) FROM  Domains WHERE (IsDomainPointer = 0) AND (IsInstantAlias = 0) AND (IsSubDomain = 0)", _conn))
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT COUNT(*) 
+                                                                FROM Domains AS D INNER JOIN
+                                                                    Packages AS P ON D.PackageID = P.PackageID INNER JOIN
+                                                        Users ON P.UserID = Users.UserID WHERE (D.IsDomainPointer = 0) AND (D.IsSubDomain = 0) AND (D.IsInstantAlias = 0)
+                                                        AND D.DomainName IN (SELECT ServiceItems.ItemName
+                                                        FROM ServiceItems INNER JOIN
+                                                               ServiceItemTypes ON ServiceItems.ItemTypeID = ServiceItemTypes.ItemTypeID
+                                                        WHERE (ServiceItemTypes.DisplayName = N'WebSite'))", _conn))
                 {
                     pstats.TotalDomainCount = GetScalarValue(_cmd.ExecuteScalar());
                 }

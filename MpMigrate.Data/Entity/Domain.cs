@@ -24,12 +24,14 @@
         public bool isForwarding { get; set; }
         public string ForwardUrl { get; set; }
 
-
         public Domain()
         {            
             Aliases = new List<DomainAlias>();
             Subdomains = new List<Subdomain>();
             Emails = new List<Email>();
+            Limits = new HostLimit();
+            Expiration = DateTime.Now.AddYears(1).Date;
+            Zone = new DnsZone();
         }
 
         public DateTime FromUnixTime(double unixTime)

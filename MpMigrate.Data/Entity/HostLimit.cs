@@ -1,8 +1,8 @@
 ﻿
 namespace MpMigrate.Data.Entity
 {
-    using System.Collections.Generic;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     public class HostLimit
@@ -144,7 +144,6 @@ namespace MpMigrate.Data.Entity
             MaxMailTraffic = -1;
         }
 
-
         private bool isExists(List<LimitRow> limitRows, string key)
         {
             return limitRows.Where(m => m.Name == key).Any();
@@ -179,9 +178,15 @@ namespace MpMigrate.Data.Entity
         {
             int val = -1;
 
-            if (limitRows.Where(m => m.Name == name).Any())                
-                    val = limitRows.FirstOrDefault(m => m.Name == name).Value;
-            
+            if (limitRows == null)
+                return val;
+
+            if (limitRows.Where(m => m.Name == name).Any())
+            {
+                var _value = limitRows.FirstOrDefault(m => m.Name == name);               
+                val = _value.Value;
+            }
+
             return val;
         }
     }
