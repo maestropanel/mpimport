@@ -85,7 +85,7 @@
                             var _d = new Domain();
                             _d.Id = DataExtensions.GetColumnValue<int>(_read, "DomainID");
                             _d.Name = DataExtensions.GetColumnValue<String>(_read, "DomainName").ToLower();
-                            _d.ClientName = DataExtensions.GetColumnValue<String>(_read, "Owner");
+                            _d.ClientName = userNameFix(DataExtensions.GetColumnValue<String>(_read, "Owner"));
                             _d.DomainPassword = DataHelper.GetPassword();
                             
                             _d.Username = _d.Name;
@@ -97,13 +97,13 @@
                             _d.Limits = GetDomainLimits(_d.Name);
                             _d.Subdomains = GetSubdomains(_d.Name);                            
                             _d.Emails = GetEmails(_d.Name);
-                            
-                            // _d.Aliases aliaslar websitepanel'de bizdeki mantkta tutulmuyor.
-                            // _d.Zone bu property'i eklemek lazım.   
+
+                            _d.Aliases =new List<DomainAlias>();
+                            _d.Zone = new DnsZone() { Records = new List<DnsZoneRecord>() };
 
                             //WebsitePanel forwarding'i sitenin web.config'inde tutuyor.
                             _d.isForwarding = false;
-                            _d.ForwardUrl = "";                            
+                            _d.ForwardUrl = "";
 
                             _tmp.Add(_d);
                         }
@@ -685,7 +685,7 @@
 
                             var da = new Reseller();
                             da.Id = DataExtensions.GetColumnValue<int>(_read, "UserID");
-                            da.Username = DataExtensions.GetColumnValue<String>(_read, "Username");
+                            da.Username = userNameFix(DataExtensions.GetColumnValue<String>(_read, "Username"));
                             da.Password = Decrypt(Password);
                             da.Address1 = DataExtensions.GetColumnValue<String>(_read, "Address");                            
                             da.City = DataExtensions.GetColumnValue<String>(_read, "City");
@@ -1046,6 +1046,14 @@
                 CryptoKey = rootWebConfig1.AppSettings.Settings["WebsitePanel.CryptoKey"].Value;
                 EncryptionEnabled = ConfigurationManager.AppSettings["WebsitePanel.EncryptionEnabled"] != null ? Boolean.Parse(ConfigurationManager.AppSettings["WebsitePanel.EncryptionEnabled"]) : true;
             }
+        }
+
+        private string userNameFix(string username)
+        {
+            username = username.Replace(" ", "_")
+                .Replace(".", "_");
+
+            return username;
         }
     }
 
