@@ -82,11 +82,13 @@
 
         private string MicrosoftAccessConnectionString()
         {
+            //Provider=Microsoft.Jet.OLEDB.4.0;Data Source=O:\partisepeti-psa.mdb
             return String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};User Id={1};Password={2};", DataseFile, Username, "");            
         }
 
         private string MicrosoftAccessOdbcConnectionString()
         {
+            //return "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + DataseFile;                        
             return "Driver={Microsoft Access Driver (*.mdb)};Dbq=" + DataseFile;            
         }
 

@@ -124,6 +124,9 @@
                 case "Plesk 8.x":
                     ptype = PanelTypes.Plesk_86;
                     break;
+                case "Plesk 8.2":
+                    ptype = PanelTypes.Plesk_82;
+                    break;
                 case "MaestroPanel":
                     ptype = PanelTypes.MaestroPanel;
                     break;
@@ -212,6 +215,9 @@
             switch (paneltype)
             {
                 case PanelTypes.Unknown:
+                    break;
+                case PanelTypes.Plesk_82:
+                    comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 8.2");
                     break;
                 case PanelTypes.Plesk_86:
                     comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 8.x");

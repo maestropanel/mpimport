@@ -11,3 +11,15 @@ O:\Projects\MpImport\MpMigrate.Core\obj\Debug\MpMigrate.Core.pdb
 O:\Projects\MpImport\MpMigrate.Core\bin\Debug\Newtonsoft.Json.dll
 O:\Projects\MpImport\MpMigrate.Core\bin\Debug\MailEnable.Administration.dll
 O:\Projects\MpImport\MpMigrate.Core\obj\Debug\MpMigrate.Core.csprojResolveAssemblyReference.cache
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Core\bin\Debug\MpMigrate.Core.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Core\bin\Debug\MpMigrate.Core.pdb
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Core\bin\Debug\MpMigrate.Data.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Core\bin\Debug\MpMigrate.MaestroPanel.Api.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Core\bin\Debug\MySql.Data.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Core\bin\Debug\MailEnable.Administration.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Core\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Core\bin\Debug\MpMigrate.Data.pdb
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Core\bin\Debug\MpMigrate.MaestroPanel.Api.pdb
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Core\obj\Debug\MpMigrate.Core.csprojResolveAssemblyReference.cache
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Core\obj\Debug\MpMigrate.Core.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Core\obj\Debug\MpMigrate.Core.pdb

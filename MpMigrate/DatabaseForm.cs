@@ -48,6 +48,7 @@
                 case "SQLite":
                 case "SQLCe":
                 case "MS Access":
+                case "MS Access OLEDB":
                     ChangeEnabled(false);
                     break;
                 default:
@@ -173,6 +174,9 @@
                     break;
                 case "SQLCe":
                     Provider = DatabaseProviders.SQLCE;
+                    break;
+                case "MS Access OLEDB":
+                    Provider = DatabaseProviders.OLEDB_ACCESS;
                     break;
                 default:
                     Provider = DatabaseProviders.Unknown;

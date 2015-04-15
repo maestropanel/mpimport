@@ -61,7 +61,8 @@
             "MS SQL",
             "SQLite",
             "MS Access",
-            "SQLCe"});
+            "SQLCe",
+            "MS Access OLEDB"});
             this.comboProvider.Location = new System.Drawing.Point(12, 36);
             this.comboProvider.Name = "comboProvider";
             this.comboProvider.Size = new System.Drawing.Size(253, 21);

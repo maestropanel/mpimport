@@ -5,3 +5,10 @@ O:\Projects\MpImport\MpMigrate.Data\obj\Debug\MpMigrate.Data.pdb
 O:\Projects\MpImport\MpMigrate.Data\bin\Debug\MySql.Data.dll
 O:\Projects\MpImport\MpMigrate.Data\bin\Debug\MailEnable.Administration.dll
 O:\Projects\MpImport\MpMigrate.Data\bin\Debug\System.Data.SQLite.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Data\bin\Debug\MpMigrate.Data.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Data\bin\Debug\MpMigrate.Data.pdb
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Data\bin\Debug\MailEnable.Administration.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Data\bin\Debug\MySql.Data.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Data\bin\Debug\System.Data.SQLite.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Data\obj\Debug\MpMigrate.Data.dll
+C:\Users\Oguzhan\Documents\GitHub\mpimport\MpMigrate.Data\obj\Debug\MpMigrate.Data.pdb
