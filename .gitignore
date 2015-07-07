@@ -4,3 +4,5 @@
 
 /MpMigrate.Core/obj/Debug
 /MpMigrate.Test/obj/Debug
+/MpMigrate/bin/Release
+/MpMigrate.Data/obj/Release
