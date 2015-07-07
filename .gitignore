@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/MpMigrate.Core/obj/Debug
+/MpMigrate.Test/obj/Debug

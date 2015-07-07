@@ -36,7 +36,7 @@
                     break;
                 case DatabaseProviders.SQLCE:
                     break;
-                case DatabaseProviders.ACCESS:                
+                case DatabaseProviders.ACCESS:
                     connectionStr = MicrosoftAccessOdbcConnectionString();
                     break;
                 case DatabaseProviders.OLEDB_ACCESS:
@@ -69,7 +69,7 @@
                 case DatabaseProviders.SQLCE:
                     result = false;
                     break;
-                case DatabaseProviders.ACCESS:                
+                case DatabaseProviders.ACCESS:
                     result = MicrosoftAccessOdbcConnectionTest(connectionString, out errorMsg);
                     break;
                 case DatabaseProviders.OLEDB_ACCESS:
@@ -82,14 +82,12 @@
 
         private string MicrosoftAccessConnectionString()
         {
-            //Provider=Microsoft.Jet.OLEDB.4.0;Data Source=O:\partisepeti-psa.mdb
-            return String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};User Id={1};Password={2};", DataseFile, Username, "");            
+            return String.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};User Id={1};Password={2};", DataseFile, Username, "");
         }
 
         private string MicrosoftAccessOdbcConnectionString()
         {
-            //return "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + DataseFile;                        
-            return "Driver={Microsoft Access Driver (*.mdb)};Dbq=" + DataseFile;            
+            return "Driver={Microsoft Access Driver (*.mdb)};Dbq=" + DataseFile;
         }
 
         private bool MicrosoftAccessOleDbConnectionTest(string connectionString, out string errormsg)
@@ -124,7 +122,7 @@
 
             try
             {
-                
+
                 using (OdbcConnection myConnection = new OdbcConnection())
                 {
                     myConnection.ConnectionString = connectionString;
@@ -137,7 +135,7 @@
             }
             catch (Exception ex)
             {
-                errormsg = ex.Message;                
+                errormsg = ex.Message;
             }
 
             return result;
@@ -145,11 +143,24 @@
 
         private string MsSqlConnectionString()
         {
-            return String.Format("Server={0};Database={1};User Id={2};Password={3};",
-                Host,
-                Database,
-                Username,
-                Password);
+            if (Port != 1433)
+            {
+                return String.Format("Server={0},{4};Database={1};User Id={2};Password={3};",
+                    Host,
+                    Database,
+                    Username,
+                    Password,
+                    Port);
+            }
+            else
+            {
+
+                return String.Format("Server={0};Database={1};User Id={2};Password={3};",
+                    Host,
+                    Database,
+                    Username,
+                    Password);
+            }
         }
 
         private bool MsSqlConnectionTest(string connectionString, out string errormsg)
@@ -211,7 +222,7 @@
 
             return result;
         }
-       
+
         private string SQLiteConnectionString()
         {
             return String.Format("Data Source={0};Version=3;BinaryGUID=False", DataseFile);
