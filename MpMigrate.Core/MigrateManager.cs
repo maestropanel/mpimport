@@ -133,237 +133,251 @@
         public void Execute()
         {
             var domainList = new List<Domain>();
-            var resellerList = new List<Reseller>();                       
+            var resellerList = new List<Reseller>();
 
-            #region Filter
-            if (Plan.Filter)
+
+            try
             {
-                if (Plan.FilterType == FilterTypes.Domain)
-                    domainList = PanelData.GetDomains().Where(m => Plan.FilterDomains.Contains(m.Name)).ToList();
 
-                if (Plan.FilterType == FilterTypes.Reseller)
+                #region Filter
+                if (Plan.Filter)
                 {
-                    domainList = PanelData.GetDomains().Where(m => Plan.FilterResellers.Contains(m.ClientName)).ToList();
-                    resellerList = PanelData.GetResellers().Where(m => Plan.FilterResellers.Contains(m.Username)).ToList();
-                }
-            }
-            else        
-            {
-                domainList = PanelData.GetDomains();
-                resellerList = PanelData.GetResellers();
-            }
-            #endregion
+                    if (Plan.FilterType == FilterTypes.Domain)
+                        domainList = PanelData.GetDomains().Where(m => Plan.FilterDomains.Contains(m.Name)).ToList();
 
-            #region Reseller
-            //Import Reseller
-            if (Plan.Resellers)
-            {
-                foreach (var resItem in resellerList)
-                {
-                    Action(this,CreateActionMessage("Creating Reseller", resItem.Username));
-
-                    var resellerResult = Api.ResellerCreate(resItem.Username, resItem.Password, Plan.Destination.DefaultPlan,
-                        resItem.FirstName, resItem.LastName, resItem.Email, resItem.Country, resItem.Organization, resItem.Address1, resItem.Address2,
-                        resItem.City, resItem.Province, resItem.PostalCode, resItem.Phone, resItem.fax);
-
-                    Action(this,CreateActionEventAndLogging(resellerResult));                    
-                }
-            }
-            #endregion
-
-            #region Domains
-            foreach (var item in domainList)
-            {                
-                 totalCount++;
-
-                //Create Domain
-                if (Plan.Domains)
-                {
-                    Action(this, CreateActionMessage("Creating Domain", item.Name));
-
-                    var activeDomainUser = !String.IsNullOrEmpty(item.Password);
-                    var domainResult = Api.DomainCreate(item.Name, Plan.Destination.DefaultPlan, item.Username, item.Password, activeDomainUser,
-                        "", "", "", item.Expiration);
-
-                    Action(this, CreateActionEventAndLogging(domainResult));
-                }
-
-                if (Plan.CopyHttpFiles)
-                {
-
-                }
-
-                //Set Frowarding
-                if (Plan.Domains && item.isForwarding)
-                {
-                    Action(this, CreateActionMessage("Enable Forwarding...", item.Name));
-
-                    var forwardResult = Api.SetForwarding(item.Name, true, item.ForwardUrl, true, false, "Found");
-                    Action(this, CreateActionEventAndLogging(forwardResult));
-                }
-                
-                //Create Subdomains
-                if (Plan.Subdomains)
-                {
-                    foreach (var subItem in item.Subdomains)
+                    if (Plan.FilterType == FilterTypes.Reseller)
                     {
-                        Action(this, CreateActionMessage("Creating Subdomain: " + subItem.Name, item.Name));
-
-                        var subdomainResult = Api.AddSubDomain(item.Name, subItem.Name, subItem.Login, subItem.Password);
-                        Action(this, CreateActionEventAndLogging(subdomainResult));
-
-                        if (Plan.CopyHttpFiles && subdomainResult.ErrorCode == 0)
-                        {
-
-                        }
+                        domainList = PanelData.GetDomains().Where(m => Plan.FilterResellers.Contains(m.ClientName)).ToList();
+                        resellerList = PanelData.GetResellers().Where(m => Plan.FilterResellers.Contains(m.Username)).ToList();
                     }
                 }
-
-                //Create Aliases
-                if (Plan.DomainAliases)
+                else        
                 {
-                    foreach (var aliasItem in item.Aliases)
-                    {
-                        Action(this, CreateActionMessage("Creating Domain Alias: " + aliasItem.Alias, item.Name));
-
-                        var aliasResult = Api.AddAlias(item.Name, aliasItem.Alias);
-                        Action(this, CreateActionEventAndLogging(aliasResult));
-                    }
+                    domainList = PanelData.GetDomains();
+                    resellerList = PanelData.GetResellers();
                 }
+                #endregion
 
-                if (Plan.Emails)
+                #region Reseller
+                //Import Reseller
+                if (Plan.Resellers)
                 {
-                    foreach (var mailItem in item.Emails)
-                    {
-                        Action(this, CreateActionMessage("Creating MailBox: " + mailItem.Name, item.Name));
-
-                        var addMailboxResult = Api.AddMailBox(item.Name, mailItem.Name, mailItem.Password, mailItem.Quota, mailItem.Redirect, mailItem.RedirectedEmail);
-                        Action(this, CreateActionEventAndLogging(addMailboxResult));
-
-                        if (Plan.CopyEmailFiles && addMailboxResult.ErrorCode == 0)
-                        {
-
-                        }
-                    }
-                }
-
-                //Create Database
-                if (Plan.Databases)
-                {
-                    foreach (var dbItem in item.Databases)
-                    {
-                        Action(this, CreateActionMessage("Creating Database: " + dbItem.Name, item.Name));
-
-                        var dbResult = Api.AddDatabase(item.Name, dbItem.DbType, dbItem.Name, -1);
-                        Action(this, CreateActionEventAndLogging(dbResult));
-
-                        //Add DB Users
-                        if (dbResult.ErrorCode == 0)
-                        {
-                            foreach (var dbUserItem in dbItem.Users)
-                            {
-                                Action(this, CreateActionMessage(String.Format("Creating Database User {0} on {1} ", dbUserItem.Username, dbItem.Name), item.Name));
-
-                                var userResult = Api.AddDatabaseUser(item.Name, dbItem.DbType, dbItem.Name, dbUserItem.Username, dbUserItem.Password);
-                                Action(this, CreateActionEventAndLogging(userResult));
-                            }
-                        }
-
-                        if (Plan.CopyDatabase)
-                        {
-
-                        }
-                    }
-                }
-
-                if (Plan.DnsRecords)
-                {
-
-                    Action(this, CreateActionMessage("Build Dns Zone...", item.Name));
-
-                    var zoneRecord = item.Zone.Records
-                        .Select(m => new DnsZoneRecordItem(){ name = m.name, type  = m.type, value = m.value, priority = m.priority}).ToList();
-
-                    var dnsResult = Api.SetDnsZone(item.Name, item.Zone.expire, item.Zone.ttl, item.Zone.refresh, item.Zone.Email, item.Zone.retry,
-                        item.Zone.serial, "", zoneRecord);
-
-                    Action(this, CreateActionEventAndLogging(dnsResult));
-                }
-
-                //Set Limits
-                if (Plan.HostLimits)
-                {
-                    Action(this, CreateActionMessage("Setting Host Limits...", item.Name));
-
-                    var limitResult = Api.SetLimits(item.Name,
-                                                    item.Limits.DiskSpace,
-                                                    item.Limits.MaxMailBox,
-                                                    item.Limits.MaxFtpUser,
-                                                    item.Limits.MaxSubDomain,
-                                                    item.Limits.MaxDomainAlias,
-                                                    item.Limits.MaxWebTraffic,
-                                                    item.Limits.TotalMailBoxQuota,
-                                                    item.Limits.MaxWebTraffic,
-                                                    item.Limits.MaxFtpTraffic,
-                                                    item.Limits.MaxMailTraffic,
-                                                    item.Limits.MaxMySqlDb,
-                                                    item.Limits.MaxMySqlUser,
-                                                    item.Limits.MaxMySqlDbSpace,
-                                                    item.Limits.MaxMsSqlDb,
-                                                    item.Limits.MaxMsSqlDbUser,
-                                                    item.Limits.MaxMsSqlDbSpace);
-
-                    Action(this, CreateActionEventAndLogging(limitResult));
-                }
-
-                //Move to reseller.
-                if (Plan.Resellers && Plan.Domains)
-                {
-                    Action(this, CreateActionMessage("Setting Reseller...", item.Name));
-                    var restoreOwner = Api.ChangeReseller(item.Name, item.ClientName);
-                    Action(this, CreateActionEventAndLogging(restoreOwner));
-                }
-            }
-
-            #endregion
-
-            #region Copy Reseller Limits
-            //Copy Reseller Limits
-            if (Plan.Resellers)
-            {
-                if (Plan.ResellerLimits)
-                {
-                    
-
                     foreach (var resItem in resellerList)
                     {
-                        Action(this, CreateActionMessage("Setting Reseller Limits...", resItem.Username));
+                        Action(this, CreateActionMessage("Creating Reseller", resItem.Username));
 
-                        var resellerLimitResult = Api.ResellerSetLimit(
-                            resItem.Username,
-                            resItem.Limits.MaxDomain,
-                            resItem.Limits.DiskSpace,
-                            resItem.Limits.MaxMailBox,
-                            resItem.Limits.MaxFtpUser,
-                            resItem.Limits.MaxSubDomain,
-                            resItem.Limits.MaxDomainAlias,
-                            resItem.Limits.MaxWebTraffic,
-                            resItem.Limits.TotalMailBoxQuota,
-                            resItem.Limits.MaxWebTraffic,
-                            resItem.Limits.MaxFtpTraffic,
-                            resItem.Limits.MaxMailTraffic,
-                            resItem.Limits.MaxMySqlDb,
-                            resItem.Limits.MaxMySqlUser,
-                            resItem.Limits.MaxMsSqlDbSpace,
-                            resItem.Limits.MaxMsSqlDb,
-                            resItem.Limits.MaxMsSqlDbUser,
-                            resItem.Limits.MaxMsSqlDbSpace);
+                        var resellerResult = Api.ResellerCreate(resItem.Username, resItem.Password, Plan.Destination.DefaultPlan,
+                            resItem.FirstName, resItem.LastName, resItem.Email, resItem.Country, resItem.Organization, resItem.Address1, resItem.Address2,
+                            resItem.City, resItem.Province, resItem.PostalCode, resItem.Phone, resItem.fax);
 
-                        Action(this, CreateActionEventAndLogging(resellerLimitResult));
+                        Action(this,CreateActionEventAndLogging(resellerResult));                    
                     }
                 }
+                #endregion
+
+                #region Domains
+                foreach (var item in domainList)
+                {                
+                     totalCount++;
+
+                    //Create Domain
+                    if (Plan.Domains)
+                    {
+                        Action(this, CreateActionMessage("Creating Domain", item.Name));
+
+                        var activeDomainUser = !String.IsNullOrEmpty(item.Password);
+                        var domainResult = Api.DomainCreate(item.Name, Plan.Destination.DefaultPlan, item.Username, item.Password, activeDomainUser, "", "", "", item.Expiration);
+
+                        Action(this, CreateActionEventAndLogging(domainResult));
+                    }
+
+                    if (Plan.CopyHttpFiles)
+                    {
+
+                    }
+
+                    //Set Frowarding
+                    if (Plan.Domains && item.isForwarding)
+                    {
+                        Action(this, CreateActionMessage("Enable Forwarding...", item.Name));
+
+                        var forwardResult = Api.SetForwarding(item.Name, true, item.ForwardUrl, true, false, "Found");
+                        Action(this, CreateActionEventAndLogging(forwardResult));
+                    }
+                
+                    //Create Subdomains
+                    if (Plan.Subdomains)
+                    {
+                        foreach (var subItem in item.Subdomains)
+                        {
+                            Action(this, CreateActionMessage("Creating Subdomain: " + subItem.Name, item.Name));
+
+                            var subdomainResult = Api.AddSubDomain(item.Name, subItem.Name, subItem.Login, subItem.Password);
+                            Action(this, CreateActionEventAndLogging(subdomainResult));
+
+                            if (Plan.CopyHttpFiles && subdomainResult.ErrorCode == 0)
+                            {
+
+                            }
+                        }
+                    }
+
+                    //Create Aliases
+                    if (Plan.DomainAliases)
+                    {
+                        foreach (var aliasItem in item.Aliases)
+                        {
+                            Action(this, CreateActionMessage("Creating Domain Alias: " + aliasItem.Alias, item.Name));
+
+                            var aliasResult = Api.AddAlias(item.Name, aliasItem.Alias);
+                            Action(this, CreateActionEventAndLogging(aliasResult));
+                        }
+                    }
+
+                    if (Plan.Emails)
+                    {
+                        foreach (var mailItem in item.Emails)
+                        {
+                            Action(this, CreateActionMessage("Creating MailBox: " + mailItem.Name, item.Name));
+
+                            var addMailboxResult = Api.AddMailBox(item.Name, mailItem.Name, mailItem.Password, mailItem.Quota, mailItem.Redirect, mailItem.RedirectedEmail);
+                            Action(this, CreateActionEventAndLogging(addMailboxResult));
+
+                            if (Plan.CopyEmailFiles && addMailboxResult.ErrorCode == 0)
+                            {
+
+                            }
+                        }
+                    }
+
+                    //Create Database
+                    if (Plan.Databases)
+                    {
+                        foreach (var dbItem in item.Databases)
+                        {
+                            Action(this, CreateActionMessage("Creating Database: " + dbItem.Name, item.Name));
+
+                            var dbResult = Api.AddDatabase(item.Name, dbItem.DbType, dbItem.Name, -1);
+                            Action(this, CreateActionEventAndLogging(dbResult));
+
+                            //Add DB Users
+                            if (dbResult.ErrorCode == 0)
+                            {
+                                foreach (var dbUserItem in dbItem.Users)
+                                {
+                                    Action(this, CreateActionMessage(String.Format("Creating Database User {0} on {1} ", dbUserItem.Username, dbItem.Name), item.Name));
+
+                                    var userResult = Api.AddDatabaseUser(item.Name, dbItem.DbType, dbItem.Name, dbUserItem.Username, dbUserItem.Password);
+                                    Action(this, CreateActionEventAndLogging(userResult));
+                                }
+                            }
+
+                            if (Plan.CopyDatabase)
+                            {
+
+                            }
+                        }
+                    }
+
+                    if (Plan.DnsRecords)
+                    {
+
+                        Action(this, CreateActionMessage("Build Dns Zone...", item.Name));
+
+                        var zoneRecord = item.Zone.Records
+                            .Select(m => new DnsZoneRecordItem(){ name = m.name, type  = m.type, value = m.value, priority = m.priority}).ToList();
+
+                        var dnsResult = Api.SetDnsZone(item.Name, item.Zone.expire, item.Zone.ttl, item.Zone.refresh, item.Zone.Email, item.Zone.retry,
+                            item.Zone.serial, "", zoneRecord);
+
+                        Action(this, CreateActionEventAndLogging(dnsResult));
+                    }
+
+                    //Set Limits
+                    if (Plan.HostLimits)
+                    {
+                        Action(this, CreateActionMessage("Setting Host Limits...", item.Name));
+
+                        var limitResult = Api.SetLimits(item.Name,
+                                                        item.Limits.DiskSpace,
+                                                        item.Limits.MaxMailBox,
+                                                        item.Limits.MaxFtpUser,
+                                                        item.Limits.MaxSubDomain,
+                                                        item.Limits.MaxDomainAlias,
+                                                        item.Limits.MaxWebTraffic,
+                                                        item.Limits.TotalMailBoxQuota,
+                                                        item.Limits.MaxWebTraffic,
+                                                        item.Limits.MaxFtpTraffic,
+                                                        item.Limits.MaxMailTraffic,
+                                                        item.Limits.MaxMySqlDb,
+                                                        item.Limits.MaxMySqlUser,
+                                                        item.Limits.MaxMySqlDbSpace,
+                                                        item.Limits.MaxMsSqlDb,
+                                                        item.Limits.MaxMsSqlDbUser,
+                                                        item.Limits.MaxMsSqlDbSpace);
+
+                        Action(this, CreateActionEventAndLogging(limitResult));
+                    }
+
+                    //Move to reseller.
+                    if (Plan.Resellers && Plan.Domains)
+                    {
+                        Action(this, CreateActionMessage("Setting Reseller...", item.Name));
+                        var restoreOwner = Api.ChangeReseller(item.Name, item.ClientName);
+                        Action(this, CreateActionEventAndLogging(restoreOwner));
+                    }
+                }
+
+                #endregion
+
+                #region Copy Reseller Limits
+                //Copy Reseller Limits
+                if (Plan.Resellers)
+                {
+                    if (Plan.ResellerLimits)
+                    {
+                    
+
+                        foreach (var resItem in resellerList)
+                        {
+                            Action(this, CreateActionMessage("Setting Reseller Limits...", resItem.Username));
+
+                            var resellerLimitResult = Api.ResellerSetLimit(
+                                resItem.Username,
+                                resItem.Limits.MaxDomain,
+                                resItem.Limits.DiskSpace,
+                                resItem.Limits.MaxMailBox,
+                                resItem.Limits.MaxFtpUser,
+                                resItem.Limits.MaxSubDomain,
+                                resItem.Limits.MaxDomainAlias,
+                                resItem.Limits.MaxWebTraffic,
+                                resItem.Limits.TotalMailBoxQuota,
+                                resItem.Limits.MaxWebTraffic,
+                                resItem.Limits.MaxFtpTraffic,
+                                resItem.Limits.MaxMailTraffic,
+                                resItem.Limits.MaxMySqlDb,
+                                resItem.Limits.MaxMySqlUser,
+                                resItem.Limits.MaxMsSqlDbSpace,
+                                resItem.Limits.MaxMsSqlDb,
+                                resItem.Limits.MaxMsSqlDbUser,
+                                resItem.Limits.MaxMsSqlDbSpace);
+
+                            Action(this, CreateActionEventAndLogging(resellerLimitResult));
+                        }
+                    }
+                }
+                #endregion
+
+
             }
-            #endregion
+            catch (Exception ex)
+            {
+
+                var logMessage = String.Format("{0},{1}", ex.Message, ex.StackTrace);
+                System.Diagnostics.EventLog.WriteEntry("MaestroPanel", logMessage, System.Diagnostics.EventLogEntryType.Error);
+
+                throw ex;
+            }
         }
 
         public void LoadInstalledPanel(PanelTypes panelType, PanelDatabase sourceDatabase)
@@ -444,20 +458,20 @@
 
         private ApiAction CreateActionEventAndLogging(ApiResult<DomainOperationsResult> action)
         {
-            if (action.ErrorCode != 0)
-                errorCount++;
-
             if (action == null)
                 return new ApiAction() { Count = totalCount, ErrorCode = -1, DomainName = "Unknown", ErrorCount = errorCount, Message = "Action is null" };
 
+            if (action.ErrorCode != 0)
+                errorCount++;
+
             return new ApiAction()
-            {                
-                Count = totalCount,
-                DomainName = action.Details != null ? action.Details.Name : "",
-                ErrorCode = action.ErrorCode,
-                Message = action.Message,
-                ErrorCount = errorCount
-            };
+                                {                
+                                    Count = totalCount,
+                                    DomainName = action.Details != null ? action.Details.Name : "",
+                                    ErrorCode = action.ErrorCode,
+                                    Message = action.Message,
+                                    ErrorCount = errorCount
+                                };
         }
 
         private ApiAction CreateActionEventAndLogging(ApiResult<ResellerOperationResult> action)

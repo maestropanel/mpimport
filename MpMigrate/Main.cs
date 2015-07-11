@@ -377,6 +377,9 @@
         {
             this.UIThread(delegate 
             {
+                if (e == null)
+                    return;
+                
                 progressBarFinish.Value = e.Count > progressBarFinish.Maximum ? progressBarFinish.Maximum : e.Count;
 
                 labelFinisDomain.Text = e.DomainName;
@@ -483,27 +486,34 @@
             SetProgressBar();
 
             if (!executeTask.IsCompleted && !executeTask.IsCanceled && !executeTask.IsFaulted)
-            {                
+            {
                 executeTask.Start();
-                executeTask.ContinueWith((t) => 
+                executeTask.ContinueWith((t) =>
                 {
-                    MessageBox.Show("Operation Completed","", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                     if (t.Exception != null)
                     {
+                        var logMessage = String.Format("{0},{1}", t.Exception.Message, t.Exception.StackTrace);
+                        System.Diagnostics.EventLog.WriteEntry("MaestroPanel", logMessage);
+
+                        MessageBox.Show(logMessage, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
                         foreach (var item in t.Exception.InnerExceptions)
                         {
-                            MessageBox.Show(item.Message, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            logMessage = String.Format("{0},{1}", item.Message, item.StackTrace);
+                            System.Diagnostics.EventLog.WriteEntry("MaestroPanel", logMessage);
+
+                            MessageBox.Show(logMessage, "", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
 
                     buttonShowLogs.Enabled = true;
+                    MessageBox.Show(String.Format("Operation Completed:{0}", executeTask.Status.ToString()), "", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 }, TaskContinuationOptions.OnlyOnFaulted);
             }
             else
             {
-                MessageBox.Show("Migration already start. Please wait.", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);                
+                MessageBox.Show("Migration already start. Please wait.", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 

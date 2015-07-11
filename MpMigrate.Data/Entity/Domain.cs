@@ -31,6 +31,7 @@
             Emails = new List<Email>();
             Limits = new HostLimit();
             Expiration = DateTime.Now.AddYears(1).Date;
+            Databases = new List<Database>();
             Zone = new DnsZone();
         }
 

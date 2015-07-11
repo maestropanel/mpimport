@@ -128,7 +128,6 @@
         {
             if (isWebSiteExists())
             {
-
                 System.Configuration.Configuration rootWebConfig1 = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/", WEBSITEPANEL_WEBSITE_NAME);
                 var connectionStr = rootWebConfig1.ConnectionStrings.ConnectionStrings["EnterpriseServer"].ConnectionString;
                 

@@ -105,6 +105,8 @@
                             _d.isForwarding = false;
                             _d.ForwardUrl = "";
 
+                                              
+
                             _tmp.Add(_d);
                         }
                     }
@@ -142,15 +144,18 @@
                             var password = DataExtensions.GetColumnValue<string>(_read, "PropertyValue");
                             var ItemName = DataExtensions.GetColumnValue<string>(_read, "ItemName");
 
-                            var da = new Email();
-                            da.DomainName = domainName;
-                            da.Name = ItemName.Split('@').FirstOrDefault();
-                            da.Password = Decrypt(password);
-                            da.Quota = domainMailBoxSizeQuota;
-                            da.Redirect = String.Empty;
-                            da.RedirectedEmail = String.Empty;
+                            if (!String.IsNullOrEmpty(ItemName))
+                            {
+                                var da = new Email();
+                                da.DomainName = domainName;
+                                da.Name = ItemName.Split('@').FirstOrDefault();
+                                da.Password = Decrypt(password);
+                                da.Quota = domainMailBoxSizeQuota;
+                                da.Redirect = String.Empty;
+                                da.RedirectedEmail = String.Empty;
 
-                            _tmp.Add(da);
+                                _tmp.Add(da);
+                            }
                         }
                     }
                 }
@@ -324,7 +329,7 @@
 
             //Veritabanı Adını bul
             var db = GetDatabaseItem(database_id);
-
+            
             //Veritabanına ait kullanıcıların listesini mysql'den getir.
             var databaseUsers = db.dbtype == "mssql" ?
                 GetDatabaseUsersFromMsSQL(db) :
@@ -363,7 +368,6 @@
 
                 _tmp.Add(dbuser);
             }
-
             
             return _tmp;
         }
@@ -595,10 +599,10 @@
         private List<String> GetDatabaseUsersFromMsSQL(DataBaseItem dbitem)
         {
             var list = new List<String>();
-
             var _con = GetSQLConnectionString(dbitem);
 
-            //MessageBox.Show(_con);
+            if (!isDatabaseExists(dbitem.Name))
+                return list;
 
             using (SqlConnection _conn = new SqlConnection(_con))
             {
@@ -609,7 +613,9 @@
 				inner JOIN master..syslogins as sl on su.sid = sl.sid
 				where su.hasdbaccess = 1 AND su.islogin = 1 AND su.issqluser = 1 AND su.name <> 'dbo'",
                     dbitem.Name), _conn))
-                {                    
+                {
+                    //MessageBox.Show(_cmd.CommandText);
+
                     using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
@@ -1031,7 +1037,7 @@
         private bool isWebSiteExists()
         {
             using (ServerManager _server = new ServerManager())
-            {
+            {                
                 return _server.Sites.Where(m => m.Name == WEBSITEPANEL_WEBSITE_NAME).Any();
             }
         }
@@ -1039,13 +1045,13 @@
         public void SetCryptoKey()
         {
             //WebSitePanel Parolaları Endoce edilmiş mi?
-            if (isWebSiteExists())
-            {
+            //if (isWebSiteExists())
+            //{
                 System.Configuration.Configuration rootWebConfig1 = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/", WEBSITEPANEL_WEBSITE_NAME);
 
                 CryptoKey = rootWebConfig1.AppSettings.Settings["WebsitePanel.CryptoKey"].Value;
                 EncryptionEnabled = ConfigurationManager.AppSettings["WebsitePanel.EncryptionEnabled"] != null ? Boolean.Parse(ConfigurationManager.AppSettings["WebsitePanel.EncryptionEnabled"]) : true;
-            }
+            //}
         }
 
         private string userNameFix(string username)
@@ -1055,8 +1061,28 @@
 
             return username;
         }
-    }
 
+        private bool isDatabaseExists(string databaseName)
+        {
+            var result = false;
+
+            using (SqlConnection _conn = new SqlConnection(connectionString))
+            {
+                _conn.Open();
+
+                using (SqlCommand _cmd = new SqlCommand(String.Format(@"SELECT name FROM master.sys.databases WHERE name = '{0}'", databaseName), _conn))
+                {
+                    result = _cmd.ExecuteNonQuery() > 0 ? true: false;
+                }
+
+                _conn.Close();
+            }
+
+            return result;
+        }
+        
+    }
+    
     public struct DataBaseItem
     {
         public int Id { get; set; }
