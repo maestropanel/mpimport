@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dal\Plesk_10X_MySql.cs" />
     <Compile Include="Dal\Plesk_82_Access.cs" />
     <Compile Include="Dal\Helm_MsSQL.cs" />
     <Compile Include="Dal\Plesk_12_MySql.cs" />

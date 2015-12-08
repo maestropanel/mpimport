@@ -18,6 +18,7 @@
         Plesk_11,
         Plesk_12,
         Plesk_10,
+        Plesk_10x,
         MaestroPanel,
         Entrenix,
         Helm,
@@ -424,6 +425,9 @@
                                 (PanelTypes.Plesk_10, DatabaseProviders.MYSQL, new Plesk_10_MySql(), new Plesk_10_Discover()));
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
+                    (PanelTypes.Plesk_10x, DatabaseProviders.MYSQL, new Plesk_10X_MySql(), new Plesk_10_Discover()));
+
+            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                                 (PanelTypes.Entrenix, DatabaseProviders.ACCESS, new Entrenix_Access(), new Entrenix_Discover()));
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
@@ -443,6 +447,8 @@
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                         (PanelTypes.Plesk_82, DatabaseProviders.OLEDB_ACCESS, new Plesk_82_Access(), new Plesk_86_Discover()));
+
+
         }
 
         private void SetSourceDatabaseAutomatically(IDiscovery discover)

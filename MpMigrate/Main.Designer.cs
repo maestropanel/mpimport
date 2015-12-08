@@ -1065,6 +1065,7 @@
             "Plesk 12.x",
             "Plesk 11.x",
             "Plesk 10.x",
+            "Plesk 10.x.x",
             "Plesk 9.x",
             "Plesk 8.2",
             "Plesk 8.x",

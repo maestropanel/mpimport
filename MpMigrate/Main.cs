@@ -118,6 +118,9 @@
                 case "Plesk 10.x":
                     ptype = PanelTypes.Plesk_10;
                     break;
+                case "Plesk 10.x.x":
+                    ptype = PanelTypes.Plesk_10x;
+                    break;
                 case "Plesk 9.x":
                     ptype = PanelTypes.Plesk_95;
                     break;
@@ -236,6 +239,9 @@
                     break;
                 case PanelTypes.Plesk_10:
                     comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 10.x");
+                    break;
+                case PanelTypes.Plesk_10x:
+                    comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 10.x.x");
                     break;
                 case PanelTypes.Entrenix:
                     comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Entrenix");
