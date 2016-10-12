@@ -34,7 +34,7 @@
                 case "MySQL":
                     provider = DatabaseProviders.MYSQL;
                     break;
-                case "MsSQL":
+                case "MSSQL":
                     provider = DatabaseProviders.MSSQL;
                     break;
                 case "Jet":

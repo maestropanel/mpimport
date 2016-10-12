@@ -1,5 +1,6 @@
 ﻿namespace MpMigrate.Data.Dal
 {
+    /*
     using Microsoft.Web.Administration;
     using MpMigrate.Data.Entity;
     using MySql.Data.MySqlClient;
@@ -1100,5 +1101,6 @@
         public string UserType { get; set; }
         public string Password { get; set; }
     }
+    */
 
 }

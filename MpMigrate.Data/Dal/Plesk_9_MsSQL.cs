@@ -4,19 +4,21 @@
     using MySql.Data.MySqlClient;
     using System;
     using System.Collections.Generic;
+    using System.Data.SqlClient;
     using System.Linq;
     using System.Text;
 
-    public class Plesk_9_MySql : DboFactory
+
+    public class Plesk_9_MsSQL : DboFactory
     {
         private string connectionString;
 
-        public Plesk_9_MySql()
+        public Plesk_9_MsSQL()
         {
 
         }
 
-        public Plesk_9_MySql(string connectionString)
+        public Plesk_9_MsSQL(string connectionString)
         {
             this.connectionString = connectionString;
         }
@@ -25,11 +27,12 @@
         {
             var tmp = new List<Domain>();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
 
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT 
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT 
                                                                     domains.id, 
                                                                     domains.name, 
                                                                     hosting.fp_adm, 
@@ -46,14 +49,15 @@
 				                                LEFT JOIN accounts ON accounts.id = sys_users.account_id 
 				                                LEFT JOIN clients ON clients.id = domains.cl_id 
 				                                LEFT JOIN dom_level_usrs ON dom_level_usrs.dom_id = domains.id 
-                                                LEFT JOIN limits ON limits.id = domains.limits_id AND limits.limit_name = 'expiration'", _conn))
+                                                LEFT JOIN limits ON limits.id = domains.limits_id AND limits.limit_name = 'expiration'
+                                                WHERE domains.status = 0", _conn))
                 {
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
                             var _d = new Domain();
-                            _d.Id = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "id"));
+                            _d.Id = Convert.ToInt32(DataExtensions.GetColumnValue<int>(_read, "id"));
                             _d.Name = DataExtensions.GetColumnValue<String>(_read, "name").ToLower();
                             _d.ClientName = DataExtensions.GetColumnValue<String>(_read, "login");
                             _d.DomainPassword = DataExtensions.GetColumnValue<String>(_read, "DomainPass");
@@ -67,7 +71,7 @@
                             if (String.IsNullOrEmpty(_d.Password))
                                 _d.Password = DataHelper.GetPassword();
 
-                            _d.Status = Convert.ToInt64(DataExtensions.GetColumnValue<ulong>(_read, "Status"));
+                            _d.Status = Convert.ToInt64(DataExtensions.GetColumnValue<long>(_read, "Status"));
                             var expirationString = String.Empty;
 
                             if (_read["expiration"] is System.Int64)
@@ -109,17 +113,17 @@
         {
             var tmp = new List<Reseller>();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT * FROM clients", _conn))
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT * FROM clients", _conn))
                 {
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
                             var res = new Reseller();
-                            res.Id = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "id"));
+                            res.Id = Convert.ToInt32(DataExtensions.GetColumnValue<int>(_read, "id"));
                             res.Address1 = DataExtensions.GetColumnValue<string>(_read, "address");
                             res.City = DataExtensions.GetColumnValue<string>(_read, "city");
                             res.Country = DataExtensions.GetColumnValue<string>(_read, "country");
@@ -151,17 +155,17 @@
         {
             var _tmp = new List<DomainAlias>();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT domain_aliases.name as alias, domains.name AS domain, domain_aliases.status
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT domain_aliases.name as alias, domains.name AS domain, domain_aliases.status
                                                                 FROM  domain_aliases 
                                                             INNER JOIN domains ON domain_aliases.dom_id = domains.id 
                                                             WHERE domain_aliases.status = 0 AND domains.name = @NAME", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -188,10 +192,10 @@
         {
             var _tmp = new List<Database>();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT data_bases.id as db_id, domains.name AS domain, data_bases.name, data_bases.type,
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT data_bases.id as db_id, domains.name AS domain, data_bases.name, data_bases.type,
                                                                 data_bases.db_server_id
                                                             FROM data_bases LEFT OUTER JOIN
                                                         domains ON domains.id = data_bases.dom_id LEFT OUTER JOIN
@@ -200,16 +204,16 @@
                 {
                     _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
                             var _d = new Database();
-                            _d.Id = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "db_id"));
+                            _d.Id = Convert.ToInt32(DataExtensions.GetColumnValue<int>(_read, "db_id"));
                             _d.Name = DataExtensions.GetColumnValue<string>(_read, "name");
                             _d.Domain = DataExtensions.GetColumnValue<string>(_read, "domain");
                             _d.DbType = DataExtensions.GetColumnValue<string>(_read, "type");
-                            _d.ServerId = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "db_server_id"));
+                            _d.ServerId = Convert.ToInt32(DataExtensions.GetColumnValue<int>(_read, "db_server_id"));
                             _d.Users = GetDatabaseUsers(_d.Id);
 
                             _tmp.Add(_d);
@@ -226,14 +230,14 @@
         {
             var _tmp = new List<DatabaseUser>();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT login, passwd FROM  db_users WHERE (db_id = @ID) AND (status = 'normal')", _conn))
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT login, passwd FROM  db_users WHERE (db_id = @ID) AND (status = 'normal')", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@ID", database_id);
 
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -255,14 +259,14 @@
         {
             var _tmp_limits = new List<LimitRow>();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT L.limit_name, L.value FROM domains D LEFT JOIN limits L ON L.id = D.limits_id WHERE D.name = @NAME", _conn))
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT L.limit_name, L.value FROM domains D LEFT JOIN limits L ON L.id = D.limits_id WHERE D.name = @NAME", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -305,10 +309,10 @@
         {
             var _tmp = new List<Subdomain>();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT  subdomains.name, domains.name AS domain, sys_users.login, accounts.password, subdomains.sys_user_type
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT  subdomains.name, domains.name AS domain, sys_users.login, accounts.password, subdomains.sys_user_type
                                                                 FROM accounts RIGHT OUTER JOIN
                                                         sys_users ON accounts.id = sys_users.account_id RIGHT OUTER JOIN
                                                         subdomains ON sys_users.id = subdomains.sys_user_id LEFT OUTER JOIN
@@ -317,7 +321,7 @@
                 {
                     _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -342,24 +346,24 @@
         {
             var _tmp = new DnsZone();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT dns_zone.* FROM dns_zone 
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT dns_zone.* FROM dns_zone 
                                                                         LEFT JOIN domains ON dns_zone.name = domains.name 
                                                                             WHERE domains.name = @NAME", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
                             _tmp.Name = DataExtensions.GetColumnValue<string>(_read, "name").ToLower();
-                            _tmp.mininum = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "minimum"));
-                            _tmp.refresh = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "refresh"));
-                            _tmp.retry = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "retry"));
-                            _tmp.expire = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "expire"));
+                            _tmp.mininum = Convert.ToInt32(DataExtensions.GetColumnValue<int>(_read, "minimum"));
+                            _tmp.refresh = Convert.ToInt32(DataExtensions.GetColumnValue<int>(_read, "refresh"));
+                            _tmp.retry = Convert.ToInt32(DataExtensions.GetColumnValue<int>(_read, "retry"));
+                            _tmp.expire = Convert.ToInt32(DataExtensions.GetColumnValue<int>(_read, "expire"));
 
                             var serial_number = 0;                            
 
@@ -368,8 +372,8 @@
 
                             if(int.TryParse(serial, out serial_number))
                                 _tmp.serial = serial_number;
-                            
-                            _tmp.ttl = Convert.ToInt32(DataExtensions.GetColumnValue<uint>(_read, "ttl"));
+
+                            _tmp.ttl = Convert.ToInt32(DataExtensions.GetColumnValue<int>(_read, "ttl"));
                             _tmp.Email = DataExtensions.GetColumnValue<string>(_read, "email");
                         }
                     }
@@ -386,16 +390,16 @@
         {
             var _tmp = new List<DnsZoneRecord>();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT dns_recs.* FROM dns_zone 
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT dns_recs.* FROM dns_zone 
                                                                         LEFT JOIN dns_recs ON dns_recs.dns_zone_id = dns_zone.id 
                                                                             WHERE dns_zone.name = @NAME AND dns_recs.type <> 'PTR'", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -432,14 +436,14 @@
         {
             var _tmp = new Forwarding();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT D.name, F.redirect FROM domains D JOIN forwarding F ON F.dom_id = D.Id WHERE D.name = @NAME", _conn))
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT D.name, F.redirect FROM domains D JOIN forwarding F ON F.dom_id = D.Id WHERE D.name = @NAME", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -458,18 +462,14 @@
         {
             var pstats = new PanelStats();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
 
                 #region Disk Space
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT  CAST(SUM(httpdocs) AS SIGNED) as httpdocs, 
-                                                                        CAST((SUM(mysql_dbases) + SUM(mssql_dbases)) AS SIGNED) as totaldbsize, 
-                                                                        CAST(SUM(mailboxes) AS SIGNED) as totalmailboxsize, 
-                                                                        CAST(SUM(subdomains) AS SIGNED) as subdomainsize 
-                                                            FROM disk_usage", _conn))
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT  SUM(httpdocs)  as httpdocs, (SUM(mysql_dbases) + SUM(mssql_dbases)) as totaldbsize,  SUM(mailboxes) as totalmailboxsize,  SUM(subdomains) as subdomainsize  FROM disk_usage", _conn))
                 {
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -498,21 +498,21 @@
                 #endregion
 
                 #region Count
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT (SELECT COUNT(*) FROM domains) as domaincount, 
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT (SELECT COUNT(*) FROM domains) as domaincount, 
                                                                 (SELECT COUNT(*) FROM mail) as mailcount, 
                                                                 (SELECT COUNT(*) FROM clients) as resellercount, (SELECT COUNT(*) FROM data_bases) as databasecount, 
                                                                 (SELECT COUNT(*) FROM domain_aliases) as aliascount, (SELECT COUNT(*) FROM subdomains) as subdomaincount", _conn))
                 {
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
-                            pstats.TotalDomainCount = DataExtensions.GetColumnValue<long>(_read, "domaincount");
-                            pstats.TotalEmailCount = DataExtensions.GetColumnValue<long>(_read, "mailcount");
-                            pstats.TotalResellerCount = DataExtensions.GetColumnValue<long>(_read, "resellercount");
-                            pstats.TotalDatabaseCount = DataExtensions.GetColumnValue<long>(_read, "databasecount");
-                            pstats.TotalDomainAliasCount = DataExtensions.GetColumnValue<long>(_read, "aliascount");
-                            pstats.TotalSubdomainCount = DataExtensions.GetColumnValue<long>(_read, "subdomaincount");
+                            pstats.TotalDomainCount = DataExtensions.GetColumnValue<int>(_read, "domaincount");
+                            pstats.TotalEmailCount = DataExtensions.GetColumnValue<int>(_read, "mailcount");
+                            pstats.TotalResellerCount = DataExtensions.GetColumnValue<int>(_read, "resellercount");
+                            pstats.TotalDatabaseCount = DataExtensions.GetColumnValue<int>(_read, "databasecount");
+                            pstats.TotalDomainAliasCount = DataExtensions.GetColumnValue<int>(_read, "aliascount");
+                            pstats.TotalSubdomainCount = DataExtensions.GetColumnValue<int>(_read, "subdomaincount");
                         }
                     }
                 }
@@ -533,15 +533,15 @@
         {
             var _tmp_limits = new List<LimitRow>();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT L.limit_name, L.value FROM clients 
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT L.limit_name, L.value FROM clients 
                                                                         C LEFT JOIN limits L ON L.id = C.limits_id WHERE C.login = @NAME", _conn))
                 {
                     _cmd.Parameters.AddWithValue("@NAME", clientName);
 
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {
@@ -585,10 +585,10 @@
         {
             var securePass = false;
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT val FROM misc WHERE param = 'secure_passwords'", _conn))
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT val FROM misc WHERE param = 'secure_passwords'", _conn))
                 {
                     var secure_passwords = _cmd.ExecuteScalar();
 
@@ -605,10 +605,10 @@
         {
             var _tmp = new List<Email>();
 
-            using (MySqlConnection _conn = new MySqlConnection(connectionString))
+            using (SqlConnection _conn = new SqlConnection(connectionString))
             {
                 _conn.Open();
-                using (MySqlCommand _cmd = new MySqlCommand(@"SELECT     
+                using (SqlCommand _cmd = new SqlCommand(@"SELECT     
 	                                                        mail.mail_name, domains.name, 
 	                                                        accounts.password, domains.status, 
 	                                                        mail.redirect, mail.redir_addr, mail.mbox_quota
@@ -620,7 +620,7 @@
                 {
                     _cmd.Parameters.AddWithValue("@NAME", domainName);
 
-                    using (MySqlDataReader _read = _cmd.ExecuteReader())
+                    using (SqlDataReader _read = _cmd.ExecuteReader())
                     {
                         while (_read.Read())
                         {

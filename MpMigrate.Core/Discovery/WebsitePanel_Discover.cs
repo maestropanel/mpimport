@@ -1,6 +1,6 @@
 ﻿namespace MpMigrate.Core.Discovery
 {
-    using Microsoft.Web.Administration;
+    /*using Microsoft.Web.Administration;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -141,4 +141,5 @@
             }
         }
     }
+    */
 }

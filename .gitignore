@@ -1,6 +1,10 @@
 ﻿# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
 [Bb]in/
 [Oo]bj/
+[Bb]in/Debug
+[Oo]bj/Debug
+[Bb]in/Release
+[Oo]bj/Release
 
 # mstest test results
 TestResults
@@ -36,6 +40,9 @@ x64/
 *.vspscc
 *.vssscc
 .builds
+*.cache
+*.pdb
+*.exe
 
 # Visual C++ cache files
 ipch/
