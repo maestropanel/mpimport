@@ -234,7 +234,14 @@
                             _tmp.expire = DataExtensions.GetColumnValue<int>(_read, "Expires");
 
                             var serial = DataExtensions.GetColumnValue<string>(_read, "SerialNumber");
-                            _tmp.serial = Convert.ToInt32(serial);
+
+                            if (!String.IsNullOrEmpty(serial))
+                            {
+                                int intSerial = 0;
+
+                                if (int.TryParse(serial, out intSerial))
+                                    _tmp.serial = intSerial;
+                            }
 
                             _tmp.ttl = DataExtensions.GetColumnValue<int>(_read, "TTL");
                             _tmp.Email = DataExtensions.GetColumnValue<string>(_read, "ResponsiblePerson");
