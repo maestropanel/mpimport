@@ -109,6 +109,9 @@
 
             switch (comboSourcePanel.SelectedItem.ToString())
             {
+                case "Plesk 17.x":
+                    ptype = PanelTypes.Plesk_17x;
+                    break;
                 case "Plesk 12.x":
                     ptype = PanelTypes.Plesk_12;
                     break;
@@ -236,6 +239,9 @@
                     break;
                 case PanelTypes.Plesk_12:
                     comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 12.x");
+                    break;
+                case PanelTypes.Plesk_17x:
+                    comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 17.x");
                     break;
                 case PanelTypes.Plesk_10:
                     comboSourcePanel.SelectedIndex = comboSourcePanel.FindStringExact("Plesk 10.x");

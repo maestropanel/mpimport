@@ -19,6 +19,7 @@
         Plesk_12,
         Plesk_10,
         Plesk_10x,
+        Plesk_17x,
         MaestroPanel,
         Entrenix,
         Helm,
@@ -453,6 +454,9 @@
 
             variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
                         (PanelTypes.Plesk_82, DatabaseProviders.OLEDB_ACCESS, new Plesk_82_Access(), new Plesk_86_Discover()));
+
+            variationList.Add(new Tuple<PanelTypes, DatabaseProviders, DboFactory, IDiscovery>
+                        (PanelTypes.Plesk_17x, DatabaseProviders.MYSQL, new Plesk_17_MySql(), new Plesk_17_Discover()));
 
 
         }

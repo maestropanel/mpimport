@@ -55,6 +55,7 @@
     <Compile Include="Discovery\Plesk_12_Discover.cs" />
     <Compile Include="Discovery\Entrenix_Discover.cs" />
     <Compile Include="Discovery\Plesk_10_Discover.cs" />
+    <Compile Include="Discovery\Plesk_17_Discover.cs" />
     <Compile Include="Discovery\Plesk_9_Discover.cs" />
     <Compile Include="Discovery\MaestroPanelDiscover.cs" />
     <Compile Include="Discovery\Plesk_11_Discover.cs" />

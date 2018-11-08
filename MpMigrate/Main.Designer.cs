@@ -1044,7 +1044,7 @@
             this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(3, 227);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(46, 15);
+            this.label12.Size = new System.Drawing.Size(45, 15);
             this.label12.TabIndex = 10;
             this.label12.Text = "Version";
             // 
@@ -1062,6 +1062,7 @@
             this.comboSourcePanel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboSourcePanel.FormattingEnabled = true;
             this.comboSourcePanel.Items.AddRange(new object[] {
+            "Plesk 17.x",
             "Plesk 12.x",
             "Plesk 11.x",
             "Plesk 10.x",

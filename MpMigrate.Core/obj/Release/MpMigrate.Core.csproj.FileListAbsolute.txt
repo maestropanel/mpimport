@@ -1,3 +1,4 @@
+O:\Projects\MpImport\MpMigrate.Core\bin\Release\MpMigrate.Core.dll.config
 O:\Projects\MpImport\MpMigrate.Core\bin\Release\MpMigrate.Core.dll
 O:\Projects\MpImport\MpMigrate.Core\bin\Release\MpMigrate.Core.pdb
 O:\Projects\MpImport\MpMigrate.Core\bin\Release\MpMigrate.Data.dll
@@ -8,6 +9,6 @@ O:\Projects\MpImport\MpMigrate.Core\bin\Release\MailEnable.Administration.dll
 O:\Projects\MpImport\MpMigrate.Core\bin\Release\Newtonsoft.Json.dll
 O:\Projects\MpImport\MpMigrate.Core\bin\Release\MpMigrate.Data.pdb
 O:\Projects\MpImport\MpMigrate.Core\bin\Release\MpMigrate.MaestroPanel.Api.pdb
+O:\Projects\MpImport\MpMigrate.Core\obj\Release\MpMigrate.Core.csprojResolveAssemblyReference.cache
 O:\Projects\MpImport\MpMigrate.Core\obj\Release\MpMigrate.Core.dll
 O:\Projects\MpImport\MpMigrate.Core\obj\Release\MpMigrate.Core.pdb
-O:\Projects\MpImport\MpMigrate.Core\obj\Release\MpMigrate.Core.csprojResolveAssemblyReference.cache
